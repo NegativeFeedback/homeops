@@ -1,0 +1,3 @@
+---
+providerRegex: ^(talos-c1|talos-c2|talos-c3|talos-w1|talos-w2|talos-w3|talos-w4|talos-w5|talos-w6|talos-w7|talos-w8)$
+bypassDnsResolution: true
