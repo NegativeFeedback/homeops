@@ -1,0 +1,26 @@
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: mariadb-testrestore
+  namespace: database
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationDestination
+metadata:
+  name: mariadb-testrestore
+  namespace: database
+spec:
+  trigger:
+    manual: restore-once
+  restic:
+    repository: restic-config
+    # Use an existing PVC, don't provision a new one
+    copyMethod: Direct
+    destinationPVC: mariadb-testrestore

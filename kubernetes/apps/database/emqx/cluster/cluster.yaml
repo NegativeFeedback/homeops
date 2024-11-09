@@ -1,0 +1,34 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/apps.emqx.io/emqx_v2beta1.json
+apiVersion: apps.emqx.io/v2beta1
+kind: EMQX
+metadata:
+  name: emqx
+spec:
+  image: public.ecr.aws/emqx/emqx:5.8.1
+  config:
+    data: |
+      authentication {
+        backend = "built_in_database"
+        mechanism = "password_based"
+        password_hash_algorithm {
+            name = "bcrypt"
+        }
+        user_id_type = "username"
+        bootstrap_type = "plain"
+      }
+      authorization {
+        sources = [
+          {
+            type = built_in_database
+            enable = true
+          }
+        ]
+        no_match: "deny"
+      }
+  coreTemplate:
+    spec:
+      replicas: 3
+  listenersServiceTemplate:
+    spec:
+      type: LoadBalancer
