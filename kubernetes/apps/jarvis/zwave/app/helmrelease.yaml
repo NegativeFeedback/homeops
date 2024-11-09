@@ -32,6 +32,7 @@ spec:
   values:
     controllers:
       zwave-js-ui:
+        type: statefulset
         annotations:
           reloader.stakater.com/auto: "true"
         containers:
@@ -76,6 +77,18 @@ spec:
             port: *port
           websocket:
             port: 3000
+    ingress:
+      app:
+        annotations:
+          external-dns.alpha.kubernetes.io/target: internal.gddnet.io
+        className: internal
+        hosts:
+          - host: zwave.m.gddnet.io
+            paths:
+              - path: /
+                service:
+                  identifier: app
+                  port: http
 
     persistence:
       config:
