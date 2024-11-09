@@ -75,6 +75,9 @@ spec:
           - name: talos-w5
             devices:
               - name: /dev/disk/by-id/nvme-nvme.1e4b-323430313832373335313531303230-53504343204d2e32205043496520535344-00000001
+          - name: talos-w6
+            devices:
+              - name: /dev/disk/by-id/nvme-WD_Blue_SN570_2TB_23032A801565
           - name: talos-w8
             devices:
               - name: /dev/disk/by-id/ata-SanDisk_SSD_PLUS_1000GB_183527800539
