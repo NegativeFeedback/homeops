@@ -104,7 +104,7 @@ spec:
                   port: http
     persistence:
       config:
-        existingClaim: plex
+        existingClaim: plexserver
         globalMounts:
           - path: /config/Library/Application Support/Plex Media Server
       cache:
