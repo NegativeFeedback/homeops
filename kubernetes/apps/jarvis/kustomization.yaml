@@ -7,6 +7,6 @@ resources:
   - ./namespace.yaml
   # Flux-Kustomizations
 #  - ./homeassistant/ks.yaml
-#  - ./zwave/ks.yaml
+  - ./zwave/ks.yaml
   - ./zigbee2mqtt/ks.yaml
-  - ./frigate/ks.yaml
+#  - ./frigate/ks.yaml

@@ -30,6 +30,7 @@ spec:
   values:
     controllers:
       zigbee2mqtt:
+        type: statefulset
         annotations:
           reloader.stakater.com/auto: "true"
         containers:
@@ -77,7 +78,7 @@ spec:
           external-dns.alpha.kubernetes.io/target: internal.gddnet.io
         className: internal
         hosts:
-          - host: zigbee.gddnet.io
+          - host: zigbee.m.gddnet.io
             paths:
               - path: /
                 service:
@@ -85,7 +86,7 @@ spec:
                   port: http
     persistence:
       config:
-        existingClaim: zigbee2mqtt
+        existingClaim: zigbee
       usb:
         type: hostPath
         hostPath: /dev/serial/by-id/usb-ITead_Sonoff_Zigbee_3.0_USB_Dongle_Plus_6af289ca5c3bec1192e4a4957a0af07f-if00-port0
