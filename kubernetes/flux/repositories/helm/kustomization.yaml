@@ -15,3 +15,24 @@ resources:
   - ./external-dns.yaml
   - ./ingress-nginx.yaml
   - ./k8s-gateway.yaml
+  - ./rook-ceph.yaml
+  - ./external-secrets.yaml
+
+  - ./actions-runner-controller.yaml
+  - ./backube.yaml
+  - ./bitnami.yaml
+  - ./cloudnative-pg.yaml
+  # - ./crossplane.yaml
+  # - ./crunchydata.yaml
+  # - ./csi-driver-nfs.yaml
+  - ./descheduler.yaml
+  - ./emqx.yaml
+  - ./grafana.yaml
+  - ./intel.yaml
+  - ./kyverno.yaml
+  - ./piraeus.yaml
+  - ./stevehipwell.yaml
+  - ./bitwarden.yaml
+  - ./codecentric.yaml
+  - ./node-feature-discovery.yaml
+  - ./authentik.yaml
