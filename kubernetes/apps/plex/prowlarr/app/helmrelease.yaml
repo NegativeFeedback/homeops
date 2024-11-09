@@ -1,0 +1,99 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: prowlarr
+  namespace: plex
+spec:
+  chart:
+    spec:
+      chart: app-template
+      version: 3.5.1
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+  interval: 30m
+  values:
+    controllers:
+      prowlarr:
+        type: statefulset
+        annotations:
+          secret.reloader.stakater.com/reload: &secret prowlarr-secret
+          
+        containers:
+          app:
+            image:
+              repository: ghcr.io/onedr0p/prowlarr
+              tag: 1.25.4.4818
+            env:
+              PROWLARR__APP__INSTANCENAME: Prowlarr
+              PROWLARR__APP__THEME: dark
+              PROWLARR__LOG__ANALYTICSENABLED: "False"
+              PROWLARR__LOG__DBENABLED: "False"
+              PROWLARR__LOG__LEVEL: info
+              PROWLARR__SERVER__PORT: &port 80
+              PROWLARR__POSTGRES__HOST: "postgres16-rw.database.svc.cluster.local"
+              PROWLARR__POSTGRES__PORT: "5432"
+              PROWLARR__POSTGRES__USER: "plex_prowlarr"
+              PROWLARR__POSTGRES__MAINDB: "plex_prowlarr"
+              TZ: America/Chicago
+            envFrom:
+              - secretRef:
+                  name: *secret
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /ping
+                    port: *port
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+              startup:
+                enabled: false
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: {drop: ["ALL"]}
+            resources:
+              requests:
+                cpu: 50m
+                memory: 100Mi
+              limits:
+                memory: 300Mi
+    service:
+      app:
+        controller: prowlarr
+        ports:
+          http:
+            port: *port
+    ingress:
+      app:
+        className: internal
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Plex
+          gethomepage.dev/name: Prowlarr
+          gethomepage.dev/icon: prowlarr.svg
+          gethomepage.dev/widget.type: prowlarr
+          gethomepage.dev/widget.url: http://prowlarr.plex
+          gethomepage.dev/widget.key: "{{`{{HOMEPAGE_VAR_PROWLARR_TOKEN}}`}}"
+        hosts:
+          - host: &host prowlarr.int.gddnet.io
+            paths:
+              - path: /
+                service:
+                  identifier: app
+                  port: http
+    persistence:
+      config:
+        enabled: true
+        type: emptyDir
+      tmp:
+        type: emptyDir
