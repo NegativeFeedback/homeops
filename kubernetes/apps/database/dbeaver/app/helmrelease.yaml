@@ -30,13 +30,7 @@ spec:
               TZ: America/Chicago
 
             securityContext:
-              allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
-              capabilities: {drop: ["ALL"]}
-              runAsNonRoot: true
-              runAsUser: 568
-              runAsGroup: 568
-              fsGroup: 568
+              {}
             resources:
               requests:
                 cpu: 50m
