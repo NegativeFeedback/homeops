@@ -6,7 +6,7 @@ metadata:
   name: &app mariadb
   namespace: flux-system
 spec:
-  targetNamespace: database
+  targetNamespace: &ns database
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
@@ -19,3 +19,7 @@ spec:
   wait: true
   interval: 30m
   timeout: 5m
+  postBuild:
+    substitute:
+      APP: *app
+      NS: *ns

@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mariadb
+  namespace: database
+  labels:
+    homelab/usage: database
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: ceph-block
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationDestination
+metadata:
+  name: mariadb
+  namespace: database
+spec:
+  trigger:
+    manual: restore-once
+  restic:
+    repository: restic-config
+    copyMethod: Direct
+    destinationPVC: mariadb
+---
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationSource
+metadata:
+   name: mariadb
+   namespace: database
+spec:
+   sourcePVC: mariadb
+   trigger:
+      schedule: "*/30 * * * *"
+   restic:
+     pruneIntervalDays: 15
+     repository: restic-config
+     retain:
+       hourly: 1
+       daily: 1
+       weekly: 1
+       monthly: 1
+       yearly: 1
+     copyMethod: Clone
