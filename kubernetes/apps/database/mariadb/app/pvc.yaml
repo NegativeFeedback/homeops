@@ -14,19 +14,6 @@ spec:
       storage: 20Gi
 ---
 apiVersion: volsync.backube/v1alpha1
-kind: ReplicationDestination
-metadata:
-  name: mariadb
-  namespace: database
-spec:
-  trigger:
-    manual: restore-once
-  restic:
-    repository: restic-config
-    copyMethod: Direct
-    destinationPVC: mariadb
----
-apiVersion: volsync.backube/v1alpha1
 kind: ReplicationSource
 metadata:
    name: mariadb
@@ -37,7 +24,7 @@ spec:
       schedule: "*/30 * * * *"
    restic:
      pruneIntervalDays: 15
-     repository: restic-config
+     repository: restic-mariadb
      retain:
        hourly: 1
        daily: 1
