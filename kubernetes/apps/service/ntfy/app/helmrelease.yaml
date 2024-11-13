@@ -1,0 +1,86 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: service-ntfy
+spec:
+  interval: 1h
+  chart:
+    spec:
+      chart: app-template
+      version: 3.5.1
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+  values:
+    controllers:
+      ntfy:
+        containers:
+          app:
+            image:
+              repository: ghcr.io/vaskozl/ntfysh-bin
+              tag: 2.11.0@sha256:32ef674c5c3471fc62b5b00424575d11eeb06739d3e865e648b63374f8eb8f3b
+            resources:
+              requests:
+                cpu: 10m
+                memory: 25Mi
+              limits:
+                memory: 25Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                - ALL
+              readOnlyRootFilesystem: true
+        statefulset:
+          podManagementPolicy: Parallel
+        type: statefulset
+    defaultPodOptions:
+      securityContext:
+        fsGroup: 568
+        runAsGroup: 568
+        runAsNonRoot: true
+        runAsUser: 568
+        seccompProfile:
+          type: RuntimeDefault
+        sysctls:
+        - name: net.ipv4.ip_unprivileged_port_start
+          value: "0"
+    service:
+      app:
+        controller: ntfy
+        type: LoadBalancer
+        ports:
+          smtp:
+            port: 25
+          http:
+            port: 80
+    ingress:
+      app:
+        className: external
+        annotations:
+          external-dns.alpha.kubernetes.io/target: external.gddnet.io
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Service
+          gethomepage.dev/name: Push
+          gethomepage.dev/icon: ntfy.svg
+          gatus.io/path: *path
+        hosts:
+          - host: "push.gddnet.io"
+            paths:
+              - path: /
+                pathType: Prefix
+                service:
+                  identifier: app
+                  port: http
+    persistence:
+      config:
+        type: configMap
+        name: ntfy-config
+        globalMounts:
+        - path: /etc/ntfy
+      cache:
+        type: emptyDir
+        globalMounts:
+        - path: /var/cache/ntfy
