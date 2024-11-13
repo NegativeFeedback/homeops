@@ -65,7 +65,6 @@ spec:
           gethomepage.dev/group: Service
           gethomepage.dev/name: Push
           gethomepage.dev/icon: ntfy.svg
-          gatus.io/path: *path
         hosts:
           - host: "push.gddnet.io"
             paths:

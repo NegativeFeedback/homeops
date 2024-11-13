@@ -18,7 +18,7 @@ spec:
     controllers:
       monica:
         annotations:
-          secret.reloader.stakater.com/reload: &secret monica-secret
+          secret.reloader.stakater.com/reload: monica-secret
         strategy: RollingUpdate
         containers:
           app:
@@ -61,7 +61,6 @@ spec:
           gethomepage.dev/group: Service
           gethomepage.dev/name: Monica
           gethomepage.dev/icon: monica.svg
-          gatus.io/path: *path
         hosts:
           - host: monica.int.gddnet.io
             paths:
