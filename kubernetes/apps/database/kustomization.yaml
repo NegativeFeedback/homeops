@@ -10,3 +10,4 @@ resources:
   - ./emqx/ks.yaml
   - ./mariadb/ks.yaml
   - ./dbeaver/ks.yaml
+  - ./dragonfly-operator/ks.yaml
