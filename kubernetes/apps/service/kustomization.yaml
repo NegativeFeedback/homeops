@@ -9,3 +9,4 @@ resources:
   - ./homepage/ks.yaml
   - ./ntfy/ks.yaml
   - ./monica/ks.yaml
+  - ./tandoor/ks.yaml
