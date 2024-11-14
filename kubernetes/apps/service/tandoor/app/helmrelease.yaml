@@ -132,7 +132,7 @@ spec:
               - *host
     persistence:
       config:
-        existingClaim: *app
+        existingClaim: tandoor-config
         advancedMounts:
           tandoor:
             app:
