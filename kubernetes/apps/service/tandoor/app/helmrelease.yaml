@@ -127,9 +127,7 @@ spec:
                 service:
                   identifier: app
                   port: *port2
-        tls:
-          - hosts:
-              - *host
+
     persistence:
       config:
         existingClaim: tandoor-config
