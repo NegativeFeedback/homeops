@@ -97,10 +97,9 @@ spec:
           gethomepage.dev/widget.type: Homeassistant
           gethomepage.dev/widget.url: http://jarvis.gddnet.io
           gethomepage.dev/widget.key: ""
-          gatus.io/path: *path
         className: external
         hosts:
-          - host: &path jarvis.gddnet.io
+          - host: jarvis.gddnet.io
             paths:
               - path: /
                 service:
