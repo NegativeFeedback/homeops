@@ -85,7 +85,15 @@ spec:
       frigate:
         className: internal
         annotations:
-          external-dns.alpha.kubernetes.io/target: "internal.${SECRET_DOMAIN}"
+          external-dns.alpha.kubernetes.io/target: "internal.gddnet.io"
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Home Automation
+          gethomepage.dev/name: Frigate
+          gethomepage.dev/icon: frigate.svg
+          gethomepage.dev/widget.type: Frigate
+          gethomepage.dev/widget.url: http://frigate
+          gethomepage.dev/widget.key: ""
+          gatus.io/path: *path
         hosts:
           - host: frigate.int.gddnet.io
             paths:
