@@ -95,7 +95,7 @@ spec:
           gethomepage.dev/widget.key: ""
           gatus.io/path: *path
         hosts:
-          - host: frigate.int.gddnet.io
+          - host: &path frigate.int.gddnet.io
             paths:
               - path: /
                 service:

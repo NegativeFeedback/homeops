@@ -100,7 +100,7 @@ spec:
           gatus.io/path: *path
         className: external
         hosts:
-          - host: jarvis.gddnet.io
+          - host: &path jarvis.gddnet.io
             paths:
               - path: /
                 service:
