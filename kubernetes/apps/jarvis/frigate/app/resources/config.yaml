@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=http://frigate.gddnet.io:5000/api/config/schema.json
+# yaml-language-server: $schema=http://frigate.int.gddnet.io:5000/api/config/schema.json
 ---
 logger:
   default: info

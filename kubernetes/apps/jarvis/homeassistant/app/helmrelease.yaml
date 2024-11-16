@@ -90,6 +90,14 @@ spec:
       app:
         annotations:
           external-dns.alpha.kubernetes.io/target: external.gddnet.io
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Home Automation
+          gethomepage.dev/name: Jarvis
+          gethomepage.dev/icon: homeassistant.svg
+          gethomepage.dev/widget.type: Homeassistant
+          gethomepage.dev/widget.url: http://jarvis.gddnet.io
+          gethomepage.dev/widget.key: ""
+          gatus.io/path: *path
         className: external
         hosts:
           - host: jarvis.gddnet.io
