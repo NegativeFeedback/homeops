@@ -55,7 +55,7 @@ spec:
       GF_SECURITY_COOKIE_SAMESITE: grafana
       GF_SERVER_ROOT_URL: "https://grafana.gddnet.io"
     envFromSecrets:
-      - name: *secret
+      - name: grafana-secret
     grafana.ini:
       analytics:
         check_for_updates: false
