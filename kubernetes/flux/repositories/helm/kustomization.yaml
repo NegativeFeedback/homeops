@@ -36,3 +36,6 @@ resources:
   - ./codecentric.yaml
   - ./node-feature-discovery.yaml
   - ./authentik.yaml
+  - ./hashicorp.yaml
+  - ./teleport.yaml
+  - ./nextcloud.yaml
