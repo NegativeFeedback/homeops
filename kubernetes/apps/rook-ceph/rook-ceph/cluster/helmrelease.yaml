@@ -81,6 +81,9 @@ spec:
           - name: talos-w8
             devices:
               - name: /dev/disk/by-id/ata-SanDisk_SSD_PLUS_1000GB_183527800539
+              - name: /dev/disk/by-id/wwn-0x50014ee6b11b36c1
+              - name: /dev/disk/by-id/wwn-0x5001b448b9673645
+
       placement:
         mgr: &placement
           nodeAffinity:
