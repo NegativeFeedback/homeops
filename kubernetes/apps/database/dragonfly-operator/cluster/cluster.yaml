@@ -26,8 +26,6 @@ spec:
       memory: 128Mi
     limits:
       memory: 512Mi
-    nodeSelector:
-      feature.node.kubernetes.io/cpu-cpuid.AVX: "true"
   serviceSpec:
     type: LoadBalancer
     annotations:
