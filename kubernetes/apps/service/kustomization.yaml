@@ -10,3 +10,4 @@ resources:
   - ./ntfy/ks.yaml
   - ./monica/ks.yaml
   - ./tandoor/ks.yaml
+  - ./actual/ks.yaml
