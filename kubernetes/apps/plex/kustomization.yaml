@@ -14,3 +14,4 @@ resources:
   - ./overseerr/ks.yaml
   - ./qbit/ks.yaml
   - ./maintainerr/ks.yaml
+  - ./wizarr/ks.yaml
