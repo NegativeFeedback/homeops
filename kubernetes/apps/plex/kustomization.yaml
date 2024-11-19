@@ -13,3 +13,4 @@ resources:
   - ./radarr/ks.yaml
   - ./overseerr/ks.yaml
   - ./qbit/ks.yaml
+  - ./maintainerr/ks.yaml
