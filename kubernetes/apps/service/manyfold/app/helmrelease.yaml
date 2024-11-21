@@ -58,7 +58,7 @@ spec:
               REDIS_URL: redis://dragonfly.database.svc.cluster.local:6379
               REGISTRATION: enabled 
               OIDC_NAME: SSO
-              PUBLIC_HOSTNAME: manyfold.int.gddnet.io
+              PUBLIC_HOSTNAME: https://manyfold.int.gddnet.io
               PUBLIC_PORT: 443
               FORCE_OIDC: false
               SECRET_KEY_BASE:
