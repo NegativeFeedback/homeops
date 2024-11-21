@@ -59,6 +59,7 @@ spec:
               REGISTRATION: enabled 
               OIDC_NAME: SSO
               PUBLIC_HOSTNAME: manyfold.int.gddnet.io
+              PUBLIC_PORT: 443
               FORCE_OIDC: false
               SECRET_KEY_BASE:
                 valueFrom:
