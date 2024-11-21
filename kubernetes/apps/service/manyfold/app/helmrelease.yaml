@@ -60,7 +60,7 @@ spec:
                 valueFrom:
                   secretKeyRef:
                     name: manyfold-secret
-                    key: MANYFOLD_SECRET_KEY
+                    key: SECRET_KEY_BASE
             probes:
               liveness: &probes
                 enabled: true
