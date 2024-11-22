@@ -5,6 +5,10 @@ metadata:
   name: emqx-dashboard
   annotations:
     external-dns.alpha.kubernetes.io/target: internal.gddnet.io
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: Database
+    gethomepage.dev/name: Emqx
+    gethomepage.dev/icon: mosqitto.svg
 spec:
   ingressClassName: internal
   rules:

@@ -73,7 +73,7 @@ spec:
           gethomepage.dev/group: Plex
           gethomepage.dev/name: Overseerr
           gethomepage.dev/icon: overseerr.svg
-          gethomepage.dev/widget.type: Overseerr
+          gethomepage.dev/widget.type: overseerr
           gethomepage.dev/widget.url: http://Overseerr.plex
           gethomepage.dev/widget.key: "{{`{{HOMEPAGE_VAR_OVERSEERR_TOKEN}}`}}"
           gatus.io/path: *path

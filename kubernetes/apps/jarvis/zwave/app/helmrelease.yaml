@@ -81,6 +81,10 @@ spec:
       app:
         annotations:
           external-dns.alpha.kubernetes.io/target: internal.gddnet.io
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Home Automation
+          gethomepage.dev/name: zwave
+          gethomepage.dev/icon: zwavejs2mqtt.png
         className: internal
         hosts:
           - host: zwave.m.gddnet.io

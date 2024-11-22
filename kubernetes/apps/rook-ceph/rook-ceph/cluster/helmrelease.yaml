@@ -36,6 +36,10 @@ spec:
       dashboard:
         annotations:
           external-dns.alpha.kubernetes.io/target: internal.gddnet.io
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Storage
+          gethomepage.dev/name: Ceph 
+          gethomepage.dev/icon: ceph.png
         ingressClassName: internal
         host:
           name: rook.gddnet.io
@@ -238,6 +242,10 @@ spec:
             external-dns.alpha.kubernetes.io/target: internal.gddnet.io
             nginx.ingress.kubernetes.io/proxy-body-size: "0"
             nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
+            gethomepage.dev/enabled: "true"
+            gethomepage.dev/group: Storage
+            gethomepage.dev/name: Ceph RGW
+            gethomepage.dev/icon: minio.png            
           ingressClassName: internal
           host:
             name: rgw.gddnet.io

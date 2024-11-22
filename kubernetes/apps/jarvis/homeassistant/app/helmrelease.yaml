@@ -93,10 +93,7 @@ spec:
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Home Automation
           gethomepage.dev/name: Jarvis
-          gethomepage.dev/icon: homeassistant.svg
-          gethomepage.dev/widget.type: Homeassistant
-          gethomepage.dev/widget.url: http://jarvis.gddnet.io
-          gethomepage.dev/widget.key: ""
+          gethomepage.dev/icon: home-assistant.svg
         className: external
         hosts:
           - host: jarvis.gddnet.io
@@ -108,9 +105,13 @@ spec:
       code-server:
         annotations:
           external-dns.alpha.kubernetes.io/target: internal.gddnet.io
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Home Automation
+          gethomepage.dev/name: Jarvis code
+          gethomepage.dev/icon: home-assistant.svg
         className: internal
         hosts:
-          - host: jarvis-code.gddnet.io
+          - host: jarvis-code.int.gddnet.io
             paths:
               - path: /
                 service:

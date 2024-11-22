@@ -48,7 +48,7 @@ spec:
         className: internal
         annotations:
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/group: database
+          gethomepage.dev/group: Database
           gethomepage.dev/name: Dbeaver
           gethomepage.dev/icon: cloudbeaver.svg
 
