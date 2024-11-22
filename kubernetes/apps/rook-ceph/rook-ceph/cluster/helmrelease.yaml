@@ -42,7 +42,7 @@ spec:
           gethomepage.dev/icon: ceph.png
         ingressClassName: internal
         host:
-          name: rook.gddnet.io
+          name: rook.int.gddnet.io
           path: /
     toolbox:
       enabled: true

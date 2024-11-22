@@ -100,7 +100,7 @@ spec:
           gethomepage.dev/icon: plex.svg
           gethomepage.dev/widget.type: plex
           gethomepage.dev/widget.url: http://plexserver.plex
-          gethomepage.dev/widget.key: "{{`{{HOMEPAGE_VAR_OVERSEERR_TOKEN}}`}}"
+          gethomepage.dev/widget.key: "{{`{{HOMEPAGE_VAR_PLEX_TOKEN}}`}}"
         className: external
         hosts:
           - host: "plex.gddnet.io"
