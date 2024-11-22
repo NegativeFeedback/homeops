@@ -47,19 +47,12 @@ data:
               maxEvents: 20 # optional - defaults to 10
               integrations: # optional
                 - type: sonarr # active widget type that is currently enabled on homepage - possible values: radarr, sonarr>
-                  service_group: Downloads # group name where widget exists
+                  service_group: Plex # group name where widget exists
                   service_name: Sonarr # service name for that widget
                 - type: radarr # active widget type that is currently enabled on homepage - possible values: radarr, sonarr>
-                  service_group: Downloads # group name where widget exists
+                  service_group: Plex # group name where widget exists
                   service_name: Radarr # service name for that widget
-    - Automation:
-        - Home Assistant:
-            href: https://homeassistant.${PUBLIC_DOMAIN}
-            icon: home-assistant.svg
-            widget:
-              type: homeassistant
-              url: http://homeassistant.${PRIVATE_DOMAIN}:8123
-              key: {{HOMEPAGE_VAR_HASS_TOKEN}}
+
     - Infrastructure:
         - Unifi:
             href: https://unifi.${PRIVATE_DOMAIN}
@@ -77,12 +70,7 @@ data:
               url: https://proxmox.${PRIVATE_DOMAIN}
               username: {{HOMEPAGE_VAR_PROXMOX_TOKEN_ID}}
               password: {{HOMEPAGE_VAR_PROXMOX_PASSWORD}}
-        - MeshCentral:
-            href: https://meshcentral.${PRIVATE_DOMAIN}
-            icon: meshcentral.png
-        - Minio:
-            href: https://minio.${PRIVATE_DOMAIN}
-            icon: minio.svg
+
   settings.yaml: |
     title: Dashboard
     background: https://images.unsplash.com/photo-1502790671504-542ad42d5189?auto=format&fit=crop&w=2560&q=80

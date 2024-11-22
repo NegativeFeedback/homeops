@@ -135,7 +135,7 @@ spec:
         className: internal
         annotations:
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/group: plex
+          gethomepage.dev/group: Plex
           gethomepage.dev/name: qBittorrent VPN
           gethomepage.dev/icon: qbittorrent.png
           gethomepage.dev/description: Torrent Client

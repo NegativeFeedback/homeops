@@ -90,9 +90,7 @@ spec:
           gethomepage.dev/group: Home Automation
           gethomepage.dev/name: Frigate
           gethomepage.dev/icon: frigate.svg
-          gethomepage.dev/widget.type: Frigate
-          gethomepage.dev/widget.url: http://frigate
-          gethomepage.dev/widget.key: ""
+
         hosts:
           - host: frigate.int.gddnet.io
             paths:

@@ -105,7 +105,11 @@ spec:
       app:
         className: "internal"
         annotations:
-          external-dns.alpha.kubernetes.io/target: ingress-int.bjw-s.dev
+          external-dns.alpha.kubernetes.io/target: internal.gddnet.io
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Service
+          gethomepage.dev/name: ManyFold
+          gethomepage.dev/icon: manyfold.png
         hosts:
           - host: manyfold.int.gddnet.io
             paths:

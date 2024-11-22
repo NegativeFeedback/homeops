@@ -111,6 +111,10 @@ spec:
       className: external
       annotations:
         external-dns.alpha.kubernetes.io/target: "external.gddnet.io"
+        gethomepage.dev/enabled: "true"
+        gethomepage.dev/group: Service
+        gethomepage.dev/name: NextCloud
+        gethomepage.dev/icon: nextcloud.svg       
         nginx.ingress.kubernetes.io/proxy-body-size: "10G"
         nginx.ingress.kubernetes.io/proxy-buffering: "off"
         nginx.ingress.kubernetes.io/proxy-request-buffering: "off"

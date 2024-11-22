@@ -94,6 +94,13 @@ spec:
         annotations:
           external-dns.alpha.kubernetes.io/target: external.gddnet.io
           nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Plex
+          gethomepage.dev/name: Plex
+          gethomepage.dev/icon: plex.svg
+          gethomepage.dev/widget.type: plex
+          gethomepage.dev/widget.url: http://plexserver.plex
+          gethomepage.dev/widget.key: "{{`{{HOMEPAGE_VAR_OVERSEERR_TOKEN}}`}}"
         className: external
         hosts:
           - host: "plex.gddnet.io"

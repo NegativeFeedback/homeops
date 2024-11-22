@@ -71,7 +71,7 @@ spec:
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Service
           gethomepage.dev/name: Actual
-          gethomepage.dev/icon: actual.svg
+          gethomepage.dev/icon: actual.png
         hosts:
           - host: actual.gddnet.io
             paths:
