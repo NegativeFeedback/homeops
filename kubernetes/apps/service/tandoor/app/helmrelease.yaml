@@ -103,6 +103,7 @@ spec:
         enabled: true
         className: external
         annotations:
+          external-dns.alpha.kubernetes.io/target: external.gddnet.io
           gethomepage.dev/enabled: "true"
           gethomepage.dev/name: Tandoor
           gethomepage.dev/description: Managing recipes, planned meals, shopping lists.
