@@ -1,0 +1,79 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: stash
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: app-template
+      version: 3.5.1
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+
+  values:
+    controllers:
+      stash:
+        annotations:
+          reloader.stakater.com/auto: "true"
+
+        containers:
+          app:
+            image:
+              repository: stashapp/stash
+              tag: v0.27.2
+            env:
+              STASH_URL: https://stash.int.gddnet.io
+            probes:
+              liveness:
+                enabled: true
+              readiness:
+                enabled: true
+              startup:
+                enabled: true
+                spec:
+                  failureThreshold: 30
+                  periodSeconds: 5
+            resources:
+              requests:
+                cpu: 25m
+                memory: 2Gi
+              limits:
+                memory: 6Gi
+
+
+
+    service:
+      app:
+        controller: stash
+        ports:
+          http:
+            port: 9999
+
+
+    ingress:
+      app:
+        className: "internal"
+        annotations:
+          external-dns.alpha.kubernetes.io/target: internal.gddnet.io
+          gethomepage.dev/enabled: "false"
+        hosts:
+          - host: stash.int.gddnet.io
+            paths:
+              - path: /
+                service:
+                  identifier: app
+                  port: http
+
+    persistence:
+      data:
+        existingClaim: stash-data
+        advancedMounts:
+          stash:
+            app:
+              - path: /root/.stash
