@@ -77,3 +77,9 @@ spec:
           stash:
             app:
               - path: /root/.stash
+      mdata:
+        type: nfs
+        server: 10.0.50.210
+        path: /m/
+        globalMounts:
+          - path: /mdata
