@@ -29,7 +29,7 @@ spec:
       namespace: volsync-system
   values:
     controllers:
-      deepstack:
+      main:
         type: statefulset
         annotations:
           reloader.stakater.com/auto: "true"
