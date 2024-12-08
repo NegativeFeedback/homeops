@@ -10,3 +10,4 @@ resources:
   - ./zwave/ks.yaml
   - ./zigbee2mqtt/ks.yaml
   - ./frigate/ks.yaml
+  - ./deepstack/ks.yaml

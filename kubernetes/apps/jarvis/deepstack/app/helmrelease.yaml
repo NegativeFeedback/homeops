@@ -1,0 +1,116 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: deepstack
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: app-template
+      version: 3.5.1
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      strategy: rollback
+      retries: 3
+  dependsOn:
+    - name: rook-ceph-cluster
+      namespace: rook-ceph
+    - name: volsync
+      namespace: volsync-system
+  values:
+    controllers:
+      deepstack:
+        type: statefulset
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          main:
+            image:
+              repository: docker.io/deepquestai/deepstack
+              tag: cpu@sha256:4320be73987468b3040b2ca63daf2d3935c4d469b53aa40efb6176858488b500
+            env:
+              TZ: America/Chicago
+              VISION-FACE: "True"
+              VISION-DETECTION: "True"
+            probes:
+              liveness:
+                enabled: true
+              readiness:
+                enabled: true
+              startup:
+                enabled: true
+                spec:
+                  failureThreshold: 30
+                  periodSeconds: 10
+            securityContext:
+              privileged: true
+            resources:
+              requests:
+                cpu: 50m
+              limits:
+                memory: 512Mi
+
+          ui:
+            image:
+              repository: docker.io/robmarkcole/deepstack-ui
+              tag: latest@sha256:41027572645947141c217e530e102297d4be4a0cfbfb870d3f3fcecd09c72e85
+
+            env:
+              # -- the IP address of your deepstack instance
+              DEEPSTACK_IP: localhost
+              # -- the port of your deepstack instance
+              DEEPSTACK_PORT: 5000
+              # - name: DEEPSTACK_API_KEY
+              #   value : '{{ index .Values.env "API-KEY" }}'
+              # - name: DEEPSTACK_TIMEOUT
+              #   value: the timeout to wait for deepstack, default 30 seconds
+              DEEPSTACK_TIMEOUT: 90
+              # - name: DEEPSTACK_CUSTOM_MODEL
+              #   value: the name of a custom model, if you wish to use one
+              # - name: DEEPSTACK_UI_DEBUG_MODE
+              #   value: options `True` or `False` (default). Lowers the minimum confidence threshold to 1%
+
+#        pod:
+#          nodeSelector:
+#            aeotec.feature.node.kubernetes.io/zwave: "true"
+    service:
+      main:
+        controller: main
+        ports:
+          ui:
+            port: 8501
+          http:
+            port: 5000
+    ingress:
+      main:
+        annotations:
+          external-dns.alpha.kubernetes.io/target: internal.gddnet.io
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Home Automation
+          gethomepage.dev/name: Deepstack
+          gethomepage.dev/icon: zigbee2mqtt.svg
+        className: internal
+        hosts:
+          - host: deepstack.int.gddnet.io
+            paths:
+              - path: /
+                service:
+                  identifier: main
+                  port: 5000
+    persistence:
+      config:
+        existingClaim: deepstack-config
+        advancedMounts:
+          main:
+            main:
+              - path: /datastore
