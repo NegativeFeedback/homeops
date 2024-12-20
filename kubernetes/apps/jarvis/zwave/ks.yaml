@@ -6,7 +6,7 @@ metadata:
   name: &app zwave
   namespace: flux-system
 spec:
-  targetNamespace: jarvis
+  targetNamespace: &ns jarvis
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
@@ -21,6 +21,7 @@ spec:
   postBuild:
     substitute:
       APP: *app
+      NS: *ns
       VOLSYNC_CAPACITY: 1Gi
       VOLSYNC_ACCESSMODES: ReadWriteMany
       VOLSYNC_STORAGECLASS: ceph-filesystem

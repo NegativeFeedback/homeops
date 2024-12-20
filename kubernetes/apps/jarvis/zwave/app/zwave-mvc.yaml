@@ -9,3 +9,23 @@ spec:
     requests:
       storage: 1Gi
   storageClassName: ceph-block
+---
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationSource
+metadata:
+   name: zwave
+   namespace: jarvis
+spec:
+   sourcePVC: zwave
+   trigger:
+      schedule: "0 * * * *"
+   restic:
+     pruneIntervalDays: 15
+     repository: restic-zwave
+     retain:
+       hourly: 1
+       daily: 1
+       weekly: 1
+       monthly: 4
+       yearly: 1
+     copyMethod: Clone
