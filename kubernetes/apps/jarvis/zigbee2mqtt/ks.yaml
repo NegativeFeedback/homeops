@@ -6,7 +6,7 @@ metadata:
   name: &app zigbee2mqtt
   namespace: flux-system
 spec:
-  targetNamespace: jarvis
+  targetNamespace: &ns jarvis
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
@@ -23,6 +23,7 @@ spec:
   postBuild:
     substitute:
       APP: *app
+      NS: *ns
       GATUS_SUBDOMAIN: zigbee
       VOLSYNC_CAPACITY: 1Gi
       VOLSYNC_ACCESSMODES: ReadWriteMany
