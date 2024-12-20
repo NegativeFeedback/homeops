@@ -22,5 +22,6 @@ spec:
   postBuild:
     substitute:
       APP: *app
+      NS: *ns
       GATUS_SUBDOMAIN: jarvis
       VOLSYNC_CAPACITY: 5Gi
