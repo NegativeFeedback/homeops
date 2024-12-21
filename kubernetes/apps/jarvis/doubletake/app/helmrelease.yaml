@@ -80,7 +80,7 @@ spec:
 
       config-file:
         type: configMap
-        name: &config double-config
+        name: &config doubletake-config
         advancedMounts:
           main:
             main:
