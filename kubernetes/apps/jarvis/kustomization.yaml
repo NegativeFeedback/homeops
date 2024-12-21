@@ -11,3 +11,4 @@ resources:
   - ./zigbee2mqtt/ks.yaml
   - ./frigate/ks.yaml
   - ./deepstack/ks.yaml
+  - ./doubletake/ks.yaml

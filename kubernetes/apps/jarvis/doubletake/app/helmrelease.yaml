@@ -1,0 +1,140 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.thesteamedcrab.com/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app doubletake
+  namespace: jarvis
+spec:
+  interval: 30m
+  chart:
+    spec:
+      # renovate: registryUrl=https://bjw-s.github.io/helm-charts
+      chart: app-template
+      version: 3.5.1
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-charts
+        namespace: flux-system
+
+  values:
+    controllers:
+      main:
+        type: statefulset
+
+        annotations:
+          reloader.stakater.com/auto: "true"
+
+        containers:
+          main:
+            image:
+              repository: skrashevich/double-take
+              tag: v1.13.11.8@sha256:9bf473338fc2fc01effbe7d5fdc12fdbd7184bb19795f5d5d7c529c6818fc412
+
+            env:
+              TZ: America/Chicago
+              SAVE_UNKNOWN: "true"
+
+            envFrom:
+              - secretRef:
+                  name: *app
+
+            resources:
+              requests:
+                cpu: 30m
+                memory: 400M
+              limits:
+                memory: 400M
+
+    service:
+      main:
+        controller: main
+        ports:
+          http:
+            port: &httpPort 3000
+
+    ingress:
+      main:
+        className: internal
+        annotations:
+          external-dns.alpha.kubernetes.io/target: internal.gddnet.io
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Home Automation
+          gethomepage.dev/name: Facial Recognition
+          gethomepage.dev/icon: double-take.svg
+        hosts:
+          - host: &host dt.int.gddnet.io
+            paths:
+              - path: /
+                service:
+                  identifier: main
+                  port: *httpPort
+
+    persistence:
+      config:
+        existingClaim: doubletake-config
+        advancedMounts:
+          main:
+            main:
+              - path: /.storage
+
+      config-file:
+        type: configMap
+        name: &config double-take-config
+        advancedMounts:
+          main:
+            main:
+              - path: /.storage/config/config.yml
+                subPath: config.yml
+
+    configMaps:
+      config:
+        enabled: true
+        data:
+          config.yml: |-
+            mqtt:
+              host: emqx-listeners.database.svc.cluster.local
+              username: ${DT_MQTT_USERNAME}
+              password: ${DT_MQTT_PASSWORD}
+
+            frigate:
+              url: http://frigate.int.gddnet.io:5000
+              cameras:
+                - Garage
+                - frontporch
+                - driveway
+                - reolink_bush
+                - spa
+
+
+              #zones:
+              #  - camera: amcrest_frontyard
+              #    zone:
+              #      - walkway
+              #      - street
+              #      - driveway
+              #  - camera: reolink_frontdoor
+              #    zone:
+              #      - walkway
+              #      - driveway
+              #      - street
+              #  - camera: amcrest_pool
+              #    zone: pool
+              #  - camera: reolink_bush
+              #    zone:
+              #      - pool
+              #      - greenway
+
+            detect:
+              match:
+                save: true
+              unknown:
+                save: true
+
+            detectors:
+              deepstack:
+                enabled: true
+                url: "http://deepstack.jarvis.svc.cluster.local:5000"
+
+            time:
+              timezone: America/Chicago
