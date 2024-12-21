@@ -5,6 +5,6 @@ kind: Kustomization
 resources:
   - ./pvc.yaml
   - ./helmrelease.yaml
-
+  - ./externalsecret.yaml
 generatorOptions:
   disableNameSuffixHash: true
