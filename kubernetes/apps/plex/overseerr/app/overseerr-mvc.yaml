@@ -9,3 +9,23 @@ spec:
     requests:
       storage: 5Gi
   storageClassName: ceph-block
+---
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationSource
+metadata:
+   name: overseerr
+   namespace: plex
+spec:
+   sourcePVC: overseerr
+   trigger:
+      schedule: "0 * * * *"
+   restic:
+     pruneIntervalDays: 15
+     repository: restic-overseerr
+     retain:
+       hourly: 1
+       daily: 1
+       weekly: 1
+       monthly: 4
+       yearly: 1
+     copyMethod: Clone

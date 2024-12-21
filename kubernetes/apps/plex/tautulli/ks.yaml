@@ -6,7 +6,7 @@ metadata:
   name: &app tautulli
   namespace: flux-system
 spec:
-  targetNamespace: plex
+  targetNamespace: &ns plex
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
@@ -21,3 +21,4 @@ spec:
   postBuild:
     substitute:
       APP: *app
+      NS: *ns

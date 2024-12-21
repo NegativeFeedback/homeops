@@ -20,3 +20,23 @@ spec:
     requests:
       storage: 15Gi
   storageClassName: ceph-block
+---
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationSource
+metadata:
+   name: tautulli
+   namespace: plex
+spec:
+   sourcePVC: tautulli
+   trigger:
+      schedule: "0 * * * *"
+   restic:
+     pruneIntervalDays: 15
+     repository: restic-tautulli
+     retain:
+       hourly: 1
+       daily: 1
+       weekly: 1
+       monthly: 4
+       yearly: 1
+     copyMethod: Clone

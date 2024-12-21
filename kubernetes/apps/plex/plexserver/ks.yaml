@@ -6,7 +6,7 @@ metadata:
   name: &app plex
   namespace: flux-system
 spec:
-  targetNamespace: plex
+  targetNamespace: &ns plex
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
@@ -22,5 +22,6 @@ spec:
   postBuild:
     substitute:
       APP: *app
+      NS: *ns
       GATUS_PATH: /web/index.html
       VOLSYNC_CAPACITY: 30Gi
