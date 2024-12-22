@@ -61,14 +61,7 @@ spec:
           nodeSelector:
             google.feature.node.kubernetes.io/coral: "true"
 #            intel.feature.node.kubernetes.io/gpu: "true"
-        statefulset:
-          volumeClaimTemplates:
-            - name: config
-              accessMode: ReadWriteOnce
-              size: 5Gi
-              storageClass: ceph-block
-              globalMounts:
-                - path: /data
+
     service:
       app:
         controller: frigate
@@ -100,7 +93,6 @@ spec:
                   port: http
     persistence:
       config:
-        enabled: true
         existingClaim: frigate-config
         globalMounts:
           - path: /config
