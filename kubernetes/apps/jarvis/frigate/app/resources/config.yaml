@@ -40,14 +40,14 @@ record:
   events:
     retain:
       default: 2
-      mode: active_objects
+      mode: all
 
 objects:
   track:
     - person
-    - cameras
     - dog
     - cat
+    - car
 
 
 go2rtc:
