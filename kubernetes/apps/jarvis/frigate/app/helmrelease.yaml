@@ -94,8 +94,10 @@ spec:
     persistence:
       config:
         existingClaim: frigate-config
-        globalMounts:
-          - path: /config
+        advancedMounts:
+          main:
+            main:
+              - path: /config
       cache:
         type: emptyDir
         medium: Memory
