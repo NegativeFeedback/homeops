@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=http://frigate.int.gddnet.io:5000/api/config/schema.json
+# yaml-language-server: $schema=http://frigate.int.gddnet.io/api/config/schema.json
 ---
 logger:
   default: info
@@ -27,7 +27,7 @@ birdseye:
 
 snapshots:
   enabled: true
-  timestamp: false
+  timestamp: true
   bounding_box: true
   retain:
     default: 7
@@ -43,13 +43,12 @@ record:
       mode: active_objects
 
 objects:
-  track: ["person"]
-  filters:
-    person:
-      min_area: 5000
-      max_area: 100000
-      min_score: 0.7
-      threshold: 0.75
+  track:
+    - person
+    - cameras
+    - dog
+    - cat
+
 
 go2rtc:
   streams:
@@ -74,12 +73,7 @@ cameras:
           roles: ["detect"]
         - path: rtsp://localhost:8554/frigate_garage_hq
           roles: ["record"]
-    detect:
-      width: 1280
-      height: 960
-      fps: 5
-      stationary:
-        threshold: 50
+
 
   frontporch:
     ffmpeg:
@@ -88,12 +82,7 @@ cameras:
           roles: ["detect"]
         - path: rtsp://localhost:8554/frigate_frontporch_hq
           roles: ["record"]
-    detect:
-      width: 1280
-      height: 960
-      fps: 5
-      stationary:
-        threshold: 50
+
   driveway:
     ffmpeg:
       inputs:
@@ -101,12 +90,7 @@ cameras:
           roles: ["detect"]
         - path: rtsp://localhost:8554/frigate_driveway_hq
           roles: ["record"]
-    detect:
-      width: 1280
-      height: 960
-      fps: 5
-      stationary:
-        threshold: 50
+
   spa:
     ffmpeg:
       inputs:
@@ -114,12 +98,7 @@ cameras:
           roles: ["detect"]
         - path: rtsp://localhost:8554/frigate_spa_hq
           roles: ["record"]
-    detect:
-      width: 1280
-      height: 960
-      fps: 5
-      stationary:
-        threshold: 50
+
   front:
     ffmpeg:
       inputs:
@@ -127,10 +106,5 @@ cameras:
           roles: ["detect"]
         - path: rtsp://localhost:8554/frigate_front_hq
           roles: ["record"]
-    detect:
-      width: 1280
-      height: 960
-      fps: 5
-      stationary:
-        threshold: 50
+
  
