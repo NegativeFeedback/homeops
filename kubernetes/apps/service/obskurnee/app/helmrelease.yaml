@@ -45,11 +45,10 @@ spec:
               BaseUrl: https://bookclub.gddnet.io
               DefaultCulture: en
               SymmetricSecurityKey: 87965trfvbh86somebigrandomsecuritykeyhere
-              #MailerType: mailgun
-              #Mailgun__EndpointUri=https://api.mailgun.net/v3/
-              #Mailgun__SenderEmail=Bookclub <bookclub@mydomain.com>
-              #Mailgun__SenderDomainName=mydomain.com
-              #Mailgun__ApiKey=key-super1337secret
+              MailerType: mailgun
+              Mailgun__EndpointUri: https://api.mailgun.net/v3/
+              Mailgun__SenderEmail: Bookclub <bookclub@gddnet.io>
+              Mailgun__SenderDomainName: gddnet.io
             resources:
               requests:
                 cpu: 100m
