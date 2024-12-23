@@ -92,11 +92,11 @@ spec:
                   identifier: app
                   port: http
     persistence:
-      config:
+      frigateconfig:
         existingClaim: frigate-config
         advancedMounts:
-          main:
-            main:
+          frigate:
+            app:
               - path: /config
       cache:
         type: emptyDir
