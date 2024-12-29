@@ -15,4 +15,4 @@ resources:
   - ./manyfold/ks.yaml
   - ./stash/ks.yaml
   - ./obskurnee/ks.yaml
-  - ./homebbox/ks.yaml
+  - ./homebox/ks.yaml
