@@ -35,7 +35,7 @@ spec:
               tag: 7.1.15
             env:
               TZ: America/Chicago
-              APP_VERSION=: 6.4.1
+              APP_VERSION: 6.4.1
               APP_PORT: 8000     
               APP_ENV: production
               APP_DEBUG: false
