@@ -16,3 +16,4 @@ resources:
   - ./stash/ks.yaml
   - ./obskurnee/ks.yaml
   - ./homebox/ks.yaml
+  - ./snipeit/ks.yaml
