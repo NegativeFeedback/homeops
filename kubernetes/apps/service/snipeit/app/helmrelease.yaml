@@ -47,7 +47,7 @@ spec:
               APP_FORCE_TLS: true
               DB_HOST: mariadb.database.svc.cluster.local
               DB_PORT: '3306'
-              DB_DATABASE: service_snipeit
+              DB_DATABASE: snipeit
               DB_CHARSET: utf8mb4
               DB_COLLATION: utf8mb4_unicode_ci
               MAIL_MAILER: smtp
