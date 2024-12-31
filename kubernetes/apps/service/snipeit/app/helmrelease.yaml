@@ -58,7 +58,7 @@ spec:
               MAIL_FROM_NAME: 'Snipe-IT'
               MAIL_REPLYTO_ADDR: no-reply@mail.gddnet.io
               MAIL_REPLYTO_NAME: 'Snipe-IT'
-              MAIL_AUTO_EMBED_METHOD=: 'attachment'
+              MAIL_AUTO_EMBED_METHOD: 'attachment'
               APP_TRUSTED_PROXIES: 10.0.0.0/8,172.16.0.0/12
             envFrom:
               - secretRef:
