@@ -61,7 +61,7 @@ spec:
         ingressClassName: external
     annotations:
       ingress:
-        external-dns.alpha.kubernetes.io/target: "external.gddnet.io"
+        external-dns.alpha.kubernetes.io/target: "gddnet.io"
         external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
         nginx.ingress.kubernetes.io/backend-protocol: "https"
         nginx.ingress.kubernetes.io/ssl-passthrough: "true"

@@ -1,0 +1,65 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app teleport-kube-agent
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: teleport-kube-agent
+      version: 16.4.7
+      sourceRef:
+        kind: HelmRepository
+        name: teleport
+        namespace: flux-system
+  maxHistory: 2
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      strategy: rollback
+      retries: 3
+  values:
+    log:
+      level: INFO
+      output: stderr
+      format: text
+      extraFields: ["timestamp", "level", "component", "caller"]
+    roles: kube,app,discovery,node,windowsdesktop
+    insecureSkipProxyTLSVerify: true
+    proxyAddr: teleport.gddnet.op:443
+    joinParams:
+      method: kubernetes
+      tokenName: kubernetes-token
+    kubeClusterName: gdd-talos
+    teleportConfig:
+      discovery_service:
+        kubernetes:
+        - types: ["app"]
+          namespaces: ["*"]
+          labels:
+            teleport: enabled
+      windows_desktop_service:
+        enabled: yes
+        static_hosts:
+        - name: rdesktop
+          addr: rdesktop.default.svc.cluster.local
+          ad: false
+      app_service:
+        enabled: yes
+        apps:
+        - name: udm-se
+          public_addr: udm.${SECRET_DOMAIN_TELEPORT}
+          uri: https://udm-se.${SECRET_DOMAIN_INT}
+          insecure_skip_verify: true
+        - name: pikvm
+          public_addr: pikvm.${SECRET_DOMAIN_TELEPORT}
+          uri: http://pikvm.${SECRET_DOMAIN_INT}
+          insecure_skip_verify: true
+        - name: proxmox01
+          public_addr: proxmox01.${SECRET_DOMAIN_TELEPORT}
+          uri: https://proxmox01.${SECRET_DOMAIN_INT}:8006
+          insecure_skip_verify: true
