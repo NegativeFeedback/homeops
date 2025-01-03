@@ -30,7 +30,7 @@ spec:
       extraFields: ["timestamp", "level", "component", "caller"]
     roles: kube,app,discovery,node,windowsdesktop
     insecureSkipProxyTLSVerify: true
-    proxyAddr: teleport.gddnet.op:443
+    proxyAddr: teleport.gddnet.io:443
     joinParams:
       method: kubernetes
       tokenName: kubernetes-token
