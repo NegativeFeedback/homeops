@@ -6,7 +6,6 @@ metadata:
 data:
   config.hcl: |
     disable_mlock = true
-    hcp_boundary_cluster_id = "db4ff7fe-1b8e-4be5-ae75-79bdb5777eac"
     
     listener "tcp" {
       address = "0.0.0.0:9203"
