@@ -25,7 +25,7 @@ spec:
       retries: 3
   values:
     controllers:
-      snipeit:
+      boundary:
         annotations:
           reloader.stakater.com/auto: "true"
         containers:
