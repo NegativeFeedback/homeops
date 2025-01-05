@@ -1,0 +1,25 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: boundary-config
+data:
+  config.hcl: |
+    disable_mlock = true
+    hcp_boundary_cluster_id = "db4ff7fe-1b8e-4be5-ae75-79bdb5777eac"
+    
+    listener "tcp" {
+      address = "0.0.0.0:9203"
+      purpose = "proxy"
+    }
+    
+    worker {
+      initial_upstreams = ["59d57f2e-c8d3-d55c-bc6d-5e6b75f2d0ea.proxy.boundary.hashicorp.cloud:9202"]
+      auth_storage_path = "/boundary-hcp-worker/file/worker1"
+      recording_storage_path = "/boundary-hcp-worker/recording/"
+      tags {
+        type = ["worker1", "homelab"]
+      }
+    }
+
+
