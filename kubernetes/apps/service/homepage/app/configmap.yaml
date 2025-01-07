@@ -70,6 +70,10 @@ data:
               url: https://10.0.10.243
               username: {{HOMEPAGE_VAR_PROXMOX_TOKEN_ID}}
               password: {{HOMEPAGE_VAR_PROXMOX_PASSWORD}}
+    - Security:
+        - Boundary:
+            href: https://db4ff7fe-1b8e-4be5-ae75-79bdb5777eac.boundary.hashicorp.cloud
+            icon: boundary.png
 
   settings.yaml: |
     title: Dashboard
