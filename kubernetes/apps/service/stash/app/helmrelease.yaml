@@ -83,3 +83,9 @@ spec:
         path: /m/
         globalMounts:
           - path: /mdata
+      pdata:
+        type: nfs
+        server: 10.0.50.210
+        path: /m/pictures/
+        globalMounts:
+          - path: /pdata
