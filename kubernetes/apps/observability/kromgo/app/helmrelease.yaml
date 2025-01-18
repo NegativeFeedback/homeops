@@ -81,6 +81,7 @@ spec:
     ingress:
       main:
         className: external
+        enabled: true
         annotations:
           external-dns.alpha.kubernetes.io/target: external.gddnet.io
           external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
@@ -90,15 +91,14 @@ spec:
           gethomepage.dev/icon: kromgo.svg
 
         hosts:
-          - host: &host badge-metrics.gddnet.io
-            paths: &paths
+          - host: badge-metrics.gddnet.io
+            paths:
               - path: /
-                pathType: Prefix
                 service:
                   identifier: kromgo
                   port: http
-        tls:
-          - hosts: [*host]
+
+
     persistence:
       config:
         type: configMap
