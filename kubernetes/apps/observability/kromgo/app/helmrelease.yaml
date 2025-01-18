@@ -80,7 +80,7 @@ spec:
             appProtocol: http
     ingress:
       main:
-        className: external.gddnet.io
+        className: external
         annotations:
           external-dns.alpha.kubernetes.io/target: external.gddnet.io
           external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
