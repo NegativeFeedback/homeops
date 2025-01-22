@@ -54,6 +54,7 @@ spec:
     ingress:
       enabled: true
       annotations:
+        external-dns.alpha.kubernetes.io/target: external.gddnet.io
         gethomepage.dev/enabled: "true"
         gethomepage.dev/name: Apps
         gethomepage.dev/description: Developer platform to turn scripts into workflows and UIs
