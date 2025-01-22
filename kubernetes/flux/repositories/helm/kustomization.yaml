@@ -39,3 +39,4 @@ resources:
   - ./hashicorp.yaml
   - ./teleport.yaml
   - ./nextcloud.yaml
+  - ./windmill.yaml
