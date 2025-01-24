@@ -18,3 +18,4 @@ resources:
   - ./homebox/ks.yaml
   - ./snipeit/ks.yaml
   - ./windmill/ks.yaml
+  - ./nextcloud/ks.yaml
