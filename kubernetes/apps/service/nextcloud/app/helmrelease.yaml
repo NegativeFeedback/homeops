@@ -183,4 +183,4 @@ spec:
         memory: 512Mi
       limits:
         cpu: 4
-        memory: 5Gi
+        memory: 6Gi
