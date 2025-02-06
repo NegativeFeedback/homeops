@@ -19,3 +19,4 @@ resources:
   - ./snipeit/ks.yaml
   - ./windmill/ks.yaml
   - ./nextcloud/ks.yaml
+  - ./foundry/ks.yaml
