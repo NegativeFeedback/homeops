@@ -87,7 +87,7 @@ spec:
       app:
         className: external
         annotations:
-          external-dns.alpha.kubernetes.io/target: internal.gddnet.io
+          external-dns.alpha.kubernetes.io/target: external.gddnet.io
           nginx.ingress.kubernetes.io/proxy-body-size: 4096m
         hosts:
           - host: &host "foundry.gddnet.io"
