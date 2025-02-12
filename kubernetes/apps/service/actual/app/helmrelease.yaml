@@ -73,7 +73,7 @@ spec:
           gethomepage.dev/name: Actual
           gethomepage.dev/icon: actual.png
         hosts:
-          - host: actual.gddnet.io
+          - host: actual.int.gddnet.io
             paths:
               - path: /
                 service:
