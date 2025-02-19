@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 3.7.0
+      version: 3.7.1
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -47,7 +47,7 @@ spec:
           main:
             image:
               repository: ghcr.io/bjw-s-labs/manyfold
-              tag: 0.99.1@sha256:8d187ecac91d04a86e29757d5844a9a0e0362aceb6b35d67ca11971df5ae2fd2
+              tag: 0.101.0@sha256:a1c9220429296ef70b3891fa5fc060eba8f4ae5b57c13fe55de967a176373809
             envFrom:
               - secretRef:
                   name: manyfold-secret
