@@ -20,3 +20,4 @@ resources:
   - ./windmill/ks.yaml
   - ./nextcloud/ks.yaml
   - ./foundry/ks.yaml
+  - ./habittrove/ks.yaml
