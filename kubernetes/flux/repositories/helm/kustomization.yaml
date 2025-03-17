@@ -40,3 +40,4 @@ resources:
   - ./teleport.yaml
   - ./nextcloud.yaml
   - ./windmill.yaml
+  - ./crowdsec.yaml
