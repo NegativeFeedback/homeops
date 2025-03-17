@@ -24,3 +24,6 @@ Brewfile.lock.json
 wiki
 # Bootstrap
 /config.yaml
+gpu.yaml
+ts.yaml
+kubernetes/apps/database/mariadb/app/restore.yaml.yml
