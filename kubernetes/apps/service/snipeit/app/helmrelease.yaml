@@ -32,7 +32,7 @@ spec:
           app:
             image:
               repository: snipe/snipe-it
-              tag: v7.1.16
+              tag: v8.0.4
             env:
               TZ: America/Chicago
               APP_VERSION: 6.4.1
