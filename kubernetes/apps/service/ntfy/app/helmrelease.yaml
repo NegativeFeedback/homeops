@@ -20,7 +20,7 @@ spec:
           app:
             image:
               repository: ghcr.io/vaskozl/ntfysh-bin
-              tag: 2.11.0@sha256:18ae08cdea27d0f4fc1072f2f822943091a91db7430f1ab1dec3e29f9f576725
+              tag: 2.11.0@sha256:0fe5368089aa7dd31ff836965a5978624f2544d603f9cff9ac15d3b1505851b2
             resources:
               requests:
                 cpu: 10m
