@@ -76,7 +76,7 @@ spec:
           enabled: true
           accessModes:
             - ReadWriteMany
-          storageClassName: ceph-block
+          storageClassName: ceph-filesystem
           size: 100Mi
       metrics:
         enabled: true
