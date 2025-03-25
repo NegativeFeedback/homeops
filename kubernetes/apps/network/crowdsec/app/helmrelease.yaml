@@ -34,9 +34,9 @@ spec:
       # To specify each pod you want to process it logs (pods present in the node)
       acquisition:
         # The namespace where the pod is located
-        - namespace: "*"
+        - namespace: "network"
           # The pod name
-          podName: nginx-external-controller-*
+          podName: "nginx-*"
           # as in crowdsec configuration, we need to specify the program name so the parser will match and parse logs
           program: nginx
 
