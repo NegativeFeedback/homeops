@@ -39,6 +39,8 @@ spec:
           podName: "ingress-nginx-*"
           # as in crowdsec configuration, we need to specify the program name so the parser will match and parse logs
           program: nginx
+            - /path/to/your/file.log
+          poll_without_inotify: true
 
       env:
         - name: DISABLE_crONLINE_API
