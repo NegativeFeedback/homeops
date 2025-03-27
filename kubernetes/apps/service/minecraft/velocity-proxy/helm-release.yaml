@@ -114,8 +114,6 @@ spec:
       velocity:
         controller: velocity
         type: LoadBalancer
-        annotations:
-          io.cilium/lb-ipam-ips: 10.0.32.11
         ports:
           velocity-proxy:
             port: *port
