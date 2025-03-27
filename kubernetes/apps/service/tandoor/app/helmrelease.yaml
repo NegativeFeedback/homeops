@@ -10,7 +10,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 3.7.1
+      version: 3.7.3
       sourceRef:
         kind: HelmRepository
         name: bjw-s
@@ -40,7 +40,7 @@ spec:
           migrations:
             image:
               repository: vabene1111/recipes
-              tag: 1.5.31@sha256:063eb446e2981a737c8722642acef6aeacbd7b33f672a982209bd82c068b1a2c
+              tag: 1.5.33@sha256:e61e3280ed3fb15566230628d82cdbe9bcb68d62cac4500fda431ca8afd045a8
             envFrom: &envFrom
               - secretRef:
                   name: tandoor-secret
@@ -58,7 +58,7 @@ spec:
           app:
             image:
               repository: vabene1111/recipes
-              tag: 1.5.31@sha256:063eb446e2981a737c8722642acef6aeacbd7b33f672a982209bd82c068b1a2c
+              tag: 1.5.33@sha256:e61e3280ed3fb15566230628d82cdbe9bcb68d62cac4500fda431ca8afd045a8
             envFrom: *envFrom
             env:
               DEBUG: "0"
@@ -89,7 +89,7 @@ spec:
           nginx:
             image:
               repository: nginxinc/nginx-unprivileged
-              tag: 1.27.4-alpine@sha256:6c456958218fed889c1059f215362344664adee6907575aff8d0e68af918d8a1
+              tag: 1.27.4-alpine@sha256:e234d4f7e346c098f7b22245690372382aded5be988611eb2c53ae62231eece7
     service:
       app:
         controller: *app
