@@ -4,6 +4,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: minecraft-lobby-world-data
+  namespace: service
   labels:
     kustomize.toolkit.fluxcd.io/prune: disabled
 spec:
