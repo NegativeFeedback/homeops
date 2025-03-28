@@ -22,3 +22,4 @@ resources:
   - ./foundry/ks.yaml
   - ./habittrove/ks.yaml
   - ./minecraft/velocity-proxy/ks.yaml
+  - ./minecraft/lobby/ks.yaml
