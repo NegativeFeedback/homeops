@@ -79,7 +79,7 @@ spec:
               TZ: America/Chicago
               TYPE: "PAPER"
               # TODO renovate
-              VERSION: "1.21.4"
+              VERSION: "1.20.1"
               MEMORY: "1024M"
               MODS_FILE: /config/plugins.txt
               REPLACE_ENV_DURING_SYNC: "true"
