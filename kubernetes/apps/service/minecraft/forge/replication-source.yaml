@@ -3,17 +3,17 @@
 apiVersion: volsync.backube/v1alpha1
 kind: ReplicationSource
 metadata:
-  name: minecraft-lobby-world-data
+  name: minecraft-forge-world-data
 spec:
-  sourcePVC: minecraft-lobby-world-data
+  sourcePVC: minecraft-forge-world-data
   trigger:
     schedule: "0 * * * *"
   restic:
     copyMethod: Snapshot
     pruneIntervalDays: 14
-    repository: restic-minecraft-lobby
+    repository: restic-minecraft-forge
     volumeSnapshotClassName: csi-ceph-blockpool
-    cacheCapacity: 5Gi
+    cacheCapacity: 10Gi
     cacheStorageClassName: ceph-block
     cacheAccessModes:
       - ReadWriteOnce

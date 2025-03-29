@@ -24,3 +24,4 @@ resources:
   - ./minecraft/velocity-proxy/ks.yaml
   - ./minecraft/lobby/ks.yaml
   - ./minecraft/survival/ks.yaml
+  - ./minecraft/forge/ks.yaml

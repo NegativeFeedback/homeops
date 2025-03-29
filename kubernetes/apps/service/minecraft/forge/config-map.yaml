@@ -2,24 +2,24 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: minecraft-lobby-world-env
+  name: minecraft-forge-world-env
 data:
   EULA: "true"
-  DIFFICULTY: peaceful
-  OPS: "tyriis,jazzlyin"
-  MAX_PLAYERS: "25"
-  ALLOW_NETHER: "false"
-  ENABLE_COMMAND_BLOCK: "true"
-  GENERATE_STRUCTURES: "false"
-  SPAWN_ANIMALS: "false"
-  SPAWN_MONSTERS: "false"
-  SPAWN_NPCS: "false"
-  SPAWN_PROTECTION: "0"
+  DIFFICULTY: hard
+  OPS: "negativefeedback"
+  MAX_PLAYERS: "120"
+  ENABLE_COMMAND_BLOCK: "false"
+  GENERATE_STRUCTURES: "true"
+  SPAWN_ANIMALS: "true"
+  SPAWN_MONSTERS: "true"
+  SPAWN_NPCS: "true"
+  SPAWN_PROTECTION: "20"
   VIEW_DISTANCE: "14"
-  MODE: creative
-  MOTD: "techtales lobby"
-  PVP: "false"
-  LEVEL_TYPE: FLAT
+  MODE: survival
+  MOTD: "survival"
+  PVP: "true"
+  LEVEL_TYPE: DEFAULT
+  FORCE_GAMEMODE: "true"
   ONLINE_MODE: "false"
   CF_PARALLEL_DOWNLOADS: "4"
   ENABLE_RCON: "true"
@@ -27,8 +27,9 @@ data:
   ENABLE_ROLLING_LOGS: "true"
   LOG_TIMESTAMP: "true"
   SNOOPER_ENABLED: "true"
-  LEVEL: lobby
-  SERVER_NAME: lobby
+  LEVEL: survival
+  SERVER_NAME: survival
   STOP_SERVER_ANNOUNCE_DELAY: "30"
   STOP_DURATION: "30"
   USE_AIKAR_FLAGS: "true"
+  SEED: "684058319496482712"

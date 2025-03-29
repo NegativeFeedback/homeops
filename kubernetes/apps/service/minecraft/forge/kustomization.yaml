@@ -9,17 +9,7 @@ resources:
   - externalsecret.yaml
   - replication-destination.yaml
   - replication-source.yaml
-configMapGenerator:
-  - name: minecraft-lobby-world-config
-    files:
-      - spigot.yml=config/spigot.yaml
-      - paper-global.yml=config/paper-global.yaml
-      - plugins.txt=config/plugins.txt
-  - name: minecraft-lobby-world-plugins
-    files:
-      - bluemap_sql.conf=plugins/BlueMap/storages/sql.conf
-      - bluemap_core.conf=plugins/BlueMap/core.conf
-      - bluemap_map_lobby.conf=plugins/BlueMap/maps/lobby.conf
+
 generatorOptions:
   disableNameSuffixHash: true
   annotations:
