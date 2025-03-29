@@ -23,3 +23,4 @@ resources:
   - ./habittrove/ks.yaml
   - ./minecraft/velocity-proxy/ks.yaml
   - ./minecraft/lobby/ks.yaml
+  - ./minecraft/survival/ks.yaml
