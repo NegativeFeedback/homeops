@@ -12,3 +12,5 @@ https://hangarcdn.papermc.io/plugins/jmp/MiniMOTD/versions/2.1.5/VELOCITY/minimo
 https://download.luckperms.net/1570/velocity/LuckPerms-Velocity-5.4.153.jar
 
 https://modrinth.com/plugin/ambassador
+
+https://www.spigotmc.org/resources/networkjoinmessages-bungeecord-velocity-wide-join-leave-and-switch-messages.118643/download?version=577914
