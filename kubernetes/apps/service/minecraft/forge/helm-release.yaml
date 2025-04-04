@@ -77,8 +77,9 @@ spec:
             env:
               # https://docker-minecraft-server.readthedocs.io/en/latest/variables
               TZ: America/Chicago
-              TYPE: "FORGE"
+              TYPE: "MODRINTH"
               # TODO renovate
+              MODRINTH_MODPACK: "ggiBMPCI"
               VERSION: "1.20.1"
               MEMORY: "6024M"
               REPLACE_ENV_DURING_SYNC: "true"
