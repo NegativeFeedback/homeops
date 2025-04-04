@@ -103,7 +103,7 @@ spec:
 
             resources:
               requests:
-                cpu: 800m
+                cpu: 500m
                 memory: 8Gi
 
     service:
