@@ -79,7 +79,7 @@ spec:
               TZ: America/Chicago
               TYPE: "MODRINTH"
               # TODO renovate
-              MODRINTH_MODPACK: "ggiBMPCI"
+              MODRINTH_MODPACK: "https://modrinth.com/modpack/create.ultimate/version/1.2.0"
               VERSION: "1.20.1"
               MEMORY: "6024M"
               REPLACE_ENV_DURING_SYNC: "true"
