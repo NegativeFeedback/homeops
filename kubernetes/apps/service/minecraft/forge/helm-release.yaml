@@ -77,7 +77,7 @@ spec:
             env:
               # https://docker-minecraft-server.readthedocs.io/en/latest/variables
               TZ: America/Chicago
-              TYPE: "MODRINTH"
+              TYPE: "FORGE"
               # TODO renovate
               MODRINTH_MODPACK: "https://modrinth.com/modpack/create.ultimate/version/1.2.0"
               VERSION: "1.20.1"
