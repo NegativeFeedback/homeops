@@ -80,7 +80,7 @@ spec:
               TYPE: "FORGE"
               # TODO renovate
               VERSION: "1.20.1"
-              MEMORY: "4024M"
+              MEMORY: "6024M"
               REPLACE_ENV_DURING_SYNC: "true"
               CFG_PROXY_SECRET:
                 valueFrom:
@@ -101,10 +101,6 @@ spec:
               - name: metrics
                 containerPort: 9100
 
-            resources:
-              requests:
-                cpu: 100m
-                memory: 1Gi
 
     service:
       minecraft:
