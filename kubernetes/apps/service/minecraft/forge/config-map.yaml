@@ -20,7 +20,7 @@ data:
   PVP: "true"
   LEVEL_TYPE: DEFAULT
   FORCE_GAMEMODE: "true"
-  ONLINE_MODE: "false"
+  ONLINE_MODE: "true"
   CF_PARALLEL_DOWNLOADS: "4"
   ENABLE_RCON: "true"
   MAX_BUILD_HEIGHT: "256"
