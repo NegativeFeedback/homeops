@@ -119,9 +119,17 @@ spec:
           metrics:
             port: 9100
             protocol: TCP
+      voice:
+        controller: minecraft
+        type: LoadBalancer
+        ports:
           voice:
             port: 24454
             protocol: UDP
+      rcon:
+        controller: minecraft
+        type: ClusterIP
+        ports:
           rcon:
             port: 25575
             protocol: TCP
