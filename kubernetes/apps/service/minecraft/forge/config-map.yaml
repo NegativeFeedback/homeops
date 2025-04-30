@@ -5,8 +5,9 @@ metadata:
   name: minecraft-forge-world-env
 data:
   EULA: "true"
-  DIFFICULTY: hard
+  DIFFICULTY: peaceful
   OPS: "negativefeedback"
+  allow-flight: "true"
   MAX_PLAYERS: "120"
   ENABLE_COMMAND_BLOCK: "false"
   GENERATE_STRUCTURES: "true"
