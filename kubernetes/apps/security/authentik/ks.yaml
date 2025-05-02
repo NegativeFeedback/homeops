@@ -4,8 +4,6 @@ metadata:
   name: authentik
   namespace: flux-system
 spec:
-  dependsOn:
-    - name: cloudnative-pg-cluster
   path: ./kubernetes/apps/security/authentik/app
   prune: true
   sourceRef:
