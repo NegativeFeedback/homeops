@@ -56,8 +56,8 @@ spec:
                 memory: 2Gi
           code-server:
             image:
-              repository: ghcr.io/coder/code-server
-              tag: 4.98.2@sha256:9ed588a05d4e81aa464e753a409bc3b2b93267323d1c3975fbddf6f9aef84c26
+              repository: ghcr.io/home-operations/home-assistant
+              tag: 2025.4.4@sha256:dc7bb47eb6b3f62405c185cbc633771527b9710530023f7177d99a09eb858fc4
             args: [
               "--auth", "none",
               "--user-data-dir", "/config/.vscode",
