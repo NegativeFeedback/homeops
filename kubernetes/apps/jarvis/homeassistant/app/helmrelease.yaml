@@ -54,22 +54,7 @@ spec:
                 cpu: 10m
               limits:
                 memory: 2Gi
-          code-server:
-            image:
-              repository: ghcr.io/home-operations/home-assistant
-              tag: 2025.4.4@sha256:dc7bb47eb6b3f62405c185cbc633771527b9710530023f7177d99a09eb858fc4
-            args: [
-              "--auth", "none",
-              "--user-data-dir", "/config/.vscode",
-              "--extensions-dir", "/config/.vscode",
-              "--port", "12321",
-              "/config"
-            ]
-            resources:
-              requests:
-                cpu: 10m
-              limits:
-                memory: 512Mi
+
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
@@ -84,8 +69,7 @@ spec:
         ports:
           http:
             port: 8123
-          code-server:
-            port: 12321
+
     ingress:
       app:
         annotations:
@@ -102,21 +86,7 @@ spec:
                 service:
                   identifier: app
                   port: http
-      code-server:
-        annotations:
-          external-dns.alpha.kubernetes.io/target: internal.gddnet.io
-          gethomepage.dev/enabled: "true"
-          gethomepage.dev/group: Home Automation
-          gethomepage.dev/name: Jarvis code
-          gethomepage.dev/icon: home-assistant.svg
-        className: internal
-        hosts:
-          - host: jarvis-code.int.gddnet.io
-            paths:
-              - path: /
-                service:
-                  identifier: app
-                  port: code-server
+
     persistence:
       config:
         existingClaim: homeassistant
