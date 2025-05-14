@@ -41,3 +41,4 @@ resources:
   - ./nextcloud.yaml
   - ./windmill.yaml
   - ./crowdsec.yaml
+  - ./tailscale.yaml
