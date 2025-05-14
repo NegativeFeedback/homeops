@@ -49,6 +49,9 @@ spec:
     service:
       app:
         controller: monica
+        annotations:
+#          tailscale.com/hostname: "gateway-tailscale"
+          tailscale.com/expose: "true"
         ports:
           http:
             port: 80
