@@ -36,7 +36,7 @@ spec:
                   name: booklore-secret
 
     service:
-      app:
+      booklore:
         controller: booklore
         annotations:
 #          tailscale.com/hostname: "gateway-tailscale"
@@ -45,7 +45,7 @@ spec:
           http:
             port: 6060
     ingress:
-      app:
+      booklore:
         enabled: true
         className: internal
         annotations:
@@ -63,3 +63,17 @@ spec:
 
     serviceAccount:
       create: true
+
+    persistence:
+      booklore-app:
+        existingClaim: booklore-app
+        advancedMounts:
+          booklore:
+            app:
+              - path: /app/data
+      booklore-books:
+        existingClaim: booklore-books
+        advancedMounts:
+          booklore:
+            app:
+              - path: /books
