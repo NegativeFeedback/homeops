@@ -1,0 +1,65 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: booklore
+spec:
+  chart:
+    spec:
+      chart: app-template
+      version: 3.7.3
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+  interval: 30m
+  values:
+    controllers:
+      booklore:
+        annotations:
+          secret.reloader.stakater.com/reload: booklore-secret
+        strategy: RollingUpdate
+        containers:
+          app:
+            image:
+              repository: ghcr.io/adityachandelgit/booklore-app
+              tag: v0.6.4
+            env:
+              TZ: America/Chicago
+              PUID: 1000
+              PGID: 1000
+              DATABASE_URL: jdbc:mariadb://mariadb.database.svc.cluster.local:3306/booklore 
+
+            envFrom:
+              - secretRef:
+                  name: booklore-secret
+
+    service:
+      app:
+        controller: booklore
+        annotations:
+#          tailscale.com/hostname: "gateway-tailscale"
+          tailscale.com/expose: "true"
+        ports:
+          http:
+            port: 6060
+    ingress:
+      app:
+        enabled: true
+        className: internal
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Service
+          gethomepage.dev/name: Booklore
+          gethomepage.dev/icon: booklore.svg
+        hosts:
+          - host: booklore.int.gddnet.io
+            paths:
+              - path: /
+                service:
+                  identifier: app
+                  port: http
+
+    serviceAccount:
+      create: true
