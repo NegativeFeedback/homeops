@@ -25,3 +25,4 @@ resources:
   - ./minecraft/lobby/ks.yaml
   - ./minecraft/survival/ks.yaml
   - ./minecraft/forge/ks.yaml
+  - ./booklore/ks.yaml
