@@ -48,6 +48,7 @@ spec:
         enabled: true
         className: external
         annotations:
+          external-dns.alpha.kubernetes.io/target: external.gddnet.io
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Service
           gethomepage.dev/name: Booklore
