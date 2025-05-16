@@ -21,7 +21,7 @@ spec:
           secret.reloader.stakater.com/reload: booklore-secret
         strategy: RollingUpdate
         containers:
-          app:
+          booklore:
             image:
               repository: ghcr.io/adityachandelgit/booklore-app
               tag: v0.6.4
@@ -58,7 +58,7 @@ spec:
             paths:
               - path: /
                 service:
-                  identifier: app
+                  identifier: booklore
                   port: http
 
     serviceAccount:
@@ -69,11 +69,11 @@ spec:
         existingClaim: booklore-app
         advancedMounts:
           booklore:
-            app:
+            booklore:
               - path: /app/data
       booklore-books:
         existingClaim: booklore-books
         advancedMounts:
           booklore:
-            app:
+            booklore:
               - path: /books
