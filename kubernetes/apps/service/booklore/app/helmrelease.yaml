@@ -39,22 +39,21 @@ spec:
       booklore:
         controller: booklore
         annotations:
-#          tailscale.com/hostname: "gateway-tailscale"
-          tailscale.com/expose: "true"
+
         ports:
           http:
             port: 6060
     ingress:
       booklore:
         enabled: true
-        className: internal
+        className: external
         annotations:
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Service
           gethomepage.dev/name: Booklore
           gethomepage.dev/icon: booklore.svg
         hosts:
-          - host: booklore.int.gddnet.io
+          - host: books.gddnet.io
             paths:
               - path: /
                 service:
