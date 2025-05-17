@@ -24,7 +24,7 @@ spec:
           booklore:
             image:
               repository: ghcr.io/adityachandelgit/booklore-app
-              tag: v0.6.4
+              tag: v0.8.0
             env:
               TZ: America/Chicago
               PUID: 1000
