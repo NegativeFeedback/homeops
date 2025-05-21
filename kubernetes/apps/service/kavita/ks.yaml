@@ -1,0 +1,25 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/kustomize.toolkit.fluxcd.io/kustomization_v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: service-kavita
+  namespace: flux-system
+spec:
+  path: ./kubernetes/apps/service/kavita/app
+  targetNamespace: service
+  sourceRef:
+    kind: GitRepository
+    name: home-kubernetes
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: &appname kavita
+  prune: true
+  wait: false
+  interval: 10m
+  postBuild:
+    substitute:
+      APP: *appname
+      HOSTNAME: kavita.int.gddnet.io
+      APP_UID: "568"
+      APP_GID: "568"
