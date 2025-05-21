@@ -26,3 +26,4 @@ resources:
   - ./minecraft/survival/ks.yaml
   - ./minecraft/forge/ks.yaml
   - ./booklore/ks.yaml
+  - ./kavita/ks.yaml
