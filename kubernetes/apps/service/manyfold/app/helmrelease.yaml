@@ -47,7 +47,7 @@ spec:
           main:
             image:
               repository: ghcr.io/bjw-s-labs/manyfold
-              tag: 0.104.1@sha256:d3e5821e34e3af8830a7aefa1759ee69c7e0b1500a1928492114dbe70cec63b8
+              tag: 0.111.1@sha256:a275b9afbe320f536c4088637976e3233545f5147a89b9f2be89dc857c83b50d
             envFrom:
               - secretRef:
                   name: manyfold-secret
