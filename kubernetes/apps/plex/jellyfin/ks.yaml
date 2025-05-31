@@ -14,9 +14,9 @@ spec:
   components:
 #    - ../../../../templates/gatus/guarded
     - ../../../../templates/volsync
-  dependsOn:
-    - name: rook-ceph-cluster
-      namespace: rook-ceph
+#  dependsOn:
+##    - name: rook-ceph-cluster
+#      namespace: rook-ceph
   path: ./kubernetes/apps/plex/jellyfin/app
   prune: true
   retryInterval: 2m
