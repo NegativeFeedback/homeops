@@ -1,0 +1,42 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: plex-cache
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 100Gi
+  storageClassName: ceph-block
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: plexserver
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 150Gi
+  storageClassName: ceph-block
+---
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationSource
+metadata:
+   name: plexserver
+   namespace: plex
+spec:
+   sourcePVC: plexserver
+   trigger:
+      schedule: "0 * * * *"
+   restic:
+     pruneIntervalDays: 15
+     repository: restic-plexserver
+     retain:
+       hourly: 1
+       daily: 1
+       weekly: 1
+       monthly: 4
+       yearly: 1
+     copyMethod: Clone
