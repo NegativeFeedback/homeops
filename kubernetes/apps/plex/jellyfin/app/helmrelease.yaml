@@ -1,9 +1,9 @@
 ---
-# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: plex
+  name: jellyfin
 spec:
   interval: 30m
   chart:
@@ -16,37 +16,31 @@ spec:
         namespace: flux-system
   install:
     remediation:
-      retries: 3
+      retries: -1
   upgrade:
     cleanupOnFail: true
     remediation:
-      strategy: rollback
       retries: 3
-  dependsOn:
-    - name: volsync
-      namespace: volsync-system
   values:
     controllers:
-      plex:
+      jellyfin:
         annotations:
           reloader.stakater.com/auto: "true"
         containers:
           app:
             image:
-              repository: ghcr.io/home-operations/plex
-              tag: 1.41.6.9685@sha256:37d36646471fb905a0080daaaa1f09ad3370b06149ed5f94dad73ead591cad0e
+              repository: ghcr.io/jellyfin/jellyfin
+              tag: 10.10.7@sha256:e4d1dc5374344446a3a78e43dd211247f22afba84ea2e5a13cbe1a94e1ff2141
             env:
-              TZ: America/New_York
-              PLEX_ADVERTISE_URL: https://plex.gddnet.io:443,http://10.0.32.10:32400
-              PLEX_NO_AUTH_NETWORKS: 192.168.10.0/24
+              TZ: America/Chicago
             probes:
               liveness: &probes
                 enabled: true
                 custom: true
                 spec:
                   httpGet:
-                    path: /identity
-                    port: 32400
+                    path: /health
+                    port: &port 8096
                   initialDelaySeconds: 0
                   periodSeconds: 10
                   timeoutSeconds: 1
@@ -64,71 +58,67 @@ spec:
             resources:
               requests:
                 cpu: 100m
-#              limits:
-#                gpu.intel.com/i915: 1
-#                memory: 16Gi
+              limits:
+                gpu.intel.com/i915: 1
+                memory: 1Gi
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
-        runAsUser: 568
-        runAsGroup: 568
-        fsGroup: 568
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
-        supplementalGroups: [44, 10000]
-        seccompProfile: { type: RuntimeDefault }
-#      nodeSelector:
-#        intel.feature.node.kubernetes.io/gpu: "true"
+        supplementalGroups: [44]
     service:
       app:
-        controller: plex
-        type: LoadBalancer
-        annotations:
-          lbipam.cilium.io/ips: 10.0.32.10
+        controller: jellyfin
         ports:
           http:
-            port: 32400
+            port: *port
     ingress:
       app:
         annotations:
           external-dns.alpha.kubernetes.io/target: external.gddnet.io
           nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/group: Plex
-          gethomepage.dev/name: Plex
-          gethomepage.dev/icon: plex.svg
-          gethomepage.dev/widget.type: plex
-          gethomepage.dev/widget.url: https://plex.gddnet.io
+          gethomepage.dev/group: Jellyfin
+          gethomepage.dev/name: Jellyfin
+          gethomepage.dev/icon: jellyfin.svg
+          gethomepage.dev/widget.type: Jellyfin
+          gethomepage.dev/widget.url: https://Jellyfin.gddnet.io
           gethomepage.dev/widget.key: "{{`{{HOMEPAGE_VAR_PLEX_TOKEN}}`}}"
         className: external
         hosts:
-          - host: "plex.gddnet.io"
+          - host: "Jelly.gddnet.io"
             paths:
               - path: /
                 service:
                   identifier: app
                   port: http
+
     persistence:
       config:
-        existingClaim: plexserver
+        existingClaim: jellyfin
         globalMounts:
-          - path: /config/Library/Application Support/Plex Media Server
-      cache:
-        existingClaim: plex-cache
+          - path: /config
+      config-cache:
+        existingClaim: jellyfin-cache
         globalMounts:
-          - path: /config/Library/Application Support/Plex Media Server/Cache
-      logs:
-        type: emptyDir
-        globalMounts:
-          - path: /config/Library/Application Support/Plex Media Server/Logs
-      tmp:
-        type: emptyDir
-      transcode:
-        type: emptyDir
+          - path: /config/metadata
       media:
         type: nfs
         server: 10.0.30.134
         path: /medianfs
         globalMounts:
           - path: /mnt/media
-
-
+      tmpfs:
+        type: emptyDir
+        advancedMounts:
+          jellyfin:
+            app:
+              - path: /cache
+                subPath: cache
+              - path: /config/log
+                subPath: log
+              - path: /tmp
+                subPath: tmp

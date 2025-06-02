@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: plex-cache
+  name: jellyfin-cache
 spec:
   accessModes: ["ReadWriteOnce"]
   resources:
@@ -13,7 +13,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: plexserver
+  name: jellyfinserver
 spec:
   accessModes: ["ReadWriteOnce"]
   resources:
@@ -24,19 +24,18 @@ spec:
 apiVersion: volsync.backube/v1alpha1
 kind: ReplicationSource
 metadata:
-   name: plexserver
-   namespace: plex
+   name: jellyfin
 spec:
-   sourcePVC: plexserver
+   sourcePVC: jellyfin
    trigger:
       schedule: "0 * * * *"
    restic:
      pruneIntervalDays: 15
-     repository: restic-plexserver
+     repository: restic-jellyfin
      retain:
        hourly: 1
        daily: 1
        weekly: 1
        monthly: 4
        yearly: 1
-     copyMethod: Clone
+     copyMethod: Snapshot
