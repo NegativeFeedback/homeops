@@ -71,7 +71,7 @@ spec:
         supplementalGroups: [44]
     service:
       app:
-        controller: jellyfin
+        controller: *app
         ports:
           http:
             port: *port
@@ -85,17 +85,17 @@ spec:
           gethomepage.dev/name: Jellyfin
           gethomepage.dev/icon: jellyfin.svg
           gethomepage.dev/widget.type: Jellyfin
-          gethomepage.dev/widget.url: https://Jellyfin.gddnet.io
+          gethomepage.dev/widget.url: https://Jelly.gddnet.io
           gethomepage.dev/widget.key: "{{`{{HOMEPAGE_VAR_PLEX_TOKEN}}`}}"
         className: external
+
         hosts:
-          - host: "jelly.gddnet.io"
+          - host: jelly.gddnet.io
             paths:
               - path: /
                 service:
                   identifier: app
                   port: http
-
     persistence:
       config:
         existingClaim: jellyfin
