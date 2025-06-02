@@ -11,9 +11,9 @@ spec:
     labels:
       app.kubernetes.io/name: *app
 
-  components:
+#  components:
 #    - ../../../../templates/gatus/guarded
-    - ../../../../templates/volsync
+#    - ../../../../templates/volsync
 #  dependsOn:
 ##    - name: rook-ceph-cluster
 #      namespace: rook-ceph
