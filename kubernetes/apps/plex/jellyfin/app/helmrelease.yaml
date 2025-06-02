@@ -79,7 +79,6 @@ spec:
       app:
         annotations:
           external-dns.alpha.kubernetes.io/target: external.gddnet.io
-          nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Jellyfin
           gethomepage.dev/name: Jellyfin
