@@ -89,7 +89,7 @@ spec:
           gethomepage.dev/widget.key: "{{`{{HOMEPAGE_VAR_PLEX_TOKEN}}`}}"
         className: external
         hosts:
-          - host: "Jelly.gddnet.io"
+          - host: "jelly.gddnet.io"
             paths:
               - path: /
                 service:
