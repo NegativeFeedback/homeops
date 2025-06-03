@@ -29,3 +29,14 @@ spec:
        monthly: 4
        yearly: 1
      copyMethod: Clone
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: wizarr-steps
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 50Mi
+  storageClassName: ceph-block

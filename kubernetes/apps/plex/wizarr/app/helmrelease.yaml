@@ -79,3 +79,7 @@ spec:
         existingClaim: wizarr
         globalMounts:
           - path: /data/database
+      wizard:
+        existingClaim: wizarr-steps
+        globalMounts:
+          - path: /data/wizard_steps
