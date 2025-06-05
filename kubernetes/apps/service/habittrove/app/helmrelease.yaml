@@ -35,7 +35,7 @@ spec:
           app:
             image:
               repository: dohsimpson/habittrove
-              tag: v0.2.4
+              tag: v0.2.23
             envFrom: &envFrom
               - secretRef:
                   name: habittrove-secret
