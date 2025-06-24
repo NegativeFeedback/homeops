@@ -27,6 +27,8 @@ ipv4NativeRoutingCIDR: "10.69.0.0/16"
 k8sServiceHost: 127.0.0.1
 k8sServicePort: 7445
 kubeProxyReplacement: true
+socketLB:
+  hostNamespaceOnly: true
 kubeProxyReplacementHealthzBindAddr: 0.0.0.0:10256
 l2announcements:
   enabled: false # https://github.com/cilium/cilium/issues/28985
