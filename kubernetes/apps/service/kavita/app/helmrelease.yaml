@@ -22,7 +22,7 @@ spec:
           kavita:
             image:
               repository: jvmilazz0/kavita
-              tag: 0.8.6
+              tag: 0.8.7
             env:
               TZ: America/Chicago
               PUID: 1000
