@@ -32,7 +32,7 @@ spec:
           app:
             image:
               repository: hashicorp/boundary-enterprise
-              tag: 0.19.2-ent
+              tag: 0.19.3-ent
             command:
               - boundary 
               - server
