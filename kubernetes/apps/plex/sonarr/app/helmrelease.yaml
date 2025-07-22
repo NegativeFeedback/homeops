@@ -110,9 +110,4 @@ spec:
         path: /medianfs
         globalMounts:
           - path: /mnt/media
-      mediaun:
-        type: nfs
-        server: 10.0.30.160
-        path: /media
-        globalMounts:
-          - path: /mnt/unraid
+
