@@ -35,7 +35,7 @@ spec:
         type: RollingUpdate
       image:
         repository: ghcr.io/goauthentik/server
-        tag: 2025.4.1
+        tag: 2025.6.4
       fullnameOverride: authentik
       envFrom:
         - secretRef:
