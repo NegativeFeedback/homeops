@@ -9,9 +9,5 @@ resources:
   - ./pvc.yaml
 #  - ../../../../templates/gatus/guarded
 #  - ../../../../templates/volsync
-configMapGenerator:
-  - name: tandoor-configmap
-    files:
-      - ./config/nginx-config
 generatorOptions:
   disableNameSuffixHash: true
