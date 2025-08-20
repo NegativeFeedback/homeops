@@ -78,14 +78,6 @@ spec:
                 service:
                   identifier: app
                   port: http
-              - path: /media
-                service:
-                  identifier: app
-                  port: *port2
-              - path: /static
-                service:
-                  identifier: app
-                  port: *port2
 
     persistence:
       data:
