@@ -78,7 +78,7 @@ spec:
           gethomepage.dev/group: Service
           gethomepage.dev/icon: tandoor.png
         hosts:
-          - host: &host "recipes.${SECRET_DOMAIN}"
+          - host: &host "kitchen.${SECRET_DOMAIN}"
             paths:
               - path: /
                 service:
