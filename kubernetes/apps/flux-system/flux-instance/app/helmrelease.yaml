@@ -48,7 +48,7 @@ spec:
         - notification-controller
       sync:
         kind: GitRepository
-        url: "https://github.com/negativefeedback/homeops1.git"
+        url: "https://github.com/negativefeedback/homeops.git"
         ref: "refs/heads/main"
         path: kubernetes/flux/cluster
       commonMetadata:
