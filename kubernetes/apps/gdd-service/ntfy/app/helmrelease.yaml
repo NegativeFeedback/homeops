@@ -62,7 +62,7 @@ spec:
       app:
         ports:
           http:
-            port: &port 80
+            port: &port 8080
           smtp:
             port: &port 53
     serviceMonitor:
