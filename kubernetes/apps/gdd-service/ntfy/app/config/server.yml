@@ -1,0 +1,13 @@
+base-url: "https://a;erts.gddnet.io"
+cache-file: "/var/cache/ntfy/cache.db"
+attachment-cache-dir: "/var/cache/ntfy/attachments"
+upstream-base-url: "https://ntfy.sh"
+listen-http: ":8080"
+smtp-server-listen: ":25"
+smtp-server-domain: "alerts.gddnet.io"
+smtp-server-addr-prefix: ""
+behind-proxy: true
+auth-default-access: deny-all
+auth-file: /data/user.db
+enable-metrics: true
+metrics-listen-http: "[::]:9090"
