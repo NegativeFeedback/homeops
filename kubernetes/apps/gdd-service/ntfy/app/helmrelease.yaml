@@ -63,8 +63,6 @@ spec:
         ports:
           http:
             port: &port 8080
-          smtp:
-            port: &port 53
     serviceMonitor:
       app:
         endpoints:
