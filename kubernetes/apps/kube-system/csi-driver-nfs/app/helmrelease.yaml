@@ -38,6 +38,10 @@ spec:
     # https://artifacthub.io/packages/helm/csi-driver-nfs/csi-driver-nfs?modal=values
     externalSnapshotter:
       enabled: false
+      customResourceDefinitions:
+        enabled: true   #if set true, VolumeSnapshot, VolumeSnapshotContent and VolumeSnapshotClass CRDs will be created. Set it false, If they already exist in cluster.
+
+    ## volumeSnapshotClass resource example:
     volumeSnapshotClass:
       create: true
       name: nfs-csi-snapshot
