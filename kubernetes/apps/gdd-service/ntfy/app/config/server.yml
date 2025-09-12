@@ -1,4 +1,4 @@
-base-url: "https://a;erts.gddnet.io"
+base-url: "https://alerts.gddnet.io"
 cache-file: "/var/cache/ntfy/cache.db"
 attachment-cache-dir: "/var/cache/ntfy/attachments"
 upstream-base-url: "https://ntfy.sh"
@@ -7,7 +7,14 @@ smtp-server-listen: ":25"
 smtp-server-domain: "alerts.gddnet.io"
 smtp-server-addr-prefix: ""
 behind-proxy: true
-auth-default-access: deny-all
-auth-file: /data/user.db
 enable-metrics: true
 metrics-listen-http: "[::]:9090"
+####
+auth-file: /data/user.db
+auth-default-access: "deny-all"
+auth-users:
+  - "negativefeedback:$2a$12$XL.ItQPtKVVGP/W8obSxd.Mr17by6QWQHcNRf01s5xBqVwBkHMxQu:admin"
+  - "heather:$2a$10$NKbrNb7HPMjtQXWJ0f1pouw03LDLT/WzlO9VAv44x84bRCkh19h6m:user"
+auth-access:
+  - "heather:alerts-*:ro"
+  - "*:announcements:ro" # or: "everyone:announcements,ro"
