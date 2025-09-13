@@ -1,0 +1,27 @@
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: &name postgres
+  annotations:
+    cnpg.io/skipEmptyWalArchiveCheck: enabled
+spec:
+  instances: 3
+  imageName: ghcr.io/cloudnative-pg/postgresql:17.5-22
+  primaryUpdateMethod: switchover
+  primaryUpdateStrategy: unsupervised
+  storage:
+    size: 20Gi
+    storageClass: nfs-csi
+  superuserSecret:
+    name: postgres17-superuser
+  enableSuperuserAccess: true
+
+#  plugins:
+#    - name: &plugin barman-cloud.cloudnative-pg.io
+#      isWALArchiver: true
+#      parameters:
+#        barmanObjectName: &store garage-store
+
+  monitoring:
+    enablePodMonitor: true
