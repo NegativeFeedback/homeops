@@ -53,4 +53,11 @@ spec:
       app:
         endpoints:
           - port: http
-
+    persistence:
+      config:
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
+        storageClass: nfs-csi
+        size: 100Mi
+        globalMounts:
+          - path: /opt/cloudbeaver/workspace
