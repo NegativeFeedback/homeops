@@ -24,7 +24,6 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: tailscale
-        namespace: flux-system
   values:
     operatorConfig:
       hostname: "tailscale-operator"
