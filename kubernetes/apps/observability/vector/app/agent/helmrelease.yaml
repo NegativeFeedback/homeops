@@ -54,9 +54,7 @@ spec:
             args: ["--config", "/etc/vector/vector.yaml"]
             securityContext:
               privileged: true
-    serviceAccount:
-      create: false
-      name: vector-agent
+
     persistence:
       config:
         enabled: true
