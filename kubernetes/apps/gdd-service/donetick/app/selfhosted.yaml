@@ -13,7 +13,7 @@ data:
     pushover:
       token: ""
     jwt:
-      secret: ${jwt_secret}
+      secret: ${DONETICK_OAUTH_JWT}
       session_time: 168h
       max_refresh: 168h
     server:
