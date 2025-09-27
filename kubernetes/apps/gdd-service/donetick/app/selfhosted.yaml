@@ -41,10 +41,10 @@ data:
     oauth2:
       client_id: ${DONETICK_OAUTH_CLIENTID}
       client_secret: ${DONETICK_OAUTH_SECRET}
-      auth_url: "https://sso.${domain_name}/application/o/authorize/"
-      token_url: "https://sso.${domain_name}/application/o/token/"
-      user_info_url: "https://sso.${domain_name}/application/o/userinfo/"
-      redirect_url: "https://sso.${domain_name}/auth/oauth2"
+      auth_url: "https://sso.${SECRET_DOMAIN}/application/o/authorize/"
+      token_url: "https://sso.${SECRET_DOMAIN}/application/o/token/"
+      user_info_url: "https://sso.${SECRET_DOMAIN}/application/o/userinfo/"
+      redirect_url: "https://sso.${SECRET_DOMAIN}/auth/oauth2"
       name: "authentik"
       scopes:
         - "openid"
