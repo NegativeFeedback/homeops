@@ -12,6 +12,10 @@ data:
       token: ""
     pushover:
       token: ""
+    database:
+      type: "sqlite"
+      migration: true
+
     jwt:
       secret: ${DONETICK_OAUTH_JWT}
       session_time: 168h
