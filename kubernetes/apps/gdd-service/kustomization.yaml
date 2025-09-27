@@ -9,3 +9,4 @@ resources:
   - ./ntfy/ks.yaml
   - ./echo/ks.yaml
   - ./kavita/ks.yaml
+  - ./donetick/ks.yaml
