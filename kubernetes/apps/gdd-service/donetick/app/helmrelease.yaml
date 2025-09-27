@@ -1,0 +1,103 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: donetick
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  dependsOn:
+    - name: cloudflare-tunnel
+      namespace: network
+  values:
+    controllers:
+      donetick:
+        strategy: RollingUpdate
+        containers:
+          app:
+            image:
+              repository: donetick/donetick
+              tag: v0.1.51
+            env:
+              PROMETHEUS_ENABLED: true
+              TZ: America/Chicago
+              DT_ENV: selfhosted
+              DT_SQLITE_PATH: /donetick-data/donetick.db
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/v1/ping
+                    port: 2021
+                  initialDelaySeconds: 10
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
+            resources:
+              requests:
+                cpu: 10m
+                memory: 250Mi
+              limits:
+                memory: 500Mi
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile: { type: RuntimeDefault }
+    service:
+      app:
+        annotations:
+          tailscale.com/expose: "true"
+        ports:
+          http:
+            port: &port 2021
+    serviceMonitor:
+      app:
+        endpoints:
+          - port: http
+    route:
+      app:
+        hostnames: ["todo.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: external
+            namespace: kube-system
+            sectionName: https
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *port
+    persistence:
+      app:
+        type: persistentVolumeClaim
+        storageClass: nfs-csi
+        accessMode: ReadWriteOnce
+        size: 5Gi
+        globalMounts:
+          - path: /donetick-data
+      config:
+        type: configMap
+        name: donetick-config
+        globalMounts:
+          - path: "/config/selfhosted.yaml"
+            subPath: selfhosted.yaml
+            readOnly: true
