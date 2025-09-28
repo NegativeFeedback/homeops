@@ -7,15 +7,20 @@ data:
   selfhosted.yaml: |
     name: "selfhosted"
     is_done_tick_dot_com: false
-    is_user_creation_disabled: true
+    is_user_creation_disabled: false
     telegram:
       token: ""
     pushover:
       token: ""
-    database:
-      type: "sqlite"
-      migration: true
 
+    database:
+      type: "postgres"
+      migration: true
+      host: postgres-rw.database.svc.cluster.local
+      port: 5432
+      user: gdd_user_donetick
+      password: gdd_user_donetick
+      name: gdd_donetick
     jwt:
       secret: ${DONETICK_OAUTH_JWT}
       session_time: 168h
