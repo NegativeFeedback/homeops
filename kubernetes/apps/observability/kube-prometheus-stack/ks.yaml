@@ -20,7 +20,7 @@ spec:
         kind: Secret
     substitute:
       APP: *app
-      NS: *ns
+      NS: *namespace
   prune: true
   retryInterval: 2m
   sourceRef:
