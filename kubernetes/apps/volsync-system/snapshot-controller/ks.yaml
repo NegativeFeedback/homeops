@@ -15,6 +15,7 @@ spec:
       name: sops-age
   interval: 1h
   path: ./kubernetes/apps/volsync-system/snapshot-controller/app
+  postBuild:
     substituteFrom:
       - name: cluster-secrets
         kind: Secret
