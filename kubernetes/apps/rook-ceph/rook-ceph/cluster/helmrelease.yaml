@@ -74,7 +74,7 @@ spec:
         nodes:
           - name: talos-0tj-is2
             devices:
-              - name: /dev/disk/by-id/nvme-nvme.1e4b-323430313832373335313531303532-53504343204d2e32205043496520535344-00000001
+              - name: /dev/disk/by-id/nvme-SPCC_M.2_PCIe_SSD_240182735151052
           - name: talos-6o0-upn
             devices:
               - name: /dev/disk/by-id/nvme-nvme.1e4b-323430313832373335313531303230-53504343204d2e32205043496520535344-00000001
