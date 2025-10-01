@@ -13,9 +13,7 @@ spec:
   primaryUpdateStrategy: unsupervised
   storage:
     size: 20Gi
-    storageClass: nfs-csi
-  superuserSecret:
-    name: postgres17-superuser
+    storageClass: ceph-block
   enableSuperuserAccess: true
 
 #  plugins:
@@ -26,3 +24,4 @@ spec:
 
   monitoring:
     enablePodMonitor: true
+
