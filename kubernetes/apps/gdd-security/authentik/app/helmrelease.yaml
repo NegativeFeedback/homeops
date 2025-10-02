@@ -36,8 +36,6 @@ spec:
 
       deploymentStrategy:
         type: RollingUpdate
-      env:
-        TZ: America/Chicago
 
     authentik:
       redis:
