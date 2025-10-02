@@ -75,8 +75,7 @@ spec:
               labelSelector:
                 matchLabels:
                   app.kubernetes.io/name: *app
-        serviceAccount:
-          identifier: dragonfly-operator
+
     service:
       app:
         controller: *app
