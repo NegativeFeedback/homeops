@@ -48,11 +48,39 @@ spec:
       outposts:
         container_image_base: ghcr.io/goauthentik/%(type)s:%(version)
     server:
+      envFrom:
+        - secretRef:
+            name: authentik-secret
       replicas: 1
-      metrics:
+      pdb:
         enabled: true
+        minAvailable: 1
+        maxUnavailable: 1
+
+      metrics:
         serviceMonitor:
           enabled: true
+      resources:
+        requests:
+          cpu: 100m
+          memory: 512Mi
+        limits:
+          memory: 2Gi
+    worker:
+      envFrom:
+        - secretRef:
+            name: authentik-secret
+      replicas: 2
+      pdb:
+        enabled: true
+        minAvailable: 1
+        maxUnavailable: 1
+      resources:
+        requests:
+          cpu: 50m
+          memory: 512Mi
+        limits:
+          memory: 1Gi
     route:
       app:
         hostnames:
