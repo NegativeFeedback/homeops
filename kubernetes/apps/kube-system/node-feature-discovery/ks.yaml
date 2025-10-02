@@ -35,7 +35,6 @@ spec:
     - name: node-feature-discovery
   path: ./kubernetes/apps/kube-system/node-feature-discovery/rules
   prune: true
-  retryInterval: 2m
   sourceRef:
     kind: GitRepository
     name: flux-system
