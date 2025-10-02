@@ -67,7 +67,7 @@ spec:
         hostnames:
           - sso.gddnet.io
         parentRefs:
-          - name: internal
+          - name: external
             namespace: kube-system
             sectionName: https
         rules:
