@@ -53,8 +53,6 @@ spec:
         enabled: true
         serviceMonitor:
           enabled: true
-    worker:
-      replicas: 2
     route:
       app:
         hostnames:
