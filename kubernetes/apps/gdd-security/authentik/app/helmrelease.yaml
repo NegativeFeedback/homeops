@@ -41,7 +41,7 @@ spec:
         TZ: America/Chicago
       envFrom:
         - secretRef:
-            name: *secret
+            name: authentik-secret
     authentik:
       redis:
         host: dragonfly.database.svc.cluster.local
