@@ -48,7 +48,7 @@ spec:
       config:
         type: persistentVolumeClaim
         accessMode: ReadWriteOnce
-        storageClass: nfs-csi
+        storageClass: ceph-block
         size: 100Mi
         globalMounts:
           - path: /opt/cloudbeaver/workspace
