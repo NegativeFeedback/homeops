@@ -1,0 +1,24 @@
+#---
+#apiVersion: networking.k8s.io/v1
+#kind: Ingress
+#metadata:
+#  name: emqx-dashboard
+#  annotations:
+#    external-dns.alpha.kubernetes.io/target: internal.gddnet.io
+#    gethomepage.dev/enabled: "true"
+#    gethomepage.dev/group: Infrastructure
+#    gethomepage.dev/name: Emqx
+#    gethomepage.dev/icon: mosqitto.svg
+#spec:
+#  ingressClassName: internal
+#  rules:
+#    - host: emqx.gddnet.io
+#      http:
+#        paths:
+#          - path: /
+#            pathType: Prefix
+#            backend:
+#              service:
+#                name: emqx-dashboard
+#                port:
+#                  number: 18083
