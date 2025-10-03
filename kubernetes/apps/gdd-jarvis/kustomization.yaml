@@ -1,0 +1,12 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/kustomization
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: gdd-jarvis
+components:
+  - ../../components/common
+resources:
+  - ./zwave2mqtt/ks.yaml
+#  - ./zigbee2mqtt/ks.yaml
+#  - ./homeassistant/ks.yaml
+
