@@ -16,6 +16,7 @@ spec:
   interval: 1h
   dependsOn:
   - name: emqx-cluster
+    namespace: database
   path: ./kubernetes/apps/gdd-jarvis/zwave2mqtt/app
   postBuild:
     substituteFrom:
