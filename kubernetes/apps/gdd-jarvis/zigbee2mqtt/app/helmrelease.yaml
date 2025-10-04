@@ -1,0 +1,96 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: zigbee2mqtt
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  dependsOn:
+    - name: rook-ceph-cluster
+      namespace: rook-ceph
+    - name: volsync
+      namespace: volsync-system
+  values:
+    controllers:
+      zigbee2mqtt:
+        strategy: RollingUpdate
+        containers:
+          app:
+            image:
+              repository: ghcr.io/koenkk/zigbee2mqtt
+              tag: 2.3.0@sha256:42de8c55dc578a8404a18c43aeb2b7c75be7988179abe9a8195d99a9e7ebb917
+            env:
+              PROMETHEUS_ENABLED: true
+              TZ: America/Chicago
+              ZIGBEE2MQTT_DATA: /config
+              ZIGBEE2MQTT_CONFIG_SERIAL_PORT: /dev/serial/by-id/usb-ITead_Sonoff_Zigbee_3.0_USB_Dongle_Plus_6af289ca5c3bec1192e4a4957a0af07f-if00-port0
+            probes:
+              liveness:
+                enabled: true
+              readiness:
+                enabled: true
+              startup:
+                enabled: true
+                spec:
+                  failureThreshold: 30
+                  periodSeconds: 10
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
+            resources:
+              requests:
+                cpu: 10m
+                memory: 250Mi
+              limits:
+                memory: 500Mi
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile: { type: RuntimeDefault }
+        pod:
+          nodeSelector:
+            aeotec.feature.node.kubernetes.io/zwave: "true"
+    service:
+      app:
+        ports:
+          http:
+            port: &port 8080
+    serviceMonitor:
+      app:
+        endpoints:
+          - port: http
+
+    persistence:
+      app:
+        type: persistentVolumeClaim
+        storageClass: ceph-block
+        accessMode: ReadWriteOnce
+        size: 500Mi
+        globalMounts:
+          - path: /config
+      logs:
+        type: emptyDir
+        globalMounts:
+          - path: /config/log
+      usb:
+        type: hostPath
+        hostPath: /dev/serial/by-id/usb-ITead_Sonoff_Zigbee_3.0_USB_Dongle_Plus_6af289ca5c3bec1192e4a4957a0af07f-if00-port0
+        hostPathType: CharDevice
+        globalMounts:
+          - path: /dev/serial/by-id/usb-ITead_Sonoff_Zigbee_3.0_USB_Dongle_Plus_6af289ca5c3bec1192e4a4957a0af07f-if00-port0
