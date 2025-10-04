@@ -95,7 +95,7 @@ spec:
       tmpfs:
         type: emptyDir
         advancedMounts:
-          home-assistant:
+          homeassistant:
             app:
               - path: /config/logs
                 subPath: logs
