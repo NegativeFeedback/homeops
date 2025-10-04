@@ -23,7 +23,7 @@ spec:
           app:
             image:
               repository: docker.dragonflydb.io/dragonflydb/operator
-              tag: v1.1.9@sha256:a6cc77aa5b2ecd1c6b18e2c91a9c6ca7891ad7fe9c4e60deae660dfac1b33610
+              tag: v1.3.0@sha256:ee0daee0bb11185c984bbea92b0e8cc17a06ae4cd246e0d311c814f6948fd27e
             args:
               - "--health-probe-bind-address=:8081"
               - "--metrics-bind-address=127.0.0.1:8080"
