@@ -6,6 +6,7 @@ namespace: gdd-jarvis
 components:
   - ../../components/common
 resources:
+  - namespace.yaml
   - ./zwave2mqtt/ks.yaml
   - ./zigbee2mqtt/ks.yaml
   - ./homeassistant/ks.yaml
