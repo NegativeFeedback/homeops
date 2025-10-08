@@ -6,18 +6,9 @@ metadata:
 data:
   bookmarks.yaml: |
     - Quick Links:
-        - Pods (all):
-            - icon: kubernetes.png
-              href: https://kube-web-view.18b.haus/clusters/_all/namespaces/_all/pods
-        - Pods (main):
-            - icon: kubernetes.png
-              href: https://kube-web-view.18b.haus/clusters/main/namespaces/_all/pods
-        - Pods (storage):
-            - icon: kubernetes.png
-              href: https://kube-web-view.18b.haus/clusters/storage/namespaces/_all/pods
         - home-ops:
             - icon: github.png
-              href: https://github.com/martinohmann/home-ops
+              href: https://github.com/negativeFeedback/homeops
   docker.yaml: ""
   kubernetes.yaml: |
     gateway: true
@@ -26,32 +17,30 @@ data:
   services.yaml: |
     - Infrastructure:
         - UniFi:
-            href: https://unifi.18b.haus
+            href: https://unifi.ui.com/
             icon: unifi-controller.png
     - Observability:
         - Prometheus (storage):
-            href: https://prometheus.storage.18b.haus
+            href: https://prometheus.storage.gddnet.io
             icon: prometheus.png
-        - Weave GitOps (storage):
-            href: https://gitops.storage.18b.haus
-            icon: https://github.com/weaveworks/weave-gitops/blob/main/website/static/img/weave-logo.png?raw=true
+
     - Storage:
         - Backrest:
-            href: https://backrest.18b.haus
+            href: https://backrest.gddnet.io
             icon: sh-backrest.png
         - Filebrowser:
-            href: https://filebrowser.18b.haus
+            href: https://filebrowser.gddnet.io
             icon: filebrowser.png
         - Minio:
-            href: https://minio.18b.haus
+            href: https://minio.gddnet.io
             icon: minio.png
     - Tools:
         - Zot Registry:
-            href: https://registry.18b.haus
+            href: https://registry.gddnet.io
             icon: https://zotregistry.dev/v2.0.4/assets/images/logo.svg
   settings.yaml: |
     background:
-      image: https://static.18b.haus/img/wooden-floor.jpg
+      image: https://static.gddnet.io/img/wooden-floor.jpg
       opacity: 25
     color: stone
     fiveColumns: false
