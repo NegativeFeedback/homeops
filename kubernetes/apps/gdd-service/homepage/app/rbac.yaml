@@ -48,5 +48,11 @@ roleRef:
   name: homepage
 subjects:
   - kind: ServiceAccount
-    name: *app
-    namespace: default
+    name: homepage
+    namespace: gdd-service
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: homepage
+  namespace: gdd-service
