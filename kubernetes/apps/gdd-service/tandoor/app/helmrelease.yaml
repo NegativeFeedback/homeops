@@ -47,6 +47,7 @@ spec:
             image:
               repository: vabene1111/recipes
               tag: 2.2.7@sha256:bbafaa18a39292e3e2cf032e090d17d0fcc1deb71a2b98425fec99cb05e8532d
+            envFrom: *envFrom
             env:
               DEBUG: "0"
               ALLOWED_HOSTS: "*"
