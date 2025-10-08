@@ -11,3 +11,4 @@ resources:
   - ./kavita/ks.yaml
   - ./donetick/ks.yaml
   - ./tandoor/ks.yaml
+  - ./homepage/ks.yaml
