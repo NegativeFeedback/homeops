@@ -21,7 +21,7 @@ spec:
       namespace: network
   values:
     controllers:
-      tandoor:
+      app:
         annotations:
           reloader.stakater.com/auto: "true"
         strategy: RollingUpdate
@@ -137,6 +137,7 @@ spec:
         type: persistentVolumeClaim
         storageClass: ceph-block
         accessMode: ReadWriteOnce
+        size: 5Gi
         advancedMounts:
           tandoor:
             app:
