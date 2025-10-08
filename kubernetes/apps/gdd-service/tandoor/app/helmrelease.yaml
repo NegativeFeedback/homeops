@@ -21,7 +21,7 @@ spec:
       namespace: network
   values:
     controllers:
-      app:
+      tandoor:
         annotations:
           reloader.stakater.com/auto: "true"
         strategy: RollingUpdate
