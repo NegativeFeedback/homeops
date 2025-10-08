@@ -176,3 +176,9 @@ spec:
           tandoor:
             nginx:
               - path: /var/cache/nginx
+      tmp:
+        type: emptyDir
+        advancedMounts:
+          tandoor:
+            app:
+              - path: /tmp
