@@ -86,7 +86,6 @@ spec:
                   statusCode: 301
                   hostname: dir.${SECRET_DOMAIN}
     persistence:
-    persistence:
       config:
         enabled: true
         type: emptyDir
