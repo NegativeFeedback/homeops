@@ -75,6 +75,13 @@ spec:
           - port: http
     route:
       app:
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/description: Smart home and automations
+          gethomepage.dev/group: Home Automation
+          gethomepage.dev/icon: sh-home-assistant.svg
+          gethomepage.dev/name: Home Assistant
+          gethomepage.dev/app: homeassistant
         hostnames: ["jarvis.${SECRET_DOMAIN}"]
         parentRefs:
           - name: external
