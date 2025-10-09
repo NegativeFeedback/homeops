@@ -108,3 +108,5 @@ spec:
           - subPath: widgets.yaml
             path: /app/config/widgets.yaml
             readOnly: true
+    serviceAccount:
+      homepage: {}
