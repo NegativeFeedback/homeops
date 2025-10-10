@@ -59,10 +59,7 @@ spec:
                   periodSeconds: 1
                   failureThreshold: 300
                   exec: *mc-health
-            securityContext:
-              allowPrivilegeEscalation: falsels
-              readOnlyRootFilesystem: true
-              capabilities: { drop: ["ALL"] }
+
             ports:
               - name: java
                 containerPort: 25565
