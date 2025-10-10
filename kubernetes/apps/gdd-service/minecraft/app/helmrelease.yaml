@@ -21,7 +21,7 @@ spec:
       namespace: network
   values:
     controllers:
-      donetick:
+      minecraft:
         strategy: RollingUpdate
         containers:
           app:
