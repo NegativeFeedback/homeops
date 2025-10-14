@@ -71,7 +71,7 @@ spec:
             appProtocol: http
 
     route:
-      main:
+      kromgo:
         annotations:
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Observability
@@ -85,7 +85,7 @@ spec:
         rules:
           - backendRefs:
               - identifier: kromgo
-                port: http
+                port: *health
 
     persistence:
       config:
