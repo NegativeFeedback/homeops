@@ -71,7 +71,7 @@ spec:
             appProtocol: http
 
     route:
-      kromgo:
+      main:
         annotations:
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Observability
