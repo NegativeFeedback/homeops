@@ -85,7 +85,7 @@ spec:
         rules:
           - backendRefs:
               - identifier: kromgo
-                port: *health
+                port: *http
 
     persistence:
       config:
