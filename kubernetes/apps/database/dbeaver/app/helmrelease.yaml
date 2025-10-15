@@ -27,7 +27,7 @@ spec:
           app:
             image:
               repository: dbeaver/cloudbeaver
-              tag: 25.2.1
+              tag: 25.2.2
             env:
               HTTP_PORT: &port 8978
             resources:
