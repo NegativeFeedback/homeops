@@ -9,6 +9,7 @@ resources:
   - ./zwave2mqtt/ks.yaml
   - ./zigbee2mqtt/ks.yaml
   - ./homeassistant/ks.yaml
+  - ./esphome/ks.yaml
 
 patches:
   - patch: |-
