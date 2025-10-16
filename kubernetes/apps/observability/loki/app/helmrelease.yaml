@@ -19,7 +19,7 @@ spec:
   chart:
     spec:
       chart: loki
-      version: 6.37.0
+      version: 6.42.0
       sourceRef:
         kind: HelmRepository
         name: grafana
@@ -130,14 +130,7 @@ spec:
       replicas: 2
       image:
         registry: ghcr.io
-      ingress:
-        enabled: true
-        ingressClassName: internal
-        hosts:
-          - host: &host loki.int.gddnet.io
-            paths:
-              - path: /
-                pathType: Prefix
+
     read:
       replicas: 2
     write:
