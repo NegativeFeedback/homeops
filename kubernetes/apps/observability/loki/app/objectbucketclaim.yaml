@@ -7,12 +7,3 @@ metadata:
 spec:
   bucketName: loki
   storageClassName: ceph-bucket
-
-# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/objectbucket.io/objectbucketclaim_v1alpha1.json
-apiVersion: objectbucket.io/v1alpha1
-kind: ObjectBucketClaim
-metadata:
-  name: loki-bucket-rules
-spec:
-  bucketName: loki-rules
-  storageClassName: ceph-bucket
