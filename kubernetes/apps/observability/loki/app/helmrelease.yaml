@@ -1,13 +1,4 @@
 ---
-# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/source.toolkit.fluxcd.io/helmrepository_v1.json
-apiVersion: source.toolkit.fluxcd.io/v1
-kind: HelmRepository
-metadata:
-  name: grafana
-spec:
-  interval: 2h
-  url: https://grafana.github.io/helm-charts
----
 # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2beta2.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -115,9 +106,10 @@ spec:
           enable_alertmanager_v2: true
           alertmanager_url: http://alertmanager-operated.observability.svc.cluster.local:9093
           storage:
-            type: local
-            local:
-              directory: /rules
+            type: s3
+            s3:
+              s3ForcePathStyle: true
+              insecure: true
           rule_path: /rules/fake
         analytics:
           reporting_enabled: false
