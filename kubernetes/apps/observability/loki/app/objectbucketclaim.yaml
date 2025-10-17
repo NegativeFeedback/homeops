@@ -23,5 +23,5 @@ kind: ObjectBucketClaim
 metadata:
   name: loki-bucket-admin
 spec:
-  bucketName: loki
-  storageClassName: ceph-bucket-admin
+  bucketName: loki-admin
+  storageClassName: ceph-bucket
