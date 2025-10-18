@@ -400,7 +400,7 @@ spec:
         rules:
           - backendRefs:
               - identifier: grafana
-                port: 3000
+                port: 80
     persistence:
       enabled: false
     testFramework:
