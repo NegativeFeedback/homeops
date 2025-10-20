@@ -94,3 +94,5 @@ spec:
         hostPathType: Directory
         globalMounts:
           - readOnly: true
+    serviceAccount:
+      vector-agent: {}
