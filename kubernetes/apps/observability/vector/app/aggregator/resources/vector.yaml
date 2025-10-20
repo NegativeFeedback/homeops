@@ -111,8 +111,7 @@ sinks:
     inputs: ["kubernetes_remap"]
     type: loki
     endpoint: http://loki-gateway.observability.svc.cluster.local
-    headers:
-      X-Scope-OrgID: "gddnet"
+    tenant_id: "gddnet"
     encoding: { codec: json }
     out_of_order_action: accept
     remove_label_fields: true
