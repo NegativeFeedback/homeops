@@ -40,7 +40,7 @@ spec:
               SONARR__AUTH__METHOD: External
               SONARR__LOG__ANALYTICSENABLED: "False"
               SONARR__LOG__DBENABLED: "False"
-              SONARR__SERVER__PORT: &port 8989
+              SONARR__SERVER__PORT: &port 80
               SONARR__UPDATE__BRANCH: develop
             probes:
               liveness: &probes
