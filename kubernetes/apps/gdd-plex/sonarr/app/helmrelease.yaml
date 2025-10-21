@@ -89,10 +89,10 @@ spec:
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Media
           gethomepage.dev/name: Sonarr
-          gethomepage.dev/icon: ${APP}.svg
-          gethomepage.dev/widget.type: *app
-          gethomepage.dev/widget.url: "http://${app}.gdd-plex.svc"
-          gethomepage.dev/widget.key: "{{ \"{{HOMEPAGE_VAR_${app}_API_KEY}}\" }}"
+          gethomepage.dev/icon: sonarr.svg
+          gethomepage.dev/widget.type: sonarr
+          gethomepage.dev/widget.url: "http://sonarr.gdd-plex.svc"
+          gethomepage.dev/widget.key: "{{ \"{{HOMEPAGE_VAR_sonarr_API_KEY}}\" }}"
         parentRefs:
           - name: internal
             namespace: kube-system
