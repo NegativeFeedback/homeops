@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: RADARR
+  name: radarr
 spec:
   interval: 1h
   chartRef:
@@ -21,7 +21,7 @@ spec:
       namespace: network
   values:
     controllers:
-      RADARR:
+      radarr:
         strategy: RollingUpdate
         containers:
           app:
