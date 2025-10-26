@@ -42,11 +42,11 @@ spec:
   valuesFrom:
     - targetPath: loki.storage.s3.accessKeyId
       kind: Secret
-      name: *cephBucket
+      name: loki-bucket-chunk
       valuesKey: AWS_ACCESS_KEY_ID
     - targetPath: loki.storage.s3.secretAccessKey
       kind: Secret
-      name: *cephBucket
+      name: loki-bucket-chunk
       valuesKey: AWS_SECRET_ACCESS_KEY
   values:
     loki:
