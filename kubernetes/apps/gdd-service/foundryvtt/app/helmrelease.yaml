@@ -22,8 +22,6 @@ spec:
   values:
     controllers:
       foundryvtt:
-        annotations:
-          reloader.stakater.com/auto: "true"
         strategy: RollingUpdate
         containers:
           app:
@@ -36,7 +34,7 @@ spec:
               CONTAINER_CACHE: /data/container_cache
               CONTAINER_VERBOSE: "true"
               FOUNDRY_COMPRESS_WEBSOCKET: "true"
-              FOUNDRY_CSS_THEME: fantasy
+              FOUNDRY_CSS_THEME: "fantasy"
               FOUNDRY_HOSTNAME: "dnd.gddnet.io"
               FOUNDRY_IP_DISCOVERY: "false"
               FOUNDRY_LOCAL_HOSTNAME: "dnd.gddnet.io"
@@ -82,15 +80,9 @@ spec:
         seccompProfile: { type: RuntimeDefault }
     service:
       app:
-#        annotations:
-#          tailscale.com/expose: "true"
         ports:
           http:
             port: *port
-    serviceMonitor:
-      app:
-        endpoints:
-          - port: http
     route:
       app:
         hostnames: ["dnd.${SECRET_DOMAIN}"]
