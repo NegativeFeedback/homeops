@@ -63,7 +63,7 @@ spec:
         seccompProfile: { type: RuntimeDefault }
     service:
       app:
-
+        ports:
           http:
             port: *port
 
