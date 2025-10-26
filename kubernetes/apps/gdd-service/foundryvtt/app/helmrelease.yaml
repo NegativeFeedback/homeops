@@ -83,4 +83,15 @@ spec:
           http:
             port: *port
 
-
+    persistence:
+      data:
+        type: persistentVolumeClaim
+        storageClass: ceph-block
+        accessMode: ReadWriteOnce
+        size: 5Gi
+      npm-cache:
+        type: emptyDir
+        globalMounts:
+          - path: /home/node/.npm
+      tmp:
+        type: emptyDir
