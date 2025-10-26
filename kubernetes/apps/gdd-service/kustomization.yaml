@@ -13,3 +13,4 @@ resources:
   - ./tandoor/ks.yaml
   - ./homepage/ks.yaml
   - ./minecraft/ks.yaml
+  - ./foundryvtt/ks.yaml

@@ -1,0 +1,114 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: foundryvtt
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  dependsOn:
+    - name: cloudflare-tunnel
+      namespace: network
+  values:
+    controllers:
+      foundryvtt:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        strategy: RollingUpdate
+        containers:
+          app:
+            image:
+              repository: docker.io/felddy/foundryvtt
+              tag: 13.350.0@sha256:194992f44fff837de6addca29a3de905c060c59aefdfd74ce8a41ebe8f2d29b0
+            env:
+              PROMETHEUS_ENABLED: true
+              TZ: America/Chicago
+              CONTAINER_CACHE: /data/container_cache
+              CONTAINER_VERBOSE: "true"
+              FOUNDRY_COMPRESS_WEBSOCKET: "true"
+              FOUNDRY_CSS_THEME: fantasy
+              FOUNDRY_HOSTNAME: "dnd.gddnet.io"
+              FOUNDRY_IP_DISCOVERY: "false"
+              FOUNDRY_LOCAL_HOSTNAME: "dnd.gddnet.io"
+              FOUNDRY_MINIFY_STATIC_FILES: "true"
+              FOUNDRY_PROTOCOL: "4"
+              FOUNDRY_PROXY_PORT: "443"
+              FOUNDRY_PROXY_SSL: "true"
+              FOUNDRY_TELEMETRY: "false"
+              FOUNDRY_UPNP: "false"
+            envFrom:
+              - secretRef:
+                  name: "{{ .Release.Name }}-secret"
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/status
+                    port: &port 30000
+                  initialDelaySeconds: 10
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
+            resources:
+              requests:
+                cpu: 10m
+                memory: 250Mi
+              limits:
+                memory: 4 Gi
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile: { type: RuntimeDefault }
+    service:
+      app:
+#        annotations:
+#          tailscale.com/expose: "true"
+        ports:
+          http:
+            port: *port
+    serviceMonitor:
+      app:
+        endpoints:
+          - port: http
+    route:
+      app:
+        hostnames: ["dnd.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: external
+            namespace: kube-system
+            sectionName: https
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *port
+    persistence:
+      data:
+        type: persistentVolumeClaim
+        storageClass: ceph-block
+        accessMode: ReadWriteOnce
+        size: 5Gi
+      npm-cache:
+        type: emptyDir
+        globalMounts:
+          - path: /home/node/.npm
