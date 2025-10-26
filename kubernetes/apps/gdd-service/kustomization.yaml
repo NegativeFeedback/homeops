@@ -14,3 +14,4 @@ resources:
   - ./homepage/ks.yaml
   - ./minecraft/ks.yaml
   - ./foundryvtt/ks.yaml
+  - ./minecraft-create/ks.yaml

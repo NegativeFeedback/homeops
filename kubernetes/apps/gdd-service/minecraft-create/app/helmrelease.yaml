@@ -1,0 +1,130 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: minecraft-create
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  dependsOn:
+    - name: cloudflare-tunnel
+      namespace: network
+  values:
+    controllers:
+      minecraft:
+        strategy: RollingUpdate
+        containers:
+          app:
+            image:
+              repository: ghcr.io/itzg/minecraft-server
+              tag: java17@sha256:0ce5a08c9a942f04770384d1a91ecc7467236fbd02de219146c15d04448422f9
+            envFrom:
+              - secretRef:
+                  name: minecraft-rcon
+              - secretRef:
+                  name: curseforge-api-key
+              - configMapRef:
+                  name: minecraft-create-world-env
+            env:
+              PROMETHEUS_ENABLED: true
+              TZ: America/Chicago
+              TYPE: "AUTO_CURSEFORGE"
+              CF_PAGE_URL: "https://www.curseforge.com/minecraft/modpacks/aoc/files/7046196"
+              MEMORY: "6024M"
+              REPLACE_ENV_DURING_SYNC: "true"
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  initialDelaySeconds: 30
+                  periodSeconds: 5
+                  exec: &mc-health { command: ["mc-health"] }
+                  failureThreshold: 20
+              readiness: *probes
+              startup:
+                <<: *probes
+                spec:
+                  initialDelaySeconds: 30
+                  periodSeconds: 1
+                  failureThreshold: 300
+                  exec: *mc-health
+
+            ports:
+              - name: java
+                containerPort: 25565
+              - name: rcon
+                containerPort: 25575
+              - name: metrics
+                containerPort: 9100
+              - name: voice
+                containerPort: 24454
+            resources:
+              requests:
+                cpu: 10m
+                memory: 8Gi
+              limits:
+                memory: 16Gi
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile: { type: RuntimeDefault }
+
+
+    service:
+      minecraft:
+        controller: minecraft
+        type: LoadBalancer
+        ports:
+          java:
+            port: 25565
+            protocol: TCP
+          metrics:
+            port: 9100
+            protocol: TCP
+      voice:
+        controller: minecraft
+        type: LoadBalancer
+        ports:
+          voice:
+            port: 24454
+            protocol: UDP
+      rcon:
+        controller: minecraft
+        type: ClusterIP
+        ports:
+          rcon:
+            port: 25575
+            protocol: TCP
+
+    serviceMonitor:
+      metrics:
+        enabled: true
+        serviceName: minecraft-create-world-minecraft
+        endpoints:
+          - port: metrics
+            scheme: http
+            path: /
+            interval: 1m
+
+    persistence:
+      data:
+        existingClaim: minecraft-create-world-data
+        advancedMounts:
+          minecraft:
+            app:
+              - path: /data
