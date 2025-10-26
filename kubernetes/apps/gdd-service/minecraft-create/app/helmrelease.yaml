@@ -39,7 +39,7 @@ spec:
               PROMETHEUS_ENABLED: true
               TZ: America/Chicago
               TYPE: "AUTO_CURSEFORGE"
-              CF_PAGE_URL: "https://www.curseforge.com/minecraft/modpacks/aoc/files/7046196"
+              CF_PAGE_URL: "https://www.curseforge.com/minecraft/modpacks/aoc/files/7046193"
               MEMORY: "6024M"
               REPLACE_ENV_DURING_SYNC: "true"
             probes:
