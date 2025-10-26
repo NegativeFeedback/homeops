@@ -30,6 +30,22 @@ spec:
               tag: 13.350.0@sha256:194992f44fff837de6addca29a3de905c060c59aefdfd74ce8a41ebe8f2d29b0
             env:
               TZ: America/Chicago
+              CONTAINER_CACHE: /data/container_cache
+              CONTAINER_VERBOSE: "true"
+              FOUNDRY_COMPRESS_WEBSOCKET: "true"
+              FOUNDRY_CSS_THEME: scifi
+              FOUNDRY_HOSTNAME: "dnd.gddnet.io"
+              FOUNDRY_IP_DISCOVERY: "false"
+              FOUNDRY_LOCAL_HOSTNAME: "dnd.gddnet.io"
+              FOUNDRY_MINIFY_STATIC_FILES: "true"
+              FOUNDRY_PROTOCOL: "4"
+              FOUNDRY_PROXY_PORT: "443"
+              FOUNDRY_PROXY_SSL: "true"
+              FOUNDRY_TELEMETRY: "false"
+              FOUNDRY_UPNP: "false"
+            envFrom:
+              - secretRef:
+                  name: "{{ .Release.Name }}-secret"
             probes:
               liveness: &probes
                 enabled: true
