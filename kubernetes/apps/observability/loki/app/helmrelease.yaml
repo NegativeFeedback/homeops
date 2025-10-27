@@ -24,7 +24,6 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: grafana
-        namespace: flux-system
   maxHistory: 2
   install:
     remediation:
