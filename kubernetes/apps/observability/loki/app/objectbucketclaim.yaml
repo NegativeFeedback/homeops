@@ -3,25 +3,8 @@
 apiVersion: objectbucket.io/v1alpha1
 kind: ObjectBucketClaim
 metadata:
-  name: loki-bucket-chunk
+  name: loki-bucket
+  namespace: observability
 spec:
-  bucketName: loki-chunk
-  storageClassName: ceph-bucket
----
-# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/objectbucket.io/objectbucketclaim_v1alpha1.json
-apiVersion: objectbucket.io/v1alpha1
-kind: ObjectBucketClaim
-metadata:
-  name: loki-bucket-ruler
-spec:
-  bucketName: loki-ruler
-  storageClassName: ceph-bucket
----
-# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/objectbucket.io/objectbucketclaim_v1alpha1.json
-apiVersion: objectbucket.io/v1alpha1
-kind: ObjectBucketClaim
-metadata:
-  name: loki-bucket-admin
-spec:
-  bucketName: loki-admin
+  bucketName: loki
   storageClassName: ceph-bucket
