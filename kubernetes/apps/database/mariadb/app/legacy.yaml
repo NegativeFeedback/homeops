@@ -40,7 +40,7 @@ spec:
         - name: mariadb
           securityContext:
             {}
-          image: "mysql:9.4.0"
+          image: "mysql:9.5.0"
           imagePullPolicy: IfNotPresent
 #          command: ["mysqld_safe"]
 #          args: ["--skip-grant-tables", "--skip-networking"]
