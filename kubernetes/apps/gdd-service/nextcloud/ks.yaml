@@ -32,6 +32,7 @@ spec:
         kind: Secret
     substitute:
       APP: *app
+      NS: *ns
       VOLSYNC_CAPACITY: 2Gi
       VOLSYNC_MOVER_FS_GROUP: "82"
       VOLSYNC_MOVER_GROUP: "82"
