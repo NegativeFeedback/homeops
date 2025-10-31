@@ -97,4 +97,32 @@ spec:
             type: PathPrefix
             value: /3rdparty
         - path:
-            type: Pat
+            type: PathPrefix
+            value: /templates
+        - path:
+            type: PathPrefix
+            value: /data
+        - path:
+            type: PathPrefix
+            value: /autotest
+        - path:
+            type: PathPrefix
+            value: /occ
+        - path:
+            type: PathPrefix
+            value: /issue
+        - path:
+            type: PathPrefix
+            value: /indie
+        - path:
+            type: PathPrefix
+            value: /db_
+        - path:
+            type: PathPrefix
+            value: /console
+      filters:
+        - type: ExtensionRef
+          extensionRef:
+            group: gateway.envoyproxy.io
+            kind: HTTPRouteFilter
+            name: not-found
