@@ -16,3 +16,4 @@ resources:
   - ./foundryvtt/ks.yaml
   - ./minecraft-create/ks.yaml
   - ./nextcloud/ks.yaml
+  - ./monica/ks.yaml
