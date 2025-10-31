@@ -21,6 +21,7 @@ spec:
   chartRef:
     kind: OCIRepository
     name: openebs
+  interval: 1h
   install:
     remediation:
       retries: 3
