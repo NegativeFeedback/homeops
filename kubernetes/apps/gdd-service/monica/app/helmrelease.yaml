@@ -27,7 +27,7 @@ spec:
           app:
             image:
               repository: ghcr.io/monicahq/monica-next
-              tag: sha256:8be69156acbb1edce2ba82685729f2d4ce79f1b7f749fe967d0a36f78e7ad454
+              tag: sha256:4f16c2234166b609f01e09bc87539bfba7b99f73bb62928826bfd224bff75086
             env:
               PROMETHEUS_ENABLED: true
               TZ: America/Chicago
