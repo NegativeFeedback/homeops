@@ -26,7 +26,7 @@ spec:
         containers:
           app:
             image:
-              repository: ghcr.io/monicahq/monica-next:main
+              repository: ghcr.io/monicahq/monica-next
               tag: sha256:8be69156acbb1edce2ba82685729f2d4ce79f1b7f749fe967d0a36f78e7ad454
             env:
               PROMETHEUS_ENABLED: true
