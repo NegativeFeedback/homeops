@@ -39,7 +39,7 @@ spec:
                 spec:
                   httpGet:
                     path: /api/v1/ping
-                    port: 2021
+                    port: 80
                   initialDelaySeconds: 10
                   periodSeconds: 10
                   timeoutSeconds: 1
@@ -67,15 +67,33 @@ spec:
       app:
         ports:
           http:
-            port: &port 8080
+            port: &port 80
     serviceMonitor:
       app:
         endpoints:
           - port: http
+
+    route:
+      app:
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Service
+          gethomepage.dev/name: Monica
+          gethomepage.dev/icon: monica.png
+        hostnames:
+          - "monica.gddnet.io"
+        parentRefs:
+          - name: internal
+            namespace: kube-system
+            sectionName: https
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *port
 
     persistence:
       config:
         enabled: true
         existingClaim: *app
         globalMounts:
-          - path: /var/www/html/storage
+          - path: /config
