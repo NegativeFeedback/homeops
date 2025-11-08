@@ -69,6 +69,11 @@ spec:
           - name: talos-2wu-ocq
             devices:
               - name: /dev/disk/by-id/virtio-vdisk2
+          - name: gddnet-w6
+            devices:
+              - name: /dev/disk/by-id/nvme-WD_Blue_SN570_2TB_23032A801565
+              - name: /dev/sdc
+
       placement:
         mgr: &placement
           nodeAffinity:
