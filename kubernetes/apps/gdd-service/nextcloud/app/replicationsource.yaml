@@ -1,0 +1,66 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.18b.haus/volsync.backube/replicationsource_v1alpha1.json
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationSource
+metadata:
+  name: nextcloud-data
+spec:
+  sourcePVC: nextcloud-data
+  trigger:
+    schedule: "35 2 * * *"
+  restic:
+    copyMethod: Snapshot
+    pruneIntervalDays: 7
+    repository: nextcloud-data-local-volsync
+    volumeSnapshotClassName: csi-ceph-blockpool
+    cacheCapacity: 1Gi
+    cacheStorageClassName: openebs-hostpath
+    cacheAccessModes:
+      - ReadWriteOnce
+    storageClassName: ceph-block
+    accessModes:
+      - ReadWriteOnce
+    retain:
+      daily: 7
+      weekly: 4
+      monthly: 6
+    moverResources:
+      requests:
+        memory: 1Gi
+    moverSecurityContext:
+      fsGroup: 82
+      runAsGroup: 82
+      runAsUser: 82
+
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.18b.haus/volsync.backube/replicationsource_v1alpha1.json
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationSource
+metadata:
+  name: nextcloud-data-b2
+spec:
+  sourcePVC: nextcloud-data
+  trigger:
+    schedule: "35 4 * * 4"
+  restic:
+    copyMethod: Snapshot
+    pruneIntervalDays: 7
+    repository: nextcloud-data-b2-volsync
+    volumeSnapshotClassName: csi-ceph-blockpool
+    cacheCapacity: 1Gi
+    cacheStorageClassName: openebs-hostpath
+    cacheAccessModes:
+      - ReadWriteOnce
+    storageClassName: ceph-block
+    accessModes:
+      - ReadWriteOnce
+    retain:
+      weekly: 4
+      monthly: 6
+    moverResources:
+      requests:
+        memory: 1Gi
+    moverSecurityContext:
+      fsGroup: 82
+      runAsGroup: 82
+      runAsUser: 82
