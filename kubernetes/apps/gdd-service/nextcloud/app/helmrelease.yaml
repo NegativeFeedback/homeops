@@ -34,7 +34,7 @@ spec:
     phpClientHttpsFix:
       enabled: true
     nextcloud:
-      host: '{{ .Release.Name }}.${SECRET_DOMAIN}'
+      host: next.gddnet.io
       securityContext:
         runAsUser: 82
         runAsGroup: 82
