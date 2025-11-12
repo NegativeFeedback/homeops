@@ -48,6 +48,9 @@ spec:
     authentik:
       redis:
         host: dragonfly.database.svc.cluster.local
+      email:
+        use_tls: true
+        timeout: 30
       outposts:
         container_image_base: ghcr.io/goauthentik/%(type)s:%(version)
     server:
