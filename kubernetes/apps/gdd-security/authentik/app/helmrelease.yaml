@@ -37,11 +37,6 @@ spec:
         secret.reloader.stakater.com/reload: &secret authentik-secret
       deploymentStrategy:
         type: RollingUpdate
-      env:
-        TZ: America/Chicago
-        AUTHENTIK_EMAIL__USE_TLS: true
-        AUTHENTIK_EMAIL__USE_SSL: false
-        AUTHENTIK_EMAIL__TIMEOUT: 10
       envFrom:
         - secretRef:
             name: authentik-secret
