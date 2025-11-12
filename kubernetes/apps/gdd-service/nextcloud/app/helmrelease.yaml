@@ -89,6 +89,7 @@ spec:
             'auth.bruteforce.protection.enabled' => true,
             'maintenance_window_start' => 1,
             'simpleSignUpLink.shown' => false,
+            'check_data_directory_permissions' => false,
           );
         redis.config.php: |-
           <?php
