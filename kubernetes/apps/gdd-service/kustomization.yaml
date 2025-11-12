@@ -17,3 +17,4 @@ resources:
   - ./minecraft-create/ks.yaml
   - ./nextcloud/ks.yaml
   - ./monica/ks.yaml
+  - ./paperless/ks.yaml
