@@ -50,6 +50,11 @@ spec:
               PAPERLESS_REDIS: redis://dragonfly.database.svc.cluster.local:6379/0
               USERMAP_UID: "1000"
               USERMAP_GID: "1000"
+              PAPERLESS_ENABLE_ALLAUTH: "true"
+              PAPERLESS_APPS: allauth.socialaccount.providers.openid_connect
+              PAPERLESS_AUTO_LOGIN: "true"
+              PAPERLESS_AUTO_CREATE: "true"
+              PAPERLESS_LOGOUT_REDIRECT_URL: https://sso.gddnet.io/application/o/paperless/end-session/
             envFrom:
               - secretRef:
                   name: paperless-secret
