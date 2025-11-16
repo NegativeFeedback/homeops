@@ -123,7 +123,7 @@ spec:
 
     persistence:
       data:
-        existingClaim: minecraft-create-world-data
+        existingClaim: *app
         advancedMounts:
           minecraft:
             app:
