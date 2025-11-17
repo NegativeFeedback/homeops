@@ -93,7 +93,8 @@ spec:
           gethomepage.dev/icon: gatus.png
           gethomepage.dev/name: Status
           gethomepage.dev/group: System
-        hostnames: ["status.${SECRET_DOMAIN}"]
+        hostnames:
+          - up.gddnet.io
         parentRefs:
           - name: external
             namespace: kube-system
