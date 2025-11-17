@@ -7,7 +7,7 @@ components:
   - ../../components/common
 resources:
   - ./ntfy/ks.yaml
-  - ./echo/ks.yaml
+#  - ./echo/ks.yaml
   - ./kavita/ks.yaml
   - ./donetick/ks.yaml
   - ./tandoor/ks.yaml
