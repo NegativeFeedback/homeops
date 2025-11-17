@@ -94,9 +94,7 @@ spec:
           gethomepage.dev/icon: gatus.png
           gethomepage.dev/name: Status
           gethomepage.dev/group: System
-        hostnames:
-          - "{{ .Release.Name }}.${SECRET_DOMAIN}"
-          - status.${SECRET_DOMAIN}
+        hostnames: ["status.${SECRET_DOMAIN}"]
         parentRefs:
           - name: external
             namespace: kube-system
