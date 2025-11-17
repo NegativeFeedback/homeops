@@ -10,6 +10,7 @@ resources:
   - ./loki/ks.yaml
   - ./grafana/ks.yaml
   - ./kromgo/ks.yaml
+  - ./gatus/ks.yaml
 patches:
   - patch: |-
       apiVersion: v1
