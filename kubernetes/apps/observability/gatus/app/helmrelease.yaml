@@ -11,29 +11,69 @@ spec:
   values:
     controllers:
       gatus:
-        type: deployment
-        replicas: 2
-        strategy: RollingUpdate
+        type: statefulset
+        initContainers:
+          gatus-sidecar:
+            image:
+              repository: ghcr.io/home-operations/gatus-sidecar
+              tag: 0.0.11@sha256:e60e29554acfa0ff85f6f889e4b66bedb049116e42c44cee7797a1e49546a755
+            args:
+              - --enable-httproute
+              - --enable-service
+            resources:
+              requests:
+                cpu: 10m
+              limits:
+                memory: 64Mi
+            restartPolicy: Always
         containers:
           main:
             image:
               repository: ghcr.io/twin/gatus
               tag: v5.32.0@sha256:d848d9a767f64bb7b972a30b2c8a3cd2818c4d289ddad1032a5941c2d0af5a35
             env:
-              TZ: ${TIMEZONE}
-              GATUS_CONFIG_PATH: /config
               GATUS_DELAY_START_SECONDS: 5
-              WEB_PORT: &port 8080
-            securityContext:
-              readOnlyRootFilesystem: true
-              allowPrivilegeEscalation: false
-              capabilities:
-                drop: ["ALL"]
+              GATUS_CONFIG_PATH: /config
+              GATUS_WEB_PORT: &port 8080
+              TZ: America/Chicago
+#            envFrom:
+#              - secretRef:
+#                  name: "{{ .Release.Name }}-secret"
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: *port
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
             resources:
               requests:
-                cpu: "10m"
+                cpu: 100m
               limits:
-                memory: "128Mi"
+                memory: 256Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: {add: ["NET_RAW"], drop: ["ALL"]}
+        statefulset:
+          volumeClaimTemplates:
+            - name: config
+              storageClass: ceph-block
+              accessMode: ReadWriteOnce
+              size: 5Gi
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
 
     service:
       gatus:
@@ -45,7 +85,15 @@ spec:
     route:
       gatus:
         annotations:
+          gatus.home-operations.com/endpoint: |-
+            conditions: ["[STATUS] == 200"]
           gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Observability
+          gethomepage.dev/name: Gatus
+          gethomepage.dev/icon: gatus.png
+          gethomepage.dev/description: Application Status
+          gethomepage.dev/widget.type: gatus
+          gethomepage.dev/widget.url: http://gatus.observability.svc.cluster.local:8080
         hostnames: ["status.${SECRET_DOMAIN}"]
         parentRefs:
           - name: external
@@ -55,3 +103,46 @@ spec:
           - backendRefs:
               - identifier: gatus
                 port: *port
+
+    rbac:
+      roles:
+        gatus:
+          type: ClusterRole
+          rules:
+            - apiGroups:
+                - ""
+              resources:
+                - services
+              verbs:
+                - get
+                - watch
+                - list
+            - apiGroups:
+                - gateway.networking.k8s.io
+              resources:
+                - gateways
+                - httproutes
+              verbs:
+                - get
+                - watch
+                - list
+
+      bindings:
+        gatus:
+          type: ClusterRoleBinding
+          roleRef:
+            identifier: gatus
+          subjects:
+            - identifier: gatus
+    persistence:
+      config:
+        type: emptyDir
+      config-file:
+        type: configMap
+        name: "{{ .Release.Name }}-configmap"
+        globalMounts:
+          - path: /config/config.yaml
+            subPath: config.yaml
+
+    serviceAccount:
+      gatus: {}
