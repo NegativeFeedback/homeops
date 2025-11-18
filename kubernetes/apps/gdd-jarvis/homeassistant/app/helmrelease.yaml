@@ -82,6 +82,9 @@ spec:
           gethomepage.dev/icon: sh-home-assistant.svg
           gethomepage.dev/name: Home Assistant
           gethomepage.dev/app: homeassistant
+          gatus.home-operations.com/endpoint: |-
+            group: Home
+            conditions: ["[STATUS] == 200"]
         hostnames: ["jarvis.${SECRET_DOMAIN}"]
         parentRefs:
           - name: external
