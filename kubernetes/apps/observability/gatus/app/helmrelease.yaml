@@ -129,7 +129,7 @@ spec:
           subjects:
             - identifier: gatus
     persistence:
-      config:
+      data:
         existingClaim: "{{ .Release.Name }}"
       config-file:
         type: configMap
