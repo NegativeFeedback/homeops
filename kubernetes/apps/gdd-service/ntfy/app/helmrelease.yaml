@@ -69,6 +69,18 @@ spec:
           - port: http
     route:
       app:
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/description: Push Notifications
+          gethomepage.dev/group: Service
+          gethomepage.dev/icon: sh-ntfy.svg
+          gethomepage.dev/name: Ntfy
+          gethomepage.dev/app: ntfy
+          gatus.home-operations.com/enabled: "true"
+          gatus.home-operations.com/endpoint: |-
+            group: Service
+            conditions: ["[STATUS] == 200"]
+
         hostnames: ["alerts.${SECRET_DOMAIN}"]
         parentRefs:
           - name: external
@@ -78,3 +90,10 @@ spec:
           - backendRefs:
               - identifier: app
                 port: *port
+
+    persistence:
+      data:
+        enabled: true
+        existingClaim: *app
+        globalMounts:
+          - path: /data
