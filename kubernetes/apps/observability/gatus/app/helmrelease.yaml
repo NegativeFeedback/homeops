@@ -61,12 +61,7 @@ spec:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
               capabilities: {add: ["NET_RAW"], drop: ["ALL"]}
-        statefulset:
-          volumeClaimTemplates:
-            - name: config
-              storageClass: ceph-block
-              accessMode: ReadWriteOnce
-              size: 5Gi
+
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
@@ -135,6 +130,8 @@ spec:
           subjects:
             - identifier: gatus
     persistence:
+      config:
+        existingClaim: "{{ .Release.Name }}"
       config-file:
         type: configMap
         name: "{{ .Release.Name }}-configmap"
