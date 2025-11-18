@@ -135,8 +135,6 @@ spec:
           subjects:
             - identifier: gatus
     persistence:
-      config:
-        type: emptyDir
       config-file:
         type: configMap
         name: "{{ .Release.Name }}-configmap"
