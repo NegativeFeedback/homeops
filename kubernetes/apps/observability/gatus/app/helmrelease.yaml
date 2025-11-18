@@ -1,0 +1,57 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app gatus
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+  values:
+    controllers:
+      gatus:
+        type: deployment
+        replicas: 2
+        strategy: RollingUpdate
+        containers:
+          main:
+            image:
+              repository: ghcr.io/twin/gatus
+              tag: v5.32.0@sha256:d848d9a767f64bb7b972a30b2c8a3cd2818c4d289ddad1032a5941c2d0af5a35
+            env:
+              TZ: ${TIMEZONE}
+              GATUS_CONFIG_PATH: /config
+              GATUS_DELAY_START_SECONDS: 5
+              WEB_PORT: &port 8080
+            securityContext:
+              readOnlyRootFilesystem: true
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
+            resources:
+              requests:
+                cpu: "10m"
+              limits:
+                memory: "128Mi"
+
+    service:
+      gatus:
+        controller: gatus
+        ports:
+          http:
+            port: *port
+
+    route:
+      gatus:
+        annotations:
+          gethomepage.dev/enabled: "true"
+        hostnames: ["status.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: external
+            namespace: kube-system
+            sectionName: https
+        rules:
+          - backendRefs:
+              - identifier: gatus
+                port: *port
