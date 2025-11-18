@@ -1,8 +1,9 @@
 ---
+# yaml-language-server: $schema=https://kubernetes-schemas.dmfrey.com/helm.toolkit.fluxcd.io/helmrelease_v2.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app gatus
+  name: gatus
 spec:
   interval: 1h
   chartRef:
@@ -29,14 +30,14 @@ spec:
                 memory: 64Mi
             restartPolicy: Always
         containers:
-          main:
+          app:
             image:
               repository: ghcr.io/twin/gatus
               tag: v5.32.0@sha256:d848d9a767f64bb7b972a30b2c8a3cd2818c4d289ddad1032a5941c2d0af5a35
             env:
               GATUS_DELAY_START_SECONDS: 5
               GATUS_CONFIG_PATH: /config
-              GATUS_WEB_PORT: &port 80
+              GATUS_WEB_PORT: &port 8080
               TZ: America/Chicago
 #            envFrom:
 #              - secretRef:
@@ -54,15 +55,15 @@ spec:
                   timeoutSeconds: 1
                   failureThreshold: 3
               readiness: *probes
-            securityContext:
-              allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
-              capabilities: {add: ["NET_RAW"], drop: ["ALL"]}
             resources:
               requests:
                 cpu: 100m
               limits:
                 memory: 256Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: {add: ["NET_RAW"], drop: ["ALL"]}
         statefulset:
           volumeClaimTemplates:
             - name: config
@@ -77,37 +78,36 @@ spec:
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
     service:
-      gatus:
-        controller: *app
+      app:
         ports:
           http:
             port: *port
+
     serviceMonitor:
-      gatus:
+      app:
         endpoints:
           - port: http
+
     route:
-      gatus:
+      app:
         annotations:
-          gatus.home-operations.com/enabled: "false"
+          gatus.home-operations.com/endpoint: |-
+            conditions: ["[STATUS] == 200"]
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Observability
           gethomepage.dev/name: Gatus
           gethomepage.dev/icon: gatus.png
           gethomepage.dev/description: Application Status
           gethomepage.dev/widget.type: gatus
-          gethomepage.dev/widget.url: http://gatus.observability.svc.cluster.local:80
+          gethomepage.dev/widget.url: http://gatus.observability.svc.cluster.local:8080
         hostnames:
-          - up.gddnet.io
+          - "{{ .Release.Name }}.gddnet.io"
+          - status.gddnet.io
         parentRefs:
           - name: external
             namespace: kube-system
             sectionName: https
-        rules:
-          - backendRefs:
-              - kind: Service
-                name: gatus
-                port: *port
+
     rbac:
       roles:
         gatus:
@@ -130,6 +130,7 @@ spec:
                 - get
                 - watch
                 - list
+
       bindings:
         gatus:
           type: ClusterRoleBinding
@@ -137,17 +138,15 @@ spec:
             identifier: gatus
           subjects:
             - identifier: gatus
-    serviceAccount:
-      gatus: {}
     persistence:
       config:
-        existingClaim: "{{ .Release.Name }}"
-
+        type: emptyDir
       config-file:
         type: configMap
         name: "{{ .Release.Name }}-configmap"
         globalMounts:
-          - path: /config/alerts.yaml
-            subPath: alerts.yaml
           - path: /config/config.yaml
             subPath: config.yaml
+
+    serviceAccount:
+      gatus: {}
