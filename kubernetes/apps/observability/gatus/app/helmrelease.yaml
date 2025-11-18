@@ -29,7 +29,7 @@ spec:
                 memory: 64Mi
             restartPolicy: Always
         containers:
-          app:
+          main:
             image:
               repository: ghcr.io/twin/gatus
               tag: v5.32.0@sha256:d848d9a767f64bb7b972a30b2c8a3cd2818c4d289ddad1032a5941c2d0af5a35
@@ -77,17 +77,17 @@ spec:
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
     service:
-      app:
+      gatus:
         controller: *app
         ports:
           http:
             port: *port
     serviceMonitor:
-      app:
+      gatus:
         endpoints:
           - port: http
     route:
-      app:
+      gatus:
         annotations:
           gatus.home-operations.com/enabled: "false"
           gethomepage.dev/enabled: "true"
