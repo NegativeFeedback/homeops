@@ -46,3 +46,29 @@ ui:
 
 web:
   port: ${GATUS_WEB_PORT}
+
+alerting:
+  ntfy:
+    url: "https://alerts.gddnet.io
+    topic: ${GATUS_NTFY_TOPIC}
+    token: ${GATUS_NTFY_TOKEN}
+    priority: 5 # Optional, adjust as needed
+    default-alert:
+      description: "health check failed"
+      failure-threshold: 3
+      send-on-resolved: true
+  discord:
+    webhook-url: ${GATUS_DISCORD_WEBHOOK}
+    default-alert:
+      description: "health check failed"
+      send-on-resolved: true
+      failure-threshold: 5
+      success-threshold: 5
+  github:
+    repository-url: "https://github.com/NegativeFeedback/homeops"
+    token: ${GATUS_GITHUB_TOKEN}
+    default-alert:
+      description: "health check failed"
+      send-on-resolved: true
+      failure-threshold: 5
+      success-threshold: 5
