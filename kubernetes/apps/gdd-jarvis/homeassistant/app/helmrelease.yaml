@@ -85,6 +85,8 @@ spec:
           gatus.home-operations.com/enabled: "true"
           gatus.home-operations.com/endpoint: |-
             group: Home
+            depends-on:
+              - CFtunnel
             conditions: ["[STATUS] == 200"]
             alerts:
               - type: ntfy

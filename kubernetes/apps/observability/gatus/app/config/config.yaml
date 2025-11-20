@@ -19,12 +19,21 @@ endpoints:
     conditions:
       - "[CONNECTED] == true"
 
-  - name: Quad9
+  - name: CFtunnel
     group: connectivity
-    url: icmp://9.9.9.9
+    url: https://external.gddnet.io
     interval: 1m
     conditions:
+      - "[STATUS] == 404"
+
+  - name: Chat
+    group: work
+    url: https://chat.securitylab.io
+    interval: 1m
+    conditions:
+      - "[STATUS] == 200"
       - "[CONNECTED] == true"
+      - "[CERTIFICATE_EXPIRATION] > 168h"
 
 metrics: true
 
