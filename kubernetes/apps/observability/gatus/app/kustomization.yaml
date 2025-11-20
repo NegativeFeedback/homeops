@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - ./helmrelease.yaml
   - ./prometheusrule.yaml
+  - ./externalsecret.yaml
 configMapGenerator:
   - name: gatus-configmap
     files:
