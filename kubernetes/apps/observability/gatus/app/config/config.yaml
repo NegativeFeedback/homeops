@@ -54,13 +54,13 @@ alerting:
     token: ${GATUS_NTFY_TOKEN}
     priority: 5 # Optional, adjust as needed
     default-alert:
-      description: "🚨 Gatus Alert: {{ .Name }} has failed its health check"
+      description: "🚨 Gatus Alert: {{ .Release.Name }} has failed its health check"
       failure-threshold: 3
       send-on-resolved: true
   discord:
     webhook-url: ${GATUS_DISCORD_WEBHOOK}
     default-alert:
-      description: "health check failed"
+      description: "🚨 Gatus Alert: {{ .Release.Name }} has failed its health check"
       send-on-resolved: true
       failure-threshold: 5
       success-threshold: 5
@@ -68,7 +68,7 @@ alerting:
     repository-url: "https://github.com/NegativeFeedback/homeops"
     token: ${GATUS_GITHUB_TOKEN}
     default-alert:
-      description: "health check failed"
+      description: "🚨 Gatus Alert: {{ .Release.Name }} has failed its health check"
       send-on-resolved: true
       failure-threshold: 5
       success-threshold: 5
