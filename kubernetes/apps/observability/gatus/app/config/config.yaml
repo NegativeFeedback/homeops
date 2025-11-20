@@ -54,7 +54,7 @@ alerting:
     token: ${GATUS_NTFY_TOKEN}
     priority: 5 # Optional, adjust as needed
     default-alert:
-      description: "health check failed"
+      description: "🚨 Gatus Alert: {{ .Name }} has failed its health check"
       failure-threshold: 3
       send-on-resolved: true
   discord:

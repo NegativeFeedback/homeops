@@ -86,6 +86,11 @@ spec:
           gatus.home-operations.com/endpoint: |-
             group: Home
             conditions: ["[STATUS] == 200"]
+            alerts:
+              - type: ntfy
+              - type: discord
+              - type: github
+
         hostnames: ["jarvis.${SECRET_DOMAIN}"]
         parentRefs:
           - name: external
