@@ -97,6 +97,23 @@ spec:
           - port: http
     route:
       app:
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/description: Table Top Gaming
+          gethomepage.dev/group: Service
+          gethomepage.dev/icon: sh-foundary.svg
+          gethomepage.dev/name: DND
+          gethomepage.dev/app: foundryvtt
+          gatus.home-operations.com/enabled: "true"
+          gatus.home-operations.com/endpoint: |-
+            group: Service
+            depends-on:
+              - CFtunnel
+            conditions: ["[STATUS] == 200"]
+            alerts:
+              - type: ntfy
+              - type: discord
+              - type: github
         hostnames: ["dnd.${SECRET_DOMAIN}"]
         parentRefs:
           - name: external
