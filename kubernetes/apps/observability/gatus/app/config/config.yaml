@@ -49,7 +49,7 @@ web:
 
 alerting:
   ntfy:
-    url: "https://alerts.gddnet.io
+    url: "https://alerts.gddnet.io"
     topic: ${GATUS_NTFY_TOPIC}
     token: ${GATUS_NTFY_TOKEN}
     priority: 5 # Optional, adjust as needed
