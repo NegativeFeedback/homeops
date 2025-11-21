@@ -151,9 +151,7 @@ metadata:
     gethomepage.dev/name: Paperless
     gethomepage.dev/icon: paperless.png
     gethomepage.dev/group: Service
-    gethomepage.dev/app: paperless
     gethomepage.dev/description: paperless
-    gethomepage.dev/namespace: gdd-service
 
 spec:
   hostnames:

@@ -12,35 +12,16 @@ data:
   docker.yaml: ""
   kubernetes.yaml: |
     gateway: true
-    ingress: true
     mode: cluster
   services.yaml: |
     - Infrastructure:
         - UniFi:
             href: https://unifi.ui.com/
             icon: unifi-controller.png
-    - Observability:
-        - Prometheus (storage):
-            href: https://prometheus.storage.gddnet.io
-            icon: prometheus.png
 
-    - Storage:
-        - Backrest:
-            href: https://backrest.gddnet.io
-            icon: sh-backrest.png
-        - Filebrowser:
-            href: https://filebrowser.gddnet.io
-            icon: filebrowser.png
-        - Minio:
-            href: https://minio.gddnet.io
-            icon: minio.png
-    - Tools:
-        - Zot Registry:
-            href: https://registry.gddnet.io
-            icon: https://zotregistry.dev/v2.0.4/assets/images/logo.svg
   settings.yaml: |
     background:
-      image: https://static.gddnet.io/img/wooden-floor.jpg
+      image: https://ibb.co/mHVM4vT
       opacity: 25
     color: stone
     fiveColumns: false
@@ -69,6 +50,6 @@ data:
         columns: 3
     showStats: false
     statusStyle: dot
-    target: _self
+    target: _blank
     title: Home
   widgets.yaml: ""
