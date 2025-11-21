@@ -127,7 +127,7 @@ spec:
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Service
           gethomepage.dev/name: Tandoor
-          gethomepage.dev/icon: tandoor.svg
+          gethomepage.dev/icon: sh-tandoor-recipes.svg
           gethomepage.dev/description: "🔑 SSO | Recipe and Meal planning"
           gethomepage.dev/widget.type: tandoor
           gethomepage.dev/widget.url: "http://tandoor.gdd-service.svc"
