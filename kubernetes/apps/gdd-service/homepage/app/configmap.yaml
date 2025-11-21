@@ -37,21 +37,24 @@ data:
     hideVersion: true
     iconStyle: theme
     layout:
+      Service:
+        style: column
+      Automation:
+        style: row
+        columns: 3
+      Media:
+        style: row
+        columns: 3
       Infrastructure:
         style: row
         columns: 3
       Observability:
         style: row
         columns: 3
-      Automation:
-        style: column
       Storage:
         style: column
       Tools:
         style: column
-      Media:
-        style: row
-        columns: 3
       Quick Links:
         style: row
         columns: 3
