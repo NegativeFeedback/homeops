@@ -11,7 +11,7 @@ metadata:
     gethomepage.dev/app: authentik
     gethomepage.dev/description: OIDC User Management
     gethomepage.dev/widget.type: authentik
-    gethomepage.dev/widget.url: http://authentik-server.gdd-security
+    gethomepage.dev/widget.url: https://sso.gddnet.io
     gethomepage.dev/widget.key: "{{HOMEPAGE_VAR_AUTHENTIK_TOKEN}}"
     hajimari.io/icon: simple-icons:authentik
 spec:
@@ -39,7 +39,6 @@ metadata:
     gethomepage.dev/name: Sonarr
     gethomepage.dev/icon: sonarr.png
     gethomepage.dev/group: Media
-    gethomepage.dev/app: sonarr
     gethomepage.dev/description: Sonarr
     hajimari.io/icon: simple-icons:sonarr
 spec:
@@ -67,7 +66,6 @@ metadata:
     gethomepage.dev/name: Radarr
     gethomepage.dev/icon: radarr.png
     gethomepage.dev/group: Media
-    gethomepage.dev/app: radarr
     gethomepage.dev/description: Radarr
     hajimari.io/icon: simple-icons:radarr
 spec:
@@ -95,9 +93,7 @@ metadata:
     gethomepage.dev/name: Prowlarr
     gethomepage.dev/icon: prowlarr.png
     gethomepage.dev/group: Media
-    gethomepage.dev/app: prowlarr
     gethomepage.dev/description: Prowlarr
-    hajimari.io/icon: simple-icons:radarr
 spec:
   hostnames:
     - prowlarr.gddnet.io
@@ -123,7 +119,6 @@ metadata:
     gethomepage.dev/name: Ceph
     gethomepage.dev/icon: ceph.png
     gethomepage.dev/group: Infrastructure
-    gethomepage.dev/app: ceph
     gethomepage.dev/description: Ceph
     hajimari.io/icon: simple-icons:ceph
 spec:
