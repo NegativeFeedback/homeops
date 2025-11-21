@@ -74,12 +74,16 @@ spec:
           gethomepage.dev/group: Media
           gethomepage.dev/name: Prowlarr
           gethomepage.dev/icon: prowlarr.svg
+          gethomepage.dev/description: "🔑 SSO Proxy | Media downloader"
           gethomepage.dev/widget.type: prowlarr
           gethomepage.dev/widget.url: "http://prowlarr.gdd-plex.svc"
           gethomepage.dev/widget.key: "{{ \"{{HOMEPAGE_VAR_prowlarr_API_KEY}}\" }}"
           gatus.home-operations.com/enabled: "true"
           gatus.home-operations.com/endpoint: |-
             group: Media
+            depends-on:
+              - connectivity_cftunnel
+              - security_authentik
             url: "http://prowlarr.gdd-plex.svc"
             conditions: ["[STATUS] == 200"]
             alerts:
