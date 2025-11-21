@@ -13,6 +13,7 @@ metadata:
     gethomepage.dev/widget.type: authentik
     gethomepage.dev/widget.url: https://sso.gddnet.io
     gethomepage.dev/widget.key: "{{HOMEPAGE_VAR_AUTHENTIK_TOKEN}}"
+    gethomepage.dev/widget.version: 2
     hajimari.io/icon: simple-icons:authentik
 spec:
   hostnames:
