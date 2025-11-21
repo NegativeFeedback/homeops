@@ -98,8 +98,7 @@ spec:
           gatus.home-operations.com/url: "http://radarr.gdd-plex.svc"
           gatus.home-operations.com/endpoint: |-
             group: Media
-            type: http
-            url: "radarr.gdd-plex.svc"
+            url: "http://radarr.gdd-plex.svc"
             conditions: ["[STATUS] == 200"]
             alerts:
               - type: ntfy

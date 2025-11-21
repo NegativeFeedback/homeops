@@ -78,9 +78,9 @@ spec:
           gethomepage.dev/widget.url: "http://prowlarr.gdd-plex.svc"
           gethomepage.dev/widget.key: "{{ \"{{HOMEPAGE_VAR_prowlarr_API_KEY}}\" }}"
           gatus.home-operations.com/enabled: "true"
-          gatus.home-operations.com/url: "http://prowlarr.gdd-plex.svc"
           gatus.home-operations.com/endpoint: |-
             group: Media
+            url: "http://prowlarr.gdd-plex.svc"
             conditions: ["[STATUS] == 200"]
             alerts:
               - type: ntfy
