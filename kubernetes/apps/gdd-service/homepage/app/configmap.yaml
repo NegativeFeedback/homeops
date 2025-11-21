@@ -13,6 +13,8 @@ data:
   kubernetes.yaml: |
     gateway: true
     mode: cluster
+    serviceMetrics:
+      enabled: false
   services.yaml: |
     - Infrastructure:
         - UniFi:
@@ -24,11 +26,6 @@ data:
             icon: authentik.png
             group: Infrastructure
             description: OIDC User Management
-            widget:
-              type: authentik
-              url: https://sso.gddnet.io
-              key: ${HOMEPAGE_VAR_AUTHENTIK_TOKEN}
-              version: 2
 
   settings.yaml: |
     background:
