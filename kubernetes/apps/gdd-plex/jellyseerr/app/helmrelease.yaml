@@ -80,7 +80,7 @@ spec:
           gethomepage.dev/group: Media
           gethomepage.dev/name: Jellyseerr
           gethomepage.dev/icon: jellyseerr.svg
-          gethomepage.dev/description: "Media Requester"
+          gethomepage.dev/description: "🔑 SSO Proxy|🙍🏻‍♂️ User access| Media Requester"
           gethomepage.dev/widget.type: jellyseerr
           gethomepage.dev/widget.url: "http://jellyseerr.gdd-plex.svc"
           gethomepage.dev/widget.key: "{{`{{HOMEPAGE_VAR_JELLYSEERR_TOKEN}}`}}"

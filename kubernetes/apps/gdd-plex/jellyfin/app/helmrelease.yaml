@@ -77,7 +77,7 @@ spec:
           gethomepage.dev/group: Media
           gethomepage.dev/name: Jellyfin
           gethomepage.dev/icon: jellyfin.svg
-          gethomepage.dev/description: "🔑 SSO Proxy | Media Streaming"
+          gethomepage.dev/description: "🔑 SSO Proxy|🙍🏻‍♂️ User access| Media Streaming"
           gethomepage.dev/widget.type: jellyfin
           gethomepage.dev/widget.url: "http://jellyfin.gdd-plex.svc"
           gethomepage.dev/widget.key: "{{`{{HOMEPAGE_VAR_JELLYFIN_TOKEN}}`}}"

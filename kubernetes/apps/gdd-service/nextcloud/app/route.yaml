@@ -7,8 +7,19 @@ metadata:
   annotations:
     gethomepage.dev/enabled: "true"
     gethomepage.dev/group: Service
-    gethomepage.dev/icon: nextcloud.png
     gethomepage.dev/name: Nextcloud
+    gethomepage.dev/icon: sh-nextcloud.svg
+    gethomepage.dev/description: "🔑 SSO|🙍🏻‍♂️ User access| File upload and colab"
+    gatus.home-operations.com/enabled: "true"
+    gatus.home-operations.com/endpoint: |-
+      group: Service
+      depends-on:
+        - CFtunnel
+      conditions: ["[STATUS] == 200"]
+      alerts:
+        - type: ntfy
+        - type: discord
+        - type: github
 spec:
   parentRefs:
     - name: external
