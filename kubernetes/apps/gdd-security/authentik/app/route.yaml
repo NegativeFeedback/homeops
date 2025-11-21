@@ -153,7 +153,8 @@ metadata:
     gethomepage.dev/group: Service
     gethomepage.dev/app: paperless
     gethomepage.dev/description: paperless
-    hajimari.io/icon: simple-icons:ceph
+    gethomepage.dev/namespace: gdd-service
+
 spec:
   hostnames:
     - paperless.gddnet.io
