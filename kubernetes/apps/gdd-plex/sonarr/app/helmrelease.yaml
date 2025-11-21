@@ -93,6 +93,7 @@ spec:
           gethomepage.dev/widget.type: sonarr
           gethomepage.dev/widget.url: "http://sonarr.gdd-plex.svc"
           gethomepage.dev/widget.key: "{{ \"{{HOMEPAGE_VAR_sonarr_API_KEY}}\" }}"
+          gethomepage.dev/pod-selector: "none"
           gatus.home-operations.com/enabled: "true"
           gatus.home-operations.com/url: "http://sonarr.gdd-plex.svc"
           gatus.home-operations.com/endpoint: |-
