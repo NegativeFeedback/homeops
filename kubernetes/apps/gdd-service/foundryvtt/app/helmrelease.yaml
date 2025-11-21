@@ -101,7 +101,7 @@ spec:
           gethomepage.dev/enabled: "true"
           gethomepage.dev/description: Table Top Gaming
           gethomepage.dev/group: Service
-          gethomepage.dev/icon: sh-foundary.svg
+          gethomepage.dev/icon: sh-foundry-virtual-tabletop.png
           gethomepage.dev/name: DND
           gethomepage.dev/app: foundryvtt
           gatus.home-operations.com/enabled: "true"
