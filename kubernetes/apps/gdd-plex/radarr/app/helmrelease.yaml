@@ -82,25 +82,41 @@ spec:
       app:
         endpoints:
           - port: http
+
     route:
       app:
-        hostnames: ["radarr.int.${SECRET_DOMAIN}"]
+        hostnames: ["radarr.${SECRET_DOMAIN}"]
         annotations:
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Media
-          gethomepage.dev/name: radarr
+          gethomepage.dev/name: Radarr
           gethomepage.dev/icon: radarr.svg
           gethomepage.dev/widget.type: radarr
           gethomepage.dev/widget.url: "http://radarr.gdd-plex.svc"
-          gethomepage.dev/widget.key: "{{ \"{{HOMEPAGE_VAR_RADARR_API_KEY}}\" }}"
+          gethomepage.dev/widget.key: "{{ \"{{HOMEPAGE_VAR_radarr_API_KEY}}\" }}"
+          gatus.home-operations.com/enabled: "true"
+          gatus.home-operations.com/url: "http://radarr.gdd-plex.svc"
+          gatus.home-operations.com/endpoint: |-
+            group: Media
+            conditions: ["[STATUS] == 200"]
+            alerts:
+              - type: ntfy
+              - type: discord
+              - type: github
         parentRefs:
-          - name: internal
+          - name: external
             namespace: kube-system
             sectionName: https
         rules:
           - backendRefs:
-              - identifier: app
-                port: *port
+              - name: authentik-server
+                namespace: gdd-security
+                port: 80
+            matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+
     persistence:
       config:
         type: persistentVolumeClaim
