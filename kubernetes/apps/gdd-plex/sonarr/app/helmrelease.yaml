@@ -84,7 +84,7 @@ spec:
           - port: http
     route:
       app:
-        hostnames: ["sonarr.int.${SECRET_DOMAIN}"]
+        hostnames: ["sonarr.${SECRET_DOMAIN}"]
         annotations:
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Media
@@ -93,14 +93,29 @@ spec:
           gethomepage.dev/widget.type: sonarr
           gethomepage.dev/widget.url: "http://sonarr.gdd-plex.svc"
           gethomepage.dev/widget.key: "{{ \"{{HOMEPAGE_VAR_sonarr_API_KEY}}\" }}"
+          gatus.home-operations.com/enabled: "true"
+          gatus.home-operations.com/endpoint: |-
+            group: Media
+            target: http://sonarr.gdd-plex.svc
+            conditions: ["[STATUS] == 200"]
+            alerts:
+              - type: ntfy
+              - type: discord
+              - type: github
         parentRefs:
-          - name: internal
+          - name: external
             namespace: kube-system
             sectionName: https
         rules:
           - backendRefs:
-              - identifier: app
-                port: *port
+              - name: authentik-server
+                namespace: gdd-security
+                port: 80
+            matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+
     persistence:
       config:
         type: persistentVolumeClaim
