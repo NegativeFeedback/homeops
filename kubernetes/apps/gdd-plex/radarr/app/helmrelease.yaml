@@ -91,6 +91,7 @@ spec:
           gethomepage.dev/group: Media
           gethomepage.dev/name: Radarr
           gethomepage.dev/icon: radarr.svg
+          gethomepage.dev/description: "🔑 SSO Proxy | Media downloader"
           gethomepage.dev/widget.type: radarr
           gethomepage.dev/widget.url: "http://radarr.gdd-plex.svc"
           gethomepage.dev/widget.key: "{{ \"{{HOMEPAGE_VAR_radarr_API_KEY}}\" }}"
@@ -98,6 +99,9 @@ spec:
           gatus.home-operations.com/url: "http://radarr.gdd-plex.svc"
           gatus.home-operations.com/endpoint: |-
             group: Media
+            depends-on:
+              - connectivity_cftunnel
+              - security_authentik
             url: "http://radarr.gdd-plex.svc"
             conditions: ["[STATUS] == 200"]
             alerts:
