@@ -75,6 +75,26 @@ spec:
           - port: http
     route:
       app:
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Media
+          gethomepage.dev/name: Jellyseerr
+          gethomepage.dev/icon: jellyseerr.svg
+          gethomepage.dev/description: "Media Requester"
+          gethomepage.dev/widget.type: jellyseerr
+          gethomepage.dev/widget.url: "http://jellyseerr.gdd-plex.svc"
+          gethomepage.dev/widget.key: "{{`{{HOMEPAGE_VAR_JELLYSEERR_TOKEN}}`}}"
+          gatus.home-operations.com/enabled: "true"
+          gatus.home-operations.com/endpoint: |-
+            group: Media
+            depends-on:
+              - connectivity_cftunnel
+              - security_authentik
+            conditions: ["[STATUS] == 200"]
+            alerts:
+              - type: ntfy
+              - type: discord
+              - type: github
         hostnames: ["requests.${SECRET_DOMAIN}"]
         parentRefs:
           - name: external

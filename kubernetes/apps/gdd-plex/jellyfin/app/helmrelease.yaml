@@ -72,6 +72,26 @@ spec:
           - port: http
     route:
       app:
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Media
+          gethomepage.dev/name: Jellyfin
+          gethomepage.dev/icon: jellyfin.svg
+          gethomepage.dev/description: "🔑 SSO Proxy | Media Streaming"
+          gethomepage.dev/widget.type: jellyfin
+          gethomepage.dev/widget.url: "http://jellyfin.gdd-plex.svc"
+          gethomepage.dev/widget.key: "{{`{{HOMEPAGE_VAR_JELLYFIN_TOKEN}}`}}"
+          gatus.home-operations.com/enabled: "true"
+          gatus.home-operations.com/endpoint: |-
+            group: Media
+            depends-on:
+              - connectivity_cftunnel
+              - security_authentik
+            conditions: ["[STATUS] == 200"]
+            alerts:
+              - type: ntfy
+              - type: discord
+              - type: github
         hostnames: ["jelly.${SECRET_DOMAIN}"]
         parentRefs:
           - name: external
