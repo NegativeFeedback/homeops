@@ -13,8 +13,7 @@ data:
   kubernetes.yaml: |
     gateway: true
     mode: cluster
-    serviceMetrics:
-      enabled: false
+
   services.yaml: |
     - Infrastructure:
         - UniFi:
