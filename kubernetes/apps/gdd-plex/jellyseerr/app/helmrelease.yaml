@@ -82,7 +82,7 @@ spec:
           gethomepage.dev/icon: jellyseerr.svg
           gethomepage.dev/description: "🔑 SSO Proxy|🙍🏻‍♂️ User access| Media Requester"
           gethomepage.dev/widget.type: jellyseerr
-          gethomepage.dev/widget.url: "http://jellyseerr.gdd-plex.svc"
+          gethomepage.dev/widget.url: "https://requests.gddnet.io"
           gethomepage.dev/widget.key: "{{`{{HOMEPAGE_VAR_JELLYSEERR_TOKEN}}`}}"
           gatus.home-operations.com/enabled: "true"
           gatus.home-operations.com/endpoint: |-
