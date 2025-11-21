@@ -52,9 +52,23 @@ spec:
         hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
         annotations:
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/icon: si-jellyfin
-          gethomepage.dev/name: Jellyfin Stats
           gethomepage.dev/group: Media
+          gethomepage.dev/name: Jellystat
+          gethomepage.dev/icon: jellystat.svg
+          gethomepage.dev/description: "Media stats"
+          gethomepage.dev/widget.type: jellystat
+          gethomepage.dev/widget.url: "http://jellystat.gdd-plex.svc"
+          gethomepage.dev/widget.key: "{{`{{HOMEPAGE_VAR_JELLYSTAT_TOKEN}}`}}"
+          gatus.home-operations.com/enabled: "true"
+          gatus.home-operations.com/endpoint: |-
+            group: Media
+            depends-on:
+              - connectivity_cftunnel
+            conditions: ["[STATUS] == 200"]
+            alerts:
+              - type: ntfy
+              - type: discord
+              - type: github
         parentRefs:
           - name: external
             namespace: kube-system
