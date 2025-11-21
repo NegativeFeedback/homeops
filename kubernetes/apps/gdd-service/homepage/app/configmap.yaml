@@ -18,6 +18,17 @@ data:
         - UniFi:
             href: https://unifi.ui.com/
             icon: unifi-controller.png
+    - Security:
+        - Authentik:
+            href: https://sso.gddnet.io/
+            icon: authentik.png
+            group: Infrastructure
+            description: OIDC User Management
+            widget:
+              type: authentik
+              url: https://sso.gddnet.io
+              key: ${HOMEPAGE_VAR_AUTHENTIK_TOKEN}
+              version: 2
 
   settings.yaml: |
     background:
