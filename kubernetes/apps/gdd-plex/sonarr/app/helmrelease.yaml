@@ -122,10 +122,8 @@ spec:
 
     persistence:
       config:
-        type: persistentVolumeClaim
-        storageClass: ceph-block
-        accessMode: ReadWriteOnce
-        size: 4Gi
+        enabled: true
+        existingClaim: *app
       tmp:
         type: emptyDir
       media:
