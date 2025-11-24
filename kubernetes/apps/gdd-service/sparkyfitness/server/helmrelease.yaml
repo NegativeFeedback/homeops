@@ -46,7 +46,7 @@ spec:
 
             envFrom:
               - secretRef:
-                  name: sparkyfitness
+                  name: sparky-secret
             resources:
               requests:
                 cpu: 10m
