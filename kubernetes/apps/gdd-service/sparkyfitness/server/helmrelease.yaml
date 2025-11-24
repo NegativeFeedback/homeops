@@ -39,7 +39,7 @@ spec:
               SPARKY_FITNESS_SERVER_PORT: "3010"
               SPARKY_FITNESS_FORCE_EMAIL_LOGIN: "true"
               NODE_ENV: "production"
-              SPARKY_FITNESS_FRONTEND_URL: "https://fitness.gddnet.io"
+              SPARKY_FITNESS_FRONTEND_URL: fitness.gddnet.io
 
               #SPARKY_FITNESS_ADMIN_EMAIL: ${SPARKY_FITNESS_ADMIN_EMAIL}  #User with this email can access the admin panel
               #GARMIN_MICROSERVICE_URL: http://sparkyfitness-garmin:8000 # Add Garmin microservice URL
@@ -59,23 +59,3 @@ spec:
         ports:
           http:
             port: &port 3010
-
-
-    route:
-      app:
-        annotations:
-          gethomepage.dev/enabled: "true"
-          gethomepage.dev/group: Service
-          gethomepage.dev/name: Sparky Fitness
-          gethomepage.dev/icon: sparkyfitness.svg
-        hostnames:
-          - "fitness.gddnet.io"
-        parentRefs:
-          - name: external
-            namespace: kube-system
-            sectionName: https
-        rules:
-          - backendRefs:
-              - identifier: main
-                port: *port
-
