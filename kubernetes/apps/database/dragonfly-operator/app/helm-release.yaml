@@ -82,6 +82,8 @@ spec:
         ports:
           http:
             port: *port
+          metrics:
+            port: 8080
 
     serviceMonitor:
       app:
@@ -92,4 +94,5 @@ spec:
             path: /metrics
             interval: 1m
             scrapeTimeout: 10s
+    serviceAccount:
       dragonfly-operator: {}
