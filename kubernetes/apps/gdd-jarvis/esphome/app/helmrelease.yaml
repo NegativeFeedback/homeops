@@ -112,12 +112,10 @@ spec:
             app:
               - path: /cache
                 subPath: cache
+              - path: /config/.esphome
+                subPath: cache
             code-server:
               - path: /tmp
                 subPath: code-server-tmp
               - path: /nonexistent
                 subPath: nonexistent
-            esphome-cache:
-              type: emptyDir
-              globalMounts:
-                - path: /config/.esphome
