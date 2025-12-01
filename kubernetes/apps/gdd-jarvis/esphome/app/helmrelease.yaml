@@ -117,3 +117,7 @@ spec:
                 subPath: code-server-tmp
               - path: /nonexistent
                 subPath: nonexistent
+            esphome-cache:
+              type: emptyDir
+              globalMounts:
+                - path: /config/.esphome
