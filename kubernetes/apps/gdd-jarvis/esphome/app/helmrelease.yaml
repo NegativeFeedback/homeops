@@ -112,6 +112,8 @@ spec:
             app:
               - path: /cache
                 subPath: cache
+              - path: /tmp
+                subPath: tmp
               - path: /config/.esphome
                 subPath: cache
             code-server:
