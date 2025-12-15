@@ -1,0 +1,10 @@
+AUTHENTICATION_SOURCES = ['oauth2', 'internal']
+OAUTH2_AUTO_CREATE_USER = True
+OAUTH2_CONFIG = [{
+    'OAUTH2_NAME': 'authentik',
+    'OAUTH2_DISPLAY_NAME': 'Login with authentik',
+    'OAUTH2_CLIENT_ID': 'REPLACED_BY_SECRET',
+    'OAUTH2_CLIENT_SECRET': 'REPLACED_BY_SECRET',
+    'OAUTH2_SCOPE': 'openid email profile'
+}]
+MASTER_PASSWORD_REQUIRED = True
