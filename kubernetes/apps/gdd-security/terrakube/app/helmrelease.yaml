@@ -84,6 +84,9 @@ spec:
         domain: "terra.gddnet.io"
       properties:
         apiUrl: "/api"
+        registryUri: "/registry"
+        redirectUri: "https://terra.gddnet.io"
+        authority: "https://terra.gddnet.io/dex"
       api:
         enabled: true
         domain: "terra.gddnet.io"
@@ -160,3 +163,8 @@ spec:
       enabled: true
       replicaCount: "1"
       serviceType: ClusterIP
+      properties:
+        apiUrl: "/api"
+        registryUri: "/registry"
+        redirectUri: "https://terra.gddnet.io"
+        authority: "https://terra.gddnet.io/dex"
