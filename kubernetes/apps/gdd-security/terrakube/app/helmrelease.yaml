@@ -82,11 +82,7 @@ spec:
       ui:
         enabled: true
         domain: "terra.gddnet.io"
-      properties:
-        apiUrl: "/api"
-        registryUri: "/registry"
-        redirectUri: "https://terra.gddnet.io"
-        authority: "https://terra.gddnet.io/dex"
+
       api:
         enabled: true
         domain: "terra.gddnet.io"
@@ -125,7 +121,6 @@ spec:
             public: true
             redirectURIs:
               - "https://terra.gddnet.io"
-              - "http://terra.gddnet.io"
               - "http://localhost:10001/login"
               - "http://localhost:10000/login"
               - "/device/callback"
@@ -164,7 +159,7 @@ spec:
       replicaCount: "1"
       serviceType: ClusterIP
       properties:
-        apiUrl: "/api"
+        apiUrl: "/api/v1/"
         registryUri: "/registry"
         redirectUri: "https://terra.gddnet.io"
         authority: "https://terra.gddnet.io/dex"
