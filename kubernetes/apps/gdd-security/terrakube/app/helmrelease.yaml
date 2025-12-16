@@ -82,6 +82,8 @@ spec:
       ui:
         enabled: true
         domain: "terra.gddnet.io"
+      properties:
+        apiUrl: "https://terra.gddnet.io/api"
       api:
         enabled: true
         domain: "terra.gddnet.io"
