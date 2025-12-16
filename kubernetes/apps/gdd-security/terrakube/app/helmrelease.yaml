@@ -1,0 +1,150 @@
+
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app terrakube
+  namespace: terrakube
+spec:
+  interval: 1h
+
+  chart:
+    spec:
+      chart: terrakube
+      version: "4.5.1"
+      sourceRef:
+        kind: HelmRepository
+        name: terrakube
+        namespace: flux-system
+
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+
+  valuesFrom:
+    - kind: Secret
+      name: terrakube-secrets
+      valuesKey: TERRAKUBE_PAT
+      targetPath: security.patSecret
+    - kind: Secret
+      name: terrakube-secrets
+      valuesKey: TERRAKUBE_INTERNAL
+      targetPath: security.internalSecret
+    - kind: Secret
+      name: terrakube-secrets
+      valuesKey: TERRAKUBE_OIDC_CLIENT_SECRET
+      targetPath: dex.config.connectors[0].config.clientSecret
+    - kind: Secret
+      name: terrakube-secrets
+      valuesKey: TERRAKUBE_OIDC_CLIENT_ID
+      targetPath: dex.config.connectors[0].config.clientId
+
+
+
+    - kind: Secret
+      name: terrakube-bucket
+      valuesKey: AWS_ACCESS_KEY_ID
+      targetPath: storage.minio.accessKey
+    - kind: Secret
+      name: terrakube-bucket
+      valuesKey: AWS_SECRET_ACCESS_KEY
+      targetPath: storage.minio.secretKey
+    - kind: ConfigMap
+      name: terrakube-bucket
+      valuesKey: BUCKET_NAME
+      targetPath: storage.minio.bucketName
+
+  values:
+    name: *app
+
+    security:
+      adminGroup: "TERRAKUBE_ADMIN"
+      useOpenLDAP: false
+      dexClientId: "terrakube-ui"
+      dexClientScope: "email openid profile offline_access groups"
+
+    ingress:
+      controller: "gatewayapi"
+      gatewayapi:
+        gateways:
+          - name: external
+            namespace: kube-system
+      ui:
+        enabled: true
+        domain: "terra.gddnet.io"
+      api:
+        enabled: true
+        domain: "terra.gddnet.io"
+      registry:
+        enabled: true
+        domain: "terra.gddnet.io"
+      executor:
+        enabled: false
+      dex:
+        enabled: true
+        path: "/dex"
+        pathType: "Prefix"
+
+    dex:
+      enabled: true
+      config:
+        issuer: "https://terra.gddnet.io/dex"
+        storage:
+          type: kubernetes
+          config:
+            inCluster: true
+        web:
+          http: 0.0.0.0:5556
+          allowedOrigins: ["*"]
+          skipApprovalScreen: true
+        oauth2:
+          responseTypes: ["code", "token", "id_token"]
+
+        staticClients:
+          - id: terrakube-ui
+            name: terrakube-ui
+            public: true
+            redirectURIs:
+              - "https://terra.gddnet.io"
+              - "http://localhost:10001/login"
+              - "http://localhost:10000/login"
+              - "/device/callback"
+
+        connectors:
+          - type: oidc
+            id: authentik
+            name: authentik
+            config:
+              issuer: "https://sso.gddnet.io/application/o/terrakube/"
+              redirectURI: "https://terra.gddnet.io/dex/callback"
+              insecureEnableGroups: true
+
+    storage:
+      defaultStorage: false
+      minio:
+        endpoint: "http://rook-ceph-rgw-ceph-objectstore.rook-ceph.svc:80"
+
+    api:
+      enabled: true
+      replicaCount: 1
+      serviceType: ClusterIP
+
+    executor:
+      enabled: true
+      replicaCount: 1
+      serviceType: ClusterIP
+
+    registry:
+      enabled: true
+      replicaCount: 1
+      serviceType: ClusterIP
+
+    ui:
+      enabled: true
+      replicaCount: 1
+      serviceType: ClusterIP
