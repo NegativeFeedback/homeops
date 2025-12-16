@@ -47,7 +47,7 @@ spec:
     - kind: Secret
       name: terrakube-secret
       valuesKey: TERRAKUBE_OIDC_CLIENT_ID
-      targetPath: dex.config.connectors[0].config.clientId
+      targetPath: dex.config.connectors[0].config.clientID
 
 
 
