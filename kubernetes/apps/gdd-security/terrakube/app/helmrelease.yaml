@@ -136,20 +136,20 @@ spec:
 
     api:
       enabled: true
-      replicaCount: 1
+      replicaCount: "1"
       serviceType: ClusterIP
 
     executor:
       enabled: true
-      replicaCount: 1
+      replicaCount: "1"
       serviceType: ClusterIP
 
     registry:
       enabled: true
-      replicaCount: 1
+      replicaCount: "1"
       serviceType: ClusterIP
 
     ui:
       enabled: true
-      replicaCount: 1
+      replicaCount: "1"
       serviceType: ClusterIP
