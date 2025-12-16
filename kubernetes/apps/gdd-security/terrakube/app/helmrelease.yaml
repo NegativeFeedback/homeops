@@ -151,7 +151,9 @@ spec:
       enabled: true
       replicaCount: "1"
       serviceType: ClusterIP
-
+      properties:
+        toolsRepository: "https://github.com/terrakube-io/terrakube-extensions"
+        toolsBranch: "main"
     registry:
       enabled: true
       replicaCount: "1"
