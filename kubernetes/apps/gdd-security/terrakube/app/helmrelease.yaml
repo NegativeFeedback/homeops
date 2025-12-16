@@ -85,9 +85,13 @@ spec:
       api:
         enabled: true
         domain: "terra.gddnet.io"
+        path: "/api"
+        pathType: "Prefix"
       registry:
         enabled: true
         domain: "terra.gddnet.io"
+        path: "/registry"
+        pathType: "Prefix"
       executor:
         enabled: false
       dex:
