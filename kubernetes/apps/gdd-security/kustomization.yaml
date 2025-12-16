@@ -8,3 +8,4 @@ components:
 resources:
   - ./authentik/ks.yaml
   - ./openbao/ks.yaml
+  - ./terrakube/ks.yaml
