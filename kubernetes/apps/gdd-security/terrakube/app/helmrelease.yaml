@@ -33,19 +33,19 @@ spec:
 
   valuesFrom:
     - kind: Secret
-      name: terrakube-secrets
+      name: terrakube-secret
       valuesKey: TERRAKUBE_PAT
       targetPath: security.patSecret
     - kind: Secret
-      name: terrakube-secrets
+      name: terrakube-secret
       valuesKey: TERRAKUBE_INTERNAL
       targetPath: security.internalSecret
     - kind: Secret
-      name: terrakube-secrets
+      name: terrakube-secret
       valuesKey: TERRAKUBE_OIDC_CLIENT_SECRET
       targetPath: dex.config.connectors[0].config.clientSecret
     - kind: Secret
-      name: terrakube-secrets
+      name: terrakube-secret
       valuesKey: TERRAKUBE_OIDC_CLIENT_ID
       targetPath: dex.config.connectors[0].config.clientId
 
