@@ -74,6 +74,8 @@ spec:
       dexClientScope: "email openid profile offline_access groups"
 
     ingress:
+      useTls: true
+      includeTlsHosts: true
       controller: "gatewayapi"
       gatewayapi:
         gateways:
@@ -163,3 +165,12 @@ spec:
         registryUri: "/registry"
         redirectUri: "https://terra.gddnet.io"
         authority: "https://terra.gddnet.io/dex"
+    extraEnv:
+      - name: REACT_APP_TERRAKUBE_API_URL
+        value: "/api/v1/"
+      - name: REACT_APP_AUTHORITY
+        value: "https://terra.gddnet.io/dex"
+      - name: REACT_APP_REDIRECT_URI
+        value: "https://terra.gddnet.io"
+      - name: REACT_APP_REGISTRY_URI
+        value: "/registry"
