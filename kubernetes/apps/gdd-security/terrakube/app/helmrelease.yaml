@@ -120,6 +120,7 @@ spec:
             public: true
             redirectURIs:
               - "https://terra.gddnet.io"
+              - "http://terra.gddnet.io"
               - "http://localhost:10001/login"
               - "http://localhost:10000/login"
               - "/device/callback"
