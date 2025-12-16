@@ -22,7 +22,6 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: terrakube
-        namespace: flux-system
 
   install:
     remediation:
