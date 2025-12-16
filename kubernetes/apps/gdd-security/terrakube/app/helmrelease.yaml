@@ -146,6 +146,7 @@ spec:
       replicaCount: "1"
       serviceType: ClusterIP
 
+
     executor:
       enabled: true
       replicaCount: "1"
@@ -174,3 +175,11 @@ spec:
         value: "https://terra.gddnet.io"
       - name: REACT_APP_REGISTRY_URI
         value: "/registry"
+      - name: LOGGING_LEVEL_ROOT
+        value: INFO
+      - name: LOGGING_LEVEL_COM_TERRAKUBE
+        value: DEBUG
+      - name: LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB
+        value: DEBUG
+      - name: LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY
+        value: DEBUG
