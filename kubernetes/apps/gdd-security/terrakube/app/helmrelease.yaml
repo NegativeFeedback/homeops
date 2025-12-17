@@ -138,9 +138,6 @@ spec:
       executor:
         enabled: false
 
-    dex:
-      enabled: true
-
       config:
         issuer: "https://terra-dex.gddnet.io"
         storage:
