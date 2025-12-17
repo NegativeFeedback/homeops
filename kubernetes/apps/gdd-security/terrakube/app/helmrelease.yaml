@@ -164,7 +164,7 @@ spec:
       replicaCount: "1"
       serviceType: ClusterIP
       properties:
-        apiUrl: "/api/v1/"
+        apiUrl: "/api/"
         registryUri: "/registry"
         redirectUri: "https://terra.gddnet.io"
         authority: "https://terra.gddnet.io/dex"
