@@ -129,15 +129,15 @@ spec:
         path: "/"
         pathType: "Prefix"
 
-      dex:
-        enabled: true
-        domain: "terra-dex.gddnet.io"
-        path: "/"
-        pathType: "Prefix"
 
       executor:
         enabled: false
 
+    dex:
+      enabled: true
+      domain: "terra-dex.gddnet.io"
+      path: "/"
+      pathType: "Prefix"
       config:
         issuer: "https://terra-dex.gddnet.io"
         storage:
