@@ -9,7 +9,6 @@ spec:
   addresses:
     - type: IPAddress
       value: "10.0.32.14"
-  infrastructure:
   listeners:
     - name: http
       protocol: HTTP
