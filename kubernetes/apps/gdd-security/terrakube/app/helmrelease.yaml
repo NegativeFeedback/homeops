@@ -169,7 +169,12 @@ spec:
               issuer: "https://sso.gddnet.io/application/o/terrakube/"
               redirectURI: "https://terra-dex.gddnet.io/callback"
               insecureEnableGroups: true
-
+              scopes:
+                - openid
+                - profile
+                - email
+                - groups
+              getUserInfo: true
     storage:
       defaultStorage: false
       minio:
