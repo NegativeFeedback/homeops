@@ -69,15 +69,13 @@ spec:
       enabled: true
       replicaCount: "1"
       serviceType: ClusterIP
-      image:
-        tag: "2.28.1"
+
 
     ui:
       enabled: true
       replicaCount: "1"
       serviceType: ClusterIP
-      image:
-        tag: "2.28.1"
+
       properties:
         apiUrl: "https://terra-api.gddnet.io/api/v1/"
         registryUri: "https://terra-registry.gddnet.io"
@@ -88,15 +86,13 @@ spec:
       enabled: true
       replicaCount: "1"
       serviceType: ClusterIP
-      image:
-        tag: "2.28.1"
+
 
     executor:
       enabled: true
       replicaCount: "1"
       serviceType: ClusterIP
-      image:
-        tag: "2.28.1"
+
       properties:
         toolsRepository: "https://github.com/terrakube-io/terrakube-extensions"
         toolsBranch: "main"
