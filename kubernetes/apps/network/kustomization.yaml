@@ -10,3 +10,4 @@ resources:
   - ./cloudflare-tunnel/ks.yaml
   - ./k8s-gateway/ks.yaml
   - ./tailscale-operator/ks.yaml
+  - ./securitylab-tunnel/ks.yaml
