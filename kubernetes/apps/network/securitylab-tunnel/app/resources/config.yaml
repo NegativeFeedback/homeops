@@ -1,16 +1,14 @@
 ---
 originRequest:
-  originServerName: "external.securitylab.io"
+  originServerName: "external.gddnet.io"
+  noTLSVerify: true
 
 ingress:
   - hostname: "securitylab.io"
-    service: &svc http://cilium-gateway-seclabexternal.kube-system.svc.cluster.local
-    originRequest:
-      noTLSVerify: true
+    service: &svc https://cilium-gateway-seclabexternal.kube-system.svc.cluster.local
   - hostname: "*.securitylab.io"
     service: *svc
-    originRequest:
-      noTLSVerify: true
+  - hostname: "newsso.securitylab.io"
+    service: *svc
   - service: http_status:404
-    originRequest:
-      noTLSVerify: true
+
