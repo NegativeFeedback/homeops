@@ -68,3 +68,26 @@ variable "user_claim" {
   type    = string
   default = "email"
 }
+
+variable "sl_domain" {
+  description = "The domain that should activate this tenant/brand (e.g., sl.securitylab.io)."
+  type        = string
+}
+
+variable "sl_title" {
+  description = "Branding title shown in UI (tab title, headers)."
+  type        = string
+  default     = "SecurityLab"
+}
+
+variable "flow_background_url" {
+  description = "Optional background image URL for flows (can also be set per-flow). Leave blank to skip."
+  type        = string
+  default     = ""
+}
+
+variable "default_locale" {
+  description = "Default locale for the tenant/brand."
+  type        = string
+  default     = "en-us"
+}
