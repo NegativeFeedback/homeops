@@ -72,6 +72,7 @@ variable "user_claim" {
 variable "sl_domain" {
   description = "The domain that should activate this tenant/brand (e.g., sl.securitylab.io)."
   type        = string
+  default     = "auth.domain.io"
 }
 
 variable "sl_title" {
