@@ -50,7 +50,6 @@ resource "authentik_stage_password" "enrollment_password" {
 resource "authentik_stage_user_write" "enrollment_user_write" {
   name = "Enrollment - Create/Update User"
   create_users_as_inactive = false
-#  create_users_group       = [sso,jellyfin-tv,jellyfin-movies]
 }
 
 resource "authentik_flow" "invitation_enrollment_flow" {
