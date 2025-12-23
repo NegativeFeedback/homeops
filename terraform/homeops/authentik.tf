@@ -60,25 +60,25 @@ resource "authentik_flow" "invitation_enrollment_flow" {
 }
 
 resource "authentik_flow_stage_binding" "bind_invitation" {
-  target = authentik_flow.invitation_enrollment_flow.id
+  target = authentik_flow.invitation_enrollment_flow.uuid
   stage  = authentik_stage_invitation.enrollment_invitation.id
   order  = 10
 }
 
 resource "authentik_flow_stage_binding" "bind_prompts" {
-  target = authentik_flow.invitation_enrollment_flow.id
+  target = authentik_flow.invitation_enrollment_flow.uuid
   stage  = authentik_stage_prompt.enrollment_prompts.id
   order  = 20
 }
 
 resource "authentik_flow_stage_binding" "bind_password" {
-  target = authentik_flow.invitation_enrollment_flow.id
+  target = authentik_flow.invitation_enrollment_flow.uuid
   stage  = authentik_stage_password.enrollment_password.id
   order  = 30
 }
 
 resource "authentik_flow_stage_binding" "bind_user_write" {
-  target = authentik_flow.invitation_enrollment_flow.id
+  target = authentik_flow.invitation_enrollment_flow.uuid
   stage  = authentik_stage_user_write.enrollment_user_write.id
   order  = 40
 }
