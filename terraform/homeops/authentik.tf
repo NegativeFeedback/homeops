@@ -27,7 +27,14 @@ resource "authentik_stage_prompt_field" "invite_name" {
   placeholder = "Jane Doe"
   order       = 30
 }
-
+resource "authentik_stage_prompt_field" "password" {
+  name        = "Invite Password"
+  field_key = "password"
+  label     = "Password"
+  type      = "password"
+  required  = true
+  order     = 40
+}
 resource "authentik_stage_invitation" "enrollment_invitation" {
   name = "Enrollment - Invitation"
   continue_flow_without_invitation = false
@@ -39,12 +46,8 @@ resource "authentik_stage_prompt" "enrollment_prompts" {
     authentik_stage_prompt_field.invite_email.id,
     authentik_stage_prompt_field.invite_username.id,
     authentik_stage_prompt_field.invite_name.id,
+    authentik_stage_prompt_field.password.id,
   ]
-}
-
-resource "authentik_stage_password" "enrollment_password" {
-  name = "Enrollment - Set Password"
-  backends = ["authentik.core.auth.InbuiltBackend"]
 }
 
 resource "authentik_stage_user_write" "enrollment_user_write" {
@@ -71,11 +74,6 @@ resource "authentik_flow_stage_binding" "bind_prompts" {
   order  = 20
 }
 
-resource "authentik_flow_stage_binding" "bind_password" {
-  target = authentik_flow.invitation_enrollment_flow.uuid
-  stage  = authentik_stage_password.enrollment_password.id
-  order  = 30
-}
 
 resource "authentik_flow_stage_binding" "bind_user_write" {
   target = authentik_flow.invitation_enrollment_flow.uuid
