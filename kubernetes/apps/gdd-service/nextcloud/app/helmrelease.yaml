@@ -29,7 +29,7 @@ spec:
     deploymentAnnotations:
       secret.reloader.stakater.com/reload: nextcloud
     image:
-      repository: public.ecr.aws/docker/library/nextcloud
+      repository: nextcloud
       flavor: fpm-alpine
     phpClientHttpsFix:
       enabled: true
@@ -170,7 +170,7 @@ spec:
     nginx:
       enabled: true
       image:
-        repository: public.ecr.aws/nginx/nginx
+        repository: nginx
       config:
         default: true
       securityContext:
