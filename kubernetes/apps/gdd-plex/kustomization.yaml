@@ -12,3 +12,5 @@ resources:
   - ./radarr/ks.yaml
   - ./prowlarr/ks.yaml
   - ./jellystat/ks.yaml
+  - ./soulsync/ks.yaml
+#  - ./tidarr/ks.yaml
