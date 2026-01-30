@@ -136,6 +136,10 @@ spec:
                 - Thumbs.db$
                 - \.DS_Store$
     persistence:
+      config:
+        type: emptyDir
+        globalMounts:
+          - path: /config
       config-file:
         type: configMap
         identifier: config
