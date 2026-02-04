@@ -80,7 +80,6 @@ spec:
 
     route:
       app:
-        hostnames: ["tidarr.${SECRET_DOMAIN}"]
         annotations:
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Media
@@ -100,18 +99,14 @@ spec:
               - type: ntfy
               - type: discord
               - type: github
+        hostnames: ["tidarr.${SECRET_DOMAIN}"]
         parentRefs:
           - name: external
             namespace: kube-system
             sectionName: https
         rules:
-          - matches:
-              - path:
-                  type: PathPrefix
-                  value: /
-            backendRefs:
-              - name: tidarr
-                namespace: gdd-plex
+          - backendRefs:
+              - identifier: app
                 port: *port
 
     persistence:
