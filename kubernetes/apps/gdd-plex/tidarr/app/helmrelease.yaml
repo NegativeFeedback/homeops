@@ -1,0 +1,132 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: tidarr
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  dependsOn:
+    - name: cloudflare-tunnel
+      namespace: network
+  values:
+    controllers:
+      tidarr:
+        strategy: RollingUpdate
+        containers:
+          app:
+            image:
+              repository: cstaelen/tidarr
+              tag: 1.1.7@sha256:99fa13888efeaed7ed6a1890f0b75c13a7450ff9ef3741abaf6783b0bb4ab130
+            env:
+              TZ: America/Chicago
+              ENABLE_BEETS: true
+              REPLAY_GAIN: true
+              OIDC_ISSUER: https://sso.${SECRET_DOMAIN}
+              OIDC_REDIRECT_URI: https://tidarr.${SECRET_DOMAIN}/api/auth/oidc/callback
+              PUID: 1000
+              PGID: 1000
+            envFrom:
+              - secretRef:
+                  name: tidarr-secret
+            probes:
+              liveness: &probes
+                enabled: false
+                custom: true
+                spec:
+                  httpGet:
+                    path: /ping
+                    port: *port
+                  initialDelaySeconds: 10
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
+            resources:
+              requests:
+                cpu: 10m
+                memory: 150Mi
+              limits:
+                memory: 1000Mi
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile: { type: RuntimeDefault }
+    service:
+      app:
+        ports:
+          http:
+            port: *port
+    serviceMonitor:
+      app:
+        endpoints:
+          - port: http
+
+    route:
+      app:
+        hostnames: ["tidarr.${SECRET_DOMAIN}"]
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Media
+          gethomepage.dev/name: Tidarr
+          gethomepage.dev/icon: mdi-music-note
+          gethomepage.dev/description: "🔑 SSO Proxy | Music downloader"
+          gatus.home-operations.com/enabled: "true"
+          gatus.home-operations.com/url: "http://tidarr.gdd-plex.svc"
+          gatus.home-operations.com/endpoint: |-
+            group: Media
+            depends-on:
+              - connectivity_cftunnel
+              - security_authentik
+            url: "http://tidarr.gdd-plex.svc"
+            conditions: ["[STATUS] == 200"]
+            alerts:
+              - type: ntfy
+              - type: discord
+              - type: github
+        parentRefs:
+          - name: external
+            namespace: kube-system
+            sectionName: https
+        rules:
+          - backendRefs:
+              - name: authentik-server
+                namespace: gdd-security
+                port: 80
+            matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+
+    persistence:
+      config:
+        type: persistentVolumeClaim
+        storageClass: ceph-block
+        accessMode: ReadWriteOnce
+        size: 10Gi
+      tmp:
+        type: emptyDir
+      media:
+        type: nfs
+        server: 10.0.30.134
+        path: /medianfs
+        globalMounts:
+          - path: /mnt/media

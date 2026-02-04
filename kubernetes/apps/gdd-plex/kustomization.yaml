@@ -17,4 +17,4 @@ resources:
 #  - ./sabnzbd/ks.yaml
 #  - ./lidarify/ks.yaml
 #  - ./soulbeet/ks.yaml
-#  - ./tidarr/ks.yaml
+  - ./tidarr/ks.yaml
