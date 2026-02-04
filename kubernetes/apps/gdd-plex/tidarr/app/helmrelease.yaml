@@ -40,23 +40,13 @@ spec:
             envFrom:
               - secretRef:
                   name: tidarr-secret
-            securityContext:
-              allowPrivilegeEscalation: false
-              capabilities: { drop: ["ALL"] }
             resources:
               requests:
                 cpu: 10m
                 memory: 150Mi
               limits:
                 memory: 1500Mi
-    defaultPodOptions:
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
-        fsGroupChangePolicy: OnRootMismatch
-        seccompProfile: { type: RuntimeDefault }
+
     service:
       app:
         ports:
@@ -83,6 +73,8 @@ spec:
         storageClass: ceph-block
         accessMode: ReadWriteOnce
         size: 10Gi
+        globalMounts:
+          - path: /shared
       tmp:
         type: emptyDir
       media:
@@ -90,5 +82,5 @@ spec:
         server: 10.0.30.134
         path: /medianfs/music/tidarr
         globalMounts:
-          - path: /shared
+          - path: /music
 
