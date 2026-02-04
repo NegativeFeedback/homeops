@@ -106,13 +106,8 @@ spec:
             sectionName: https
         rules:
           - backendRefs:
-              - name: authentik-server
-                namespace: gdd-security
-                port: 80
-            matches:
-              - path:
-                  type: PathPrefix
-                  value: /
+              - identifier: app
+                port: *port
 
     persistence:
       config:
