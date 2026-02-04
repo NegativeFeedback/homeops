@@ -105,7 +105,11 @@ spec:
             namespace: kube-system
             sectionName: https
         rules:
-          - backendRefs:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
               - identifier: app
                 port: *port
 
