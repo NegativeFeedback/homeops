@@ -37,6 +37,8 @@ spec:
               OIDC_ISSUER: https://sso.gddnet.io/application/o/tidarr/
               OIDC_REDIRECT_URI: https://tidarr.${SECRET_DOMAIN}/api/auth/oidc/callback
               PORT: &port 8484
+              PUID: 1000
+              PGID: 1000
             envFrom:
               - secretRef:
                   name: tidarr-secret
@@ -46,28 +48,6 @@ spec:
                 memory: 150Mi
               limits:
                 memory: 1500Mi
-          permissions-fixer:
-            image:
-              repository: docker.io/library/alpine
-              tag: 3.21.2
-            command:
-              - /bin/sh
-              - -c
-              - |
-                while true; do
-                  chown -R :1000 /shared/nzb_downloads 2>/dev/null || true
-                  chmod -R g+rw /shared/nzb_downloads 2>/dev/null || true
-                  sleep 60
-                done
-            securityContext:
-              runAsUser: 0
-              runAsNonRoot: false
-            resources:
-              requests:
-                cpu: 5m
-                memory: 32Mi
-              limits:
-                memory: 64Mi
     defaultPodOptions:
       securityContext:
         fsGroup: 1000
