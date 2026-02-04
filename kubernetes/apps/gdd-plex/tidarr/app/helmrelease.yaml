@@ -86,6 +86,6 @@ spec:
       downloads:
         type: nfs
         server: 10.0.30.134
-        path: /medianfs/music/tidarr/downloads
+        path: /medianfs/tidarr/downloads
         globalMounts:
           - path: /shared/nzb_downloads
