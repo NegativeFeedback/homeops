@@ -135,3 +135,9 @@ spec:
         path: /medianfs
         globalMounts:
           - path: /mnt/media
+      musicdownloads:
+        type: nfs
+        server: 10.0.30.134
+        path: /medianfs/music/tidarr/downloads
+        globalMounts:
+          - path: /downloads
