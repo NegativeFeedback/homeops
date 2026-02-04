@@ -34,8 +34,6 @@ spec:
               REPLAY_GAIN: true
               OIDC_ISSUER: https://sso.${SECRET_DOMAIN}
               OIDC_REDIRECT_URI: https://tidarr.${SECRET_DOMAIN}/api/auth/oidc/callback
-              PUID: 1000
-              PGID: 1000
             envFrom:
               - secretRef:
                   name: tidarr-secret
