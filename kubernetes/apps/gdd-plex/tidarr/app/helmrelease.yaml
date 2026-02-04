@@ -80,7 +80,12 @@ spec:
       media:
         type: nfs
         server: 10.0.30.134
-        path: /medianfs/music/tidarr
+        path: /medianfs/music
         globalMounts:
           - path: /music
-
+      downloads:
+        type: nfs
+        server: 10.0.30.134
+        path: /medianfs/music/tidarr/downloads
+        globalMounts:
+          - path: /shared/nzb_downloads
