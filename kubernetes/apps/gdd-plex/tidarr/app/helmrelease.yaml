@@ -50,6 +50,7 @@ spec:
       securityContext:
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
+        supplementalGroups: [1000]
 
     service:
       app:
