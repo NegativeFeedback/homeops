@@ -127,6 +127,6 @@ spec:
       media:
         type: nfs
         server: 10.0.30.134
-        path: /medianfs
+        path: /medianfs/music/tidarr
         globalMounts:
-          - path: /mnt/media
+          - path: /shared
