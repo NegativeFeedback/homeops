@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: tidarr
+  name: &app tidarr
 spec:
   interval: 1h
   chartRef:
@@ -22,11 +22,13 @@ spec:
   values:
     controllers:
       tidarr:
+        annotations:
+          reloader.stakater.com/auto: "true"
         strategy: RollingUpdate
         containers:
           app:
             image:
-              repository: cstaelen/tidarr
+              repository: docker.io/cstaelen/tidarr
               tag: 1.1.7@sha256:99fa13888efeaed7ed6a1890f0b75c13a7450ff9ef3741abaf6783b0bb4ab130
             env:
               TZ: America/Chicago
@@ -34,32 +36,16 @@ spec:
               REPLAY_GAIN: true
               OIDC_ISSUER: https://sso.gddnet.io/application/o/tidarr/
               OIDC_REDIRECT_URI: https://tidarr.${SECRET_DOMAIN}/api/auth/oidc/callback
+              PORT: &port 8484
             envFrom:
               - secretRef:
                   name: tidarr-secret
-            probes:
-              liveness: &probes
-                enabled: false
-                custom: true
-                spec:
-                  httpGet:
-                    path: /ping
-                    port: &port 8484
-                  initialDelaySeconds: 10
-                  periodSeconds: 10
-                  timeoutSeconds: 1
-                  failureThreshold: 3
-              readiness: *probes
-            securityContext:
-              allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
-              capabilities: { drop: ["ALL"] }
             resources:
               requests:
                 cpu: 10m
                 memory: 150Mi
               limits:
-                memory: 1000Mi
+                memory: 1500Mi
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
@@ -77,28 +63,8 @@ spec:
       app:
         endpoints:
           - port: http
-
     route:
       app:
-        annotations:
-          gethomepage.dev/enabled: "true"
-          gethomepage.dev/group: Media
-          gethomepage.dev/name: Tidarr
-          gethomepage.dev/icon: mdi-music-note
-          gethomepage.dev/description: "🔑 SSO Proxy | Music downloader"
-          gatus.home-operations.com/enabled: "true"
-          gatus.home-operations.com/url: "http://tidarr.gdd-plex.svc"
-          gatus.home-operations.com/endpoint: |-
-            group: Media
-            depends-on:
-              - connectivity_cftunnel
-              - security_authentik
-            url: "http://tidarr.gdd-plex.svc"
-            conditions: ["[STATUS] == 200"]
-            alerts:
-              - type: ntfy
-              - type: discord
-              - type: github
         hostnames: ["tidarr.${SECRET_DOMAIN}"]
         parentRefs:
           - name: external
@@ -108,7 +74,6 @@ spec:
           - backendRefs:
               - identifier: app
                 port: *port
-
     persistence:
       config:
         type: persistentVolumeClaim
@@ -123,3 +88,4 @@ spec:
         path: /medianfs/music/tidarr
         globalMounts:
           - path: /shared
+
