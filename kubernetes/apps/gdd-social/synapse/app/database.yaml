@@ -152,22 +152,15 @@ spec:
               done
 
               echo "Creating synapse user if it doesn't exist..."
-              # Use psql variables to avoid shell escaping issues
-              psql -v ON_ERROR_STOP=1 \
-                   -v username="$SYNAPSE_USERNAME" \
-                   -v password="$SYNAPSE_PASSWORD" \
-                   <<-'EOSQL'
-                DO $body$
-                BEGIN
-                  IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname=:'username') THEN
-                    EXECUTE format('CREATE USER %I WITH PASSWORD %L', :'username', :'password');
-                    RAISE NOTICE 'User % created successfully', :'username';
-                  ELSE
-                    RAISE NOTICE 'User % already exists', :'username';
-                  END IF;
-                END
-                $body$;
-              EOSQL
+              # Check if user exists
+              if psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='$SYNAPSE_USERNAME'" | grep -q 1; then
+                echo "User $SYNAPSE_USERNAME already exists"
+              else
+                # Use printf to escape the password and avoid injection
+                ESCAPED_PASS=$(printf '%s' "$SYNAPSE_PASSWORD" | sed "s/'/''/g")
+                psql -v ON_ERROR_STOP=1 -c "CREATE USER \"$SYNAPSE_USERNAME\" WITH PASSWORD '$ESCAPED_PASS'"
+                echo "User $SYNAPSE_USERNAME created successfully"
+              fi
 
               echo "Waiting for synapse database to be created by Database resource..."
               for i in {1..30}; do
