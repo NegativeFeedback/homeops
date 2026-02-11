@@ -157,7 +157,7 @@ spec:
                    -v username="$SYNAPSE_USERNAME" \
                    -v password="$SYNAPSE_PASSWORD" \
                    <<-'EOSQL'
-                DO $$
+                DO $body$
                 BEGIN
                   IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname=:'username') THEN
                     EXECUTE format('CREATE USER %I WITH PASSWORD %L', :'username', :'password');
@@ -166,7 +166,7 @@ spec:
                     RAISE NOTICE 'User % already exists', :'username';
                   END IF;
                 END
-                $$;
+                $body$;
               EOSQL
 
               echo "Waiting for synapse database to be created by Database resource..."
