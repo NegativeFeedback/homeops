@@ -38,9 +38,10 @@ spec:
       engineVersion: v2
       data:
         username: synapse
-        password: "{{ .password }}"
-  dataFrom:
-    - sourceRef:
+        password: "{{ .synapse_password }}"
+  data:
+    - secretKey: synapse_password
+      sourceRef:
         generatorRef:
           apiVersion: generators.external-secrets.io/v1alpha1
           kind: Password
@@ -88,7 +89,6 @@ metadata:
   name: synapse-db-init
   namespace: database
   annotations:
-    # This ensures the job runs after the Database resource is created
     kustomize.toolkit.fluxcd.io/prune: disabled
 spec:
   ttlSecondsAfterFinished: 300
