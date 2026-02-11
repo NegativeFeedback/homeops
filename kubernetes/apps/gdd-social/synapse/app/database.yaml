@@ -1,0 +1,12 @@
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: synapse
+  namespace: database
+spec:
+  cluster:
+    name: postgres
+  name: synapse
+  owner: synapse
+  ensure: present
