@@ -38,10 +38,15 @@ spec:
       engineVersion: v2
       data:
         username: synapse
-        password: "{{ .synapse_password }}"
-  data:
-    - secretKey: synapse_password
-      sourceRef:
+        password: "{{ .password | toString }}"
+        POSTGRES_URL: "postgresql://synapse:{{ .password | toString }}@postgres-rw.database.svc.cluster.local:5432/synapse"
+        POSTGRES_HOST: "postgres-rw.database.svc.cluster.local"
+        POSTGRES_PORT: "5432"
+        POSTGRES_DB: "synapse"
+        POSTGRES_USER: "synapse"
+        POSTGRES_PASSWORD: "{{ .password | toString }}"
+  dataFrom:
+    - sourceRef:
         generatorRef:
           apiVersion: generators.external-secrets.io/v1alpha1
           kind: Password
