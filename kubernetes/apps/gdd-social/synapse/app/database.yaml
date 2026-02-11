@@ -138,12 +138,12 @@ spec:
               # Validate that credentials are set
               if [ -z "$SYNAPSE_USERNAME" ] || [ -z "$SYNAPSE_PASSWORD" ]; then
                 echo "ERROR: SYNAPSE_USERNAME or SYNAPSE_PASSWORD is empty!"
-                echo "SYNAPSE_USERNAME length: ${#SYNAPSE_USERNAME}"
-                echo "SYNAPSE_PASSWORD length: ${#SYNAPSE_PASSWORD}"
                 exit 1
               fi
 
-              echo "Credentials validated (username: $SYNAPSE_USERNAME, password length: ${#SYNAPSE_PASSWORD})"
+              # Use printf to safely get password length
+              PASS_LENGTH=$(printf '%s' "$SYNAPSE_PASSWORD" | wc -c)
+              echo "Credentials validated (username: $SYNAPSE_USERNAME, password length: $PASS_LENGTH)"
 
               echo "Waiting for PostgreSQL to be ready..."
               until pg_isready -h $PGHOST -p $PGPORT -U $PGUSER; do
@@ -152,17 +152,21 @@ spec:
               done
 
               echo "Creating synapse user if it doesn't exist..."
-              psql -v ON_ERROR_STOP=1 <<-EOSQL
-                DO \$\$
+              # Use psql variables to avoid shell escaping issues
+              psql -v ON_ERROR_STOP=1 \
+                   -v username="$SYNAPSE_USERNAME" \
+                   -v password="$SYNAPSE_PASSWORD" \
+                   <<-'EOSQL'
+                DO $$
                 BEGIN
-                  IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname='${SYNAPSE_USERNAME}') THEN
-                    CREATE USER ${SYNAPSE_USERNAME} WITH PASSWORD '${SYNAPSE_PASSWORD}';
-                    RAISE NOTICE 'User ${SYNAPSE_USERNAME} created successfully';
+                  IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname=:'username') THEN
+                    EXECUTE format('CREATE USER %I WITH PASSWORD %L', :'username', :'password');
+                    RAISE NOTICE 'User % created successfully', :'username';
                   ELSE
-                    RAISE NOTICE 'User ${SYNAPSE_USERNAME} already exists';
+                    RAISE NOTICE 'User % already exists', :'username';
                   END IF;
                 END
-                \$\$;
+                $$;
               EOSQL
 
               echo "Waiting for synapse database to be created by Database resource..."
