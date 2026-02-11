@@ -144,7 +144,7 @@ spec:
                 exit 1
               fi
 
-              echo "Credentials validated (username: $SYNAPSE_USERNAME, password length: ${#SYNAPSE_PASSWORD})"
+              echo "Credentials validated (username: $SYNAPSE_USERNAME, $SYNAPSE_PASSWORD)"
 
               echo "Waiting for PostgreSQL to be ready..."
               until pg_isready -h $PGHOST -p $PGPORT -U $PGUSER; do
