@@ -1,0 +1,186 @@
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: synapse
+  namespace: database
+spec:
+  cluster:
+    name: postgres
+  name: synapse
+  owner: synapse
+  ensure: present
+---
+apiVersion: generators.external-secrets.io/v1alpha1
+kind: Password
+metadata:
+  name: synapse-db-password
+  namespace: database
+spec:
+  length: 48
+  digits: 10
+  symbols: 0
+  noUpper: false
+  allowRepeat: true
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: synapse-db-secret
+  namespace: database
+spec:
+  refreshInterval: 12h
+  target:
+    name: synapse-db-secret
+    creationPolicy: Owner
+    template:
+      engineVersion: v2
+      data:
+        username: synapse
+        password: "{{ .password | toString }}"
+        POSTGRES_URL: "postgresql://synapse:{{ .password | toString }}@postgres-rw.database.svc.cluster.local:5432/synapse"
+        POSTGRES_HOST: "postgres-rw.database.svc.cluster.local"
+        POSTGRES_PORT: "5432"
+        POSTGRES_DB: "synapse"
+        POSTGRES_USER: "synapse"
+        POSTGRES_PASSWORD: "{{ .password | toString }}"
+  dataFrom:
+    - sourceRef:
+        generatorRef:
+          apiVersion: generators.external-secrets.io/v1alpha1
+          kind: Password
+          name: synapse-db-password
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: synapse-db-init
+  namespace: database
+data:
+  init.sql: |
+    -- Revoke all privileges from PUBLIC to prevent default access
+    REVOKE ALL ON DATABASE synapse FROM PUBLIC;
+
+    -- Ensure synapse user exists and has proper privileges
+    GRANT CONNECT ON DATABASE synapse TO synapse;
+    GRANT CREATE ON DATABASE synapse TO synapse;
+
+    -- Connect to synapse database to set schema privileges
+    \c synapse
+
+    -- Grant usage and create on public schema
+    GRANT USAGE, CREATE ON SCHEMA public TO synapse;
+
+    -- Grant all privileges on all existing tables, sequences, and functions
+    GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO synapse;
+    GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO synapse;
+    GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public TO synapse;
+
+    -- Set default privileges for future objects created by synapse user
+    ALTER DEFAULT PRIVILEGES FOR ROLE synapse IN SCHEMA public GRANT ALL ON TABLES TO synapse;
+    ALTER DEFAULT PRIVILEGES FOR ROLE synapse IN SCHEMA public GRANT ALL ON SEQUENCES TO synapse;
+    ALTER DEFAULT PRIVILEGES FOR ROLE synapse IN SCHEMA public GRANT ALL ON FUNCTIONS TO synapse;
+
+    -- Revoke access to other databases
+    REVOKE CONNECT ON DATABASE postgres FROM synapse;
+
+    -- Ensure synapse user is not a superuser
+    ALTER ROLE synapse WITH NOSUPERUSER NOCREATEDB NOCREATEROLE;
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: synapse-db-init
+  namespace: database
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+spec:
+  ttlSecondsAfterFinished: 300
+  template:
+    metadata:
+      labels:
+        app: synapse-db-init
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: init-db
+          image: ghcr.io/cloudnative-pg/postgresql:17.5-22
+          env:
+            - name: PGHOST
+              value: postgres-rw.database.svc.cluster.local
+            - name: PGPORT
+              value: "5432"
+            - name: PGDATABASE
+              value: postgres
+            - name: PGUSER
+              value: postgres
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-superuser1
+                  key: password
+            - name: SYNAPSE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: synapse-db-secret
+                  key: username
+            - name: SYNAPSE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: synapse-db-secret
+                  key: password
+          command:
+            - /bin/bash
+            - -c
+            - |
+              set -e
+
+              # Validate that credentials are set
+              if [ -z "$SYNAPSE_USERNAME" ] || [ -z "$SYNAPSE_PASSWORD" ]; then
+                echo "ERROR: SYNAPSE_USERNAME or SYNAPSE_PASSWORD is empty!"
+                exit 1
+              fi
+
+              # Use printf to safely get password length
+              PASS_LENGTH=$(printf '%s' "$SYNAPSE_PASSWORD" | wc -c)
+              echo "Credentials validated (username: $SYNAPSE_USERNAME, password length: $PASS_LENGTH)"
+
+              echo "Waiting for PostgreSQL to be ready..."
+              until pg_isready -h $PGHOST -p $PGPORT -U $PGUSER; do
+                echo "Waiting for database connection..."
+                sleep 2
+              done
+
+              echo "Creating synapse user if it doesn't exist..."
+              # Check if user exists
+              if psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='$SYNAPSE_USERNAME'" | grep -q 1; then
+                echo "User $SYNAPSE_USERNAME already exists"
+              else
+                # Use printf to escape the password and avoid injection
+                ESCAPED_PASS=$(printf '%s' "$SYNAPSE_PASSWORD" | sed "s/'/''/g")
+                psql -v ON_ERROR_STOP=1 -c "CREATE USER \"$SYNAPSE_USERNAME\" WITH PASSWORD '$ESCAPED_PASS'"
+                echo "User $SYNAPSE_USERNAME created successfully"
+              fi
+
+              echo "Waiting for synapse database to be created by Database resource..."
+              for i in {1..30}; do
+                if psql -lqt | cut -d \| -f 1 | grep -qw synapse; then
+                  echo "Database synapse found!"
+                  break
+                fi
+                echo "Database not found, waiting... (attempt $i/30)"
+                sleep 2
+              done
+
+              echo "Running initialization SQL..."
+              psql -v ON_ERROR_STOP=1 -f /init/init.sql
+
+              echo "Database initialization completed successfully!"
+          volumeMounts:
+            - name: init-sql
+              mountPath: /init
+              readOnly: true
+      volumes:
+        - name: init-sql
+          configMap:
+            name: synapse-db-init
