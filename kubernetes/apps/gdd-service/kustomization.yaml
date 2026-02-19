@@ -6,9 +6,8 @@ namespace: gdd-service
 components:
   - ../../components/common
 resources:
+  - ./calibre/ks.yaml
   - ./ntfy/ks.yaml
-#  - ./echo/ks.yaml
-  - ./kavita/ks.yaml
   - ./donetick/ks.yaml
   - ./tandoor/ks.yaml
   - ./homepage/ks.yaml
