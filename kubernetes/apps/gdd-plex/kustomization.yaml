@@ -10,5 +10,11 @@ resources:
   - ./jellyseerr/ks.yaml
   - ./sonarr/ks.yaml
   - ./radarr/ks.yaml
+  - ./lidarr/ks.yaml
   - ./prowlarr/ks.yaml
   - ./jellystat/ks.yaml
+  - ./soulsync/ks.yaml
+#  - ./sabnzbd/ks.yaml
+#  - ./lidarify/ks.yaml
+#  - ./soulbeet/ks.yaml
+  - ./tidarr/ks.yaml

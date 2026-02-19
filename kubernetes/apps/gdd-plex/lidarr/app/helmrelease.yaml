@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app sonarr
+  name: &app lidarr
 spec:
   interval: 1h
   chartRef:
@@ -21,27 +21,26 @@ spec:
       namespace: network
   values:
     controllers:
-      sonarr:
+      lidarr:
         strategy: RollingUpdate
         containers:
           app:
             image:
-              repository: ghcr.io/home-operations/sonarr
-              tag: 4.0.16.2946@sha256:22651c750eedb091f6d76ade95dbecae0eeafe2b55432c3b8d8b042e8745f344
+              repository: ghcr.io/home-operations/lidarr
+              tag: 3.1.2.4902@sha256:dab0e07502a34436fc50c3e789388f0a29f8cbf681fb7a02ed703ad7c368a22c
             env:
               TZ: America/Chicago
-              SONARR__APP__INSTANCENAME: Sonarr
-              SONARR__LOG__LEVEL: info
-              SONARR__AUTH__APIKEY:
+              LIDARR__APP__INSTANCENAME: Lidarr
+              LIDARR__LOG__LEVEL: info
+              LIDARR__APP__THEME: dark
+              LIDARR__AUTH__REQUIRED: DisabledForLocalAddresses
+              LIDARR__AUTH__APIKEY:
                 valueFrom:
                   secretKeyRef:
-                    name: sonarr-secret
+                    name: lidarr-secret
                     key: api_key
-              SONARR__AUTH__METHOD: External
-              SONARR__LOG__ANALYTICSENABLED: "False"
-              SONARR__LOG__DBENABLED: "False"
-              SONARR__SERVER__PORT: &port 80
-              SONARR__UPDATE__BRANCH: develop
+              LIDARR__AUTH__METHOD: External
+              LIDARR__SERVER__PORT: &port 80
             probes:
               liveness: &probes
                 enabled: false
@@ -82,25 +81,27 @@ spec:
       app:
         endpoints:
           - port: http
+
     route:
       app:
-        hostnames: ["sonarr.${SECRET_DOMAIN}"]
+        hostnames: ["lidarr.${SECRET_DOMAIN}"]
         annotations:
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Media
-          gethomepage.dev/name: Sonarr
-          gethomepage.dev/icon: sonarr.svg
-          gethomepage.dev/description: "🔑 SSO Proxy | Media downloader"
-          gethomepage.dev/widget.type: sonarr
-          gethomepage.dev/widget.url: "http://sonarr.gdd-plex.svc"
-          gethomepage.dev/widget.key: "{{`{{HOMEPAGE_VAR_SONARR_TOKEN}}`}}"
+          gethomepage.dev/name: Lidarr
+          gethomepage.dev/icon: lidarr.svg
+          gethomepage.dev/description: "🔑 SSO Proxy | Music downloader"
+          gethomepage.dev/widget.type: lidarr
+          gethomepage.dev/widget.url: "http://lidarr.gdd-plex.svc"
+          gethomepage.dev/widget.key: "{{ \"{{HOMEPAGE_VAR_lidarr_API_KEY}}\" }}"
           gatus.home-operations.com/enabled: "true"
+          gatus.home-operations.com/url: "http://lidarr.gdd-plex.svc"
           gatus.home-operations.com/endpoint: |-
             group: Media
             depends-on:
               - connectivity_cftunnel
               - security_authentik
-            url: "http://sonarr.gdd-plex.svc"
+            url: "http://lidarr.gdd-plex.svc"
             conditions: ["[STATUS] == 200"]
             alerts:
               - type: ntfy
@@ -122,6 +123,7 @@ spec:
 
     persistence:
       config:
+        type: persistentVolumeClaim
         enabled: true
         existingClaim: *app
       tmp:
@@ -132,3 +134,9 @@ spec:
         path: /medianfs
         globalMounts:
           - path: /mnt/media
+      musicdownloads:
+        type: nfs
+        server: 10.0.30.134
+        path: /medianfs/tidarr/downloads
+        globalMounts:
+          - path: /downloads

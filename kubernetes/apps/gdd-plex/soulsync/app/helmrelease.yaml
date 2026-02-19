@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app sonarr
+  name: soulsync
 spec:
   interval: 1h
   chartRef:
@@ -21,30 +21,26 @@ spec:
       namespace: network
   values:
     controllers:
-      sonarr:
+      soulsync:
         strategy: RollingUpdate
         containers:
           app:
             image:
-              repository: ghcr.io/home-operations/sonarr
-              tag: 4.0.16.2946@sha256:22651c750eedb091f6d76ade95dbecae0eeafe2b55432c3b8d8b042e8745f344
+              repository: ghcr.io/slskd/slskd
+              tag: 0.24.3@sha256:bcf9820dab68e21d2bba8ebb1ffd583d71fcba542a50a1e998119f69b7b498fe
             env:
               TZ: America/Chicago
-              SONARR__APP__INSTANCENAME: Sonarr
-              SONARR__LOG__LEVEL: info
-              SONARR__AUTH__APIKEY:
-                valueFrom:
-                  secretKeyRef:
-                    name: sonarr-secret
-                    key: api_key
-              SONARR__AUTH__METHOD: External
-              SONARR__LOG__ANALYTICSENABLED: "False"
-              SONARR__LOG__DBENABLED: "False"
-              SONARR__SERVER__PORT: &port 80
-              SONARR__UPDATE__BRANCH: develop
+              DOTNET_BUNDLE_EXTRACT_BASE_DIR: /tmp/.net
+              SLSKD_APP_DIR: /config
+              SLSKD_HTTP_PORT: &port 80
+              SLSKD_NO_AUTH: true
+              SLSKD_NO_HTTPS: true
+              SLSKD_NO_VERSION_CHECK: true
+              SLSKD_SLSK_LISTEN_PORT: &soulseekPort 50429
+
             probes:
               liveness: &probes
-                enabled: false
+                enabled: true
                 custom: true
                 spec:
                   httpGet:
@@ -78,29 +74,31 @@ spec:
         ports:
           http:
             port: *port
+          soulseek:
+            port: *soulseekPort
+            protocol: TCP
     serviceMonitor:
       app:
         endpoints:
           - port: http
+
     route:
       app:
-        hostnames: ["sonarr.${SECRET_DOMAIN}"]
+        hostnames: ["soulsync.${SECRET_DOMAIN}"]
         annotations:
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Media
-          gethomepage.dev/name: Sonarr
-          gethomepage.dev/icon: sonarr.svg
-          gethomepage.dev/description: "🔑 SSO Proxy | Media downloader"
-          gethomepage.dev/widget.type: sonarr
-          gethomepage.dev/widget.url: "http://sonarr.gdd-plex.svc"
-          gethomepage.dev/widget.key: "{{`{{HOMEPAGE_VAR_SONARR_TOKEN}}`}}"
+          gethomepage.dev/name: Soulsync
+          gethomepage.dev/icon: mdi-music
+          gethomepage.dev/description: "🔑 SSO Proxy | Music sync"
           gatus.home-operations.com/enabled: "true"
+          gatus.home-operations.com/url: "http://soulsync.gdd-plex.svc"
           gatus.home-operations.com/endpoint: |-
             group: Media
             depends-on:
               - connectivity_cftunnel
               - security_authentik
-            url: "http://sonarr.gdd-plex.svc"
+            url: "http://soulsync.gdd-plex.svc"
             conditions: ["[STATUS] == 200"]
             alerts:
               - type: ntfy
@@ -120,10 +118,34 @@ spec:
                   type: PathPrefix
                   value: /
 
+    configMaps:
+      config:
+        data:
+          slskd.yml: |-
+            directories:
+              downloads: /mnt/media/music/soulseek/complete
+              incomplete: /mnt/media/music/soulseek/incomplete
+            permissions:
+              file:
+                mode: 750
+            shares:
+              directories:
+                - /mnt/media/music/
+              filters:
+                - \.ini$
+                - Thumbs.db$
+                - \.DS_Store$
     persistence:
       config:
-        enabled: true
-        existingClaim: *app
+        type: emptyDir
+        globalMounts:
+          - path: /config
+      config-file:
+        type: configMap
+        identifier: config
+        globalMounts:
+          - path: /config/slskd.yml
+            subPath: slskd.yml
       tmp:
         type: emptyDir
       media:
