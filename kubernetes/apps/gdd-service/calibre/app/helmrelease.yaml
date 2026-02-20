@@ -98,8 +98,8 @@ spec:
         server: 10.0.30.134
         path: /medianfs/books
         globalMounts:
-          - path: /calibre-library
-      ingest:
-        type: emptyDir
-        globalMounts:
           - path: /cwa-book-ingest
+            subPath: cwa-book-ingest
+          - path: /calibre-library
+            subPath: calibre-library
+
