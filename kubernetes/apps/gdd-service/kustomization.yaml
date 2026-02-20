@@ -7,6 +7,7 @@ components:
   - ../../components/common
 resources:
   - ./calibre/ks.yaml
+  - ./shelfmark/ks.yaml
   - ./ntfy/ks.yaml
   - ./donetick/ks.yaml
   - ./tandoor/ks.yaml
