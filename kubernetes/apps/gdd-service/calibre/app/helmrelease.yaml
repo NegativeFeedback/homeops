@@ -30,7 +30,6 @@ spec:
               tag: V4.0.6@sha256:c31a738b6d5ec6982c050063dd3f063b6943eb1051fc81144789f840d9093a8d
             env:
               CACHE_DIR: /cache
-              NETWORK_SHARE_MODE: true
               S6_YES_I_WANT_A_WORLD_WRITABLE_RUN_BECAUSE_KUBERNETES: 1
               S6_READ_ONLY_ROOT: 1
             securityContext:
@@ -93,6 +92,8 @@ spec:
         existingClaim: *app
         globalMounts:
           - path: /config
+          - path: /calibre-library
+            subPath: calibre-library
       books:
         type: nfs
         server: 10.0.30.134
@@ -100,6 +101,4 @@ spec:
         globalMounts:
           - path: /cwa-book-ingest
             subPath: cwa-book-ingest
-          - path: /calibre-library
-            subPath: calibre-library
 
