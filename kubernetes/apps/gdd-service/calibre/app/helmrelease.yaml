@@ -46,15 +46,7 @@ spec:
                   - SETGID
                   - FOWNER
                   - DAC_OVERRIDE
-            probes:
-              liveness: &probes
-                enabled: true
-                custom: true
-                spec:
-                  httpGet:
-                    port: &port 8083
-                    path: /login
-              readiness: *probes
+
             resources:
               requests:
                 cpu: 50m
@@ -72,7 +64,7 @@ spec:
         controller: *app
         ports:
           http:
-            port: *port
+            port: 8083
     route:
       app:
         annotations:
@@ -94,7 +86,7 @@ spec:
         rules:
           - backendRefs:
               - identifier: app
-                port: *port
+                port: 8083
     persistence:
       config:
         enabled: true
