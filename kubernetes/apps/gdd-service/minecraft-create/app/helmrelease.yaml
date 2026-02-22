@@ -27,7 +27,7 @@ spec:
           app:
             image:
               repository: ghcr.io/itzg/minecraft-server
-              tag: java17@sha256:ef08c49108a84b6ec62985eeba5a90ef8fdc7f94333e3fcd2eff21cfef525b9b
+              tag: java17@sha256:df12c50b1fe7ce4bbc249e5dbbff538f747962d34ca8293e17136113452bec0b
             envFrom:
               - secretRef:
                   name: minecraft-rcon
