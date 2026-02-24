@@ -29,7 +29,7 @@ spec:
           app:
             image:
               repository: docker.io/cstaelen/tidarr
-              tag: 1.1.7@sha256:99fa13888efeaed7ed6a1890f0b75c13a7450ff9ef3741abaf6783b0bb4ab130
+              tag: 1.1.9@sha256:79a2c62aed04dbe9770272443192eae145f26bdc2d188e665b13ab763341206c
             env:
               TZ: America/Chicago
               ENABLE_BEETS: true
