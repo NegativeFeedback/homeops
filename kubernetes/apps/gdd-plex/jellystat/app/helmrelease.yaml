@@ -29,7 +29,7 @@ spec:
           main:
             image:
               repository: docker.io/cyfershepard/jellystat
-              tag: 1.1.7
+              tag: 1.1.8
             env:
               TZ: America/Chicago
               POSTGRES_IP: postgres-rw.database.svc.cluster.local
