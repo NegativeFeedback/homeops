@@ -1,0 +1,116 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app homebox
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  dependsOn:
+    - name: cloudflare-tunnel
+      namespace: network
+  values:
+    controllers:
+      homebox:
+        annotations:
+          secret.reloader.stakater.com/reload: "auto"
+        strategy: RollingUpdate
+        containers:
+          app:
+            image:
+              repository: ghcr.io/sysadminsmedia/homebox
+              tag: 0.23.1-rootless
+            env:
+              TZ: America/New_York
+              HBOX_LOG_LEVEL: info
+              HBOX_LOG_FORMAT: json
+              HBOX_WEB_PORT: &port 7745
+              HBOX_MAILER_HOST: smtp-relay-noreply.services.svc.cluster.local
+              HBOX_MAILER_PORT: "25"
+              HBOX_MAILER_FROM: noreply@gddnet.io
+              HBOX_MODE: production
+              HBOX_WEB_HOST: 0.0.0.0
+              HBOX_WEB_MAX_UPLOAD_SIZE: "25"
+              HBOX_DATABASE_DRIVER: postgres
+              HBOX_DATABASE_HOST: postgres-rw.database.svc.cluster.local
+              HBOX_DATABASE_PORT: 5432
+              HBOX_DATABASE_DATABASE: gdd_homebox
+              HBOX_DATABASE_USERNAME: gdd_user_homebox
+              HBOX_DATABASE_PASSWORD: ${HBOX_DATABASE_PASSWORD}
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/v1/status
+                    port: *port
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+              startup: *probes
+            resources:
+              requests:
+                cpu: 15m
+                memory: 80M
+              limits:
+                memory: 256M
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+
+    service:
+      app:
+        controller: *app
+        ports:
+          http:
+            port: *port
+    route:
+      app:
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/description: inventory
+          gethomepage.dev/group: Service
+          gethomepage.dev/icon: homebox.svg
+          gethomepage.dev/name: Homebox
+          gethomepage.dev/app: *app
+          gatus.home-operations.com/enabled: "true"
+          gatus.home-operations.com/endpoint: |-
+            group: Service
+            conditions: ["[STATUS] == 200"]
+        hostnames: ["stuff.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: external
+            namespace: kube-system
+            sectionName: https
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *port
+    persistence:
+      config:
+        enabled: true
+        existingClaim: *app
+        globalMounts:
+          - path: /data
+
