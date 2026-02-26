@@ -46,6 +46,14 @@ spec:
               HBOX_DATABASE_PORT: 5432
               HBOX_DATABASE_DATABASE: gdd_homebox
               HBOX_DATABASE_USERNAME: gdd_user_homebox
+              HBOX_OPTIONS_ALLOW_REGISTRATION: false
+              HBOX_OIDC_ENABLED: true
+              HBOX_OIDC_ISSUER_URL: https://sso.gddnet.io/application/o/homebox/
+              HBOX_OPTIONS_TRUST_PROXY: true
+              HBOX_OPTIONS_HOSTNAME: stuff.gddnet.io
+              HBOX_OIDC_AUTO_REDIRECT: true
+              HBOX_OIDC_ALLOWED_GROUPS: service-homebox
+              HBOX_OPTIONS_ALLOW_LOCAL_LOGIN: false
             envFrom:
               - secretRef:
                   name: homebox-secret
