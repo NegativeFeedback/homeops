@@ -46,7 +46,9 @@ spec:
               HBOX_DATABASE_PORT: 5432
               HBOX_DATABASE_DATABASE: gdd_homebox
               HBOX_DATABASE_USERNAME: gdd_user_homebox
-              HBOX_DATABASE_PASSWORD: ${HBOX_DATABASE_PASSWORD}
+            envFrom:
+              - secretRef:
+                  name: homebox-secret
             probes:
               liveness: &probes
                 enabled: true
