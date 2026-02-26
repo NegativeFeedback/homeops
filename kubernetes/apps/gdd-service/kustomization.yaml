@@ -19,3 +19,4 @@ resources:
   - ./monica/ks.yaml
   - ./paperless/ks.yaml
   - ./sparkyfitness/ks.yaml
+  - ./homebox/ks.yaml
