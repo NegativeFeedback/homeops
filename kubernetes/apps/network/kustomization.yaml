@@ -11,3 +11,15 @@ resources:
   - ./k8s-gateway/ks.yaml
   - ./tailscale-operator/ks.yaml
   - ./securitylab-tunnel/ks.yaml
+patches:
+  - patch: |-
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        labels:
+          pod-security.kubernetes.io/audit: privileged
+          pod-security.kubernetes.io/enforce: privileged
+          pod-security.kubernetes.io/warn: privileged
+        name: not-used
+    target:
+      kind: Namespace
