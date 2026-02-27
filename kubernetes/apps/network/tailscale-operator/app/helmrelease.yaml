@@ -50,7 +50,7 @@ spec:
   replicas: 3
 ---
 apiVersion: tailscale.com/v1alpha1
-kind: ProxyGroup-kube
+kind: ProxyGroup
 metadata:
   name: ts-kube
 spec:
