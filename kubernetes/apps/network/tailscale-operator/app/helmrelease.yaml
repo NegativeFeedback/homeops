@@ -63,7 +63,6 @@ metadata:
   name: connector
   namespace: network
 spec:
-  hostnamePrefix: "app-connector"
   tags:
     - "tag:connector"
 
@@ -73,8 +72,6 @@ spec:
       - 10.0.30.0/24
       - 10.0.31.0/24
       - 10.0.50.0/24
-
-  replicas: 2
 ---
 apiVersion: policy/v1
 kind: PodDisruptionBudget
