@@ -30,7 +30,7 @@ spec:
       defaultTags:
         - "tag:k8s-operator"
     apiServerProxyConfig:
-      mode: "noauth"
+      mode: "true"
   valuesFrom:
     - kind: Secret
       name: tailscale-operator
@@ -40,3 +40,50 @@ spec:
       name: tailscale-operator
       valuesKey: client_secret
       targetPath: oauth.clientSecret
+---
+apiVersion: tailscale.com/v1alpha1
+kind: ProxyGroup
+metadata:
+  name: ts-ingress
+spec:
+  type: ingress
+  replicas: 3
+---
+apiVersion: tailscale.com/v1alpha1
+kind: ProxyGroup-kube
+metadata:
+  name: ts-kube
+spec:
+  type: kube-apiserver
+  replicas: 3
+---
+apiVersion: tailscale.com/v1alpha1
+kind: Connector
+metadata:
+  name: connector
+  namespace: network
+spec:
+  hostnamePrefix: "app-connector"
+  tags:
+    - "tag:connector"
+
+  appConnector:
+    routes:
+      - 10.0.10.0/24
+      - 10.0.30.0/24
+      - 10.0.31.0/24
+      - 10.0.50.0/24
+
+  replicas: 2
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: connector-pdb
+  namespace: network
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      tailscale.com/parent-resource: connector
+      tailscale.com/parent-resource-type: connector
