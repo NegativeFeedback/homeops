@@ -114,6 +114,10 @@ spec:
         type: nfs
         server: 10.0.31.16
         path: /medianfs
+        mountOptions:
+          - vers=3
+          - proto=tcp
+          - nolock
         globalMounts:
           - path: /mnt/media
       tmpfs:
