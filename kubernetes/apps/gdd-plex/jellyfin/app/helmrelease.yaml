@@ -112,7 +112,7 @@ spec:
           - path: /config/metadata
       media:
         type: nfs
-        server: 10.0.30.134
+        server: 10.0.31.16
         path: /medianfs
         globalMounts:
           - path: /mnt/media
