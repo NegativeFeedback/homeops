@@ -29,7 +29,7 @@ spec:
           migrations:
             image:
               repository: vabene1111/recipes
-              tag: 2.4.2@sha256:c1a1d494631955bdb6c200066ee5914adbc378805ac0e4df9aeb795fe25c87aa
+              tag: 2.5.3@sha256:7ce6534c9ab0e471fd0f08add67e871b9173fb580c2f86294c3ead025603a3d7
             envFrom: &envFrom
               - secretRef:
                   name: tandoor-secret
@@ -46,7 +46,7 @@ spec:
           app:
             image:
               repository: vabene1111/recipes
-              tag: 2.4.2@sha256:c1a1d494631955bdb6c200066ee5914adbc378805ac0e4df9aeb795fe25c87aa
+              tag: 2.5.3@sha256:7ce6534c9ab0e471fd0f08add67e871b9173fb580c2f86294c3ead025603a3d7
             envFrom: *envFrom
             env:
               DEBUG: "0"
@@ -103,7 +103,7 @@ spec:
           nginx:
             image:
               repository: nginxinc/nginx-unprivileged
-              tag: 1.29.3-alpine@sha256:c6ff4f142fd52165827a1cc2ff4810616e913b1b0c354a041e1fa0d0d9c4a74a
+              tag: 1.29.5-alpine@sha256:07ac04b4a727a38e7360f3bd8bbe49a7433a8e2a3259dd403d2c982e5f4c7a1c
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
