@@ -1,0 +1,89 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: comfyui
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  values:
+    controllers:
+      comfyui:
+        strategy: Recreate
+        containers:
+          app:
+            image:
+              repository: ghcr.io/ai-dock/comfyui
+              tag: latest
+            env:
+              TZ: America/Chicago
+              AUTO_UPDATE: "false"
+            probes:
+              liveness:
+                enabled: false
+              readiness:
+                enabled: false
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: false
+              capabilities: { drop: ["ALL"] }
+            resources:
+              requests:
+                cpu: 100m
+                memory: 1Gi
+              limits:
+                memory: 8Gi
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: false
+        runAsUser: 0
+        fsGroup: 0
+    service:
+      app:
+        ports:
+          http:
+            port: &port 8188
+#    route:
+#      app:
+#        hostnames: ["comfyui.${SECRET_DOMAIN}"]
+#        annotations:
+#          gethomepage.dev/enabled: "true"
+#          gethomepage.dev/group: AI
+#          gethomepage.dev/name: ComfyUI
+#          gethomepage.dev/icon: comfyui.svg
+#          gethomepage.dev/description: "AI image generation workflow"
+#        parentRefs:
+#          - name: external
+#            namespace: kube-system
+#            sectionName: https
+#        rules:
+#          - backendRefs:
+#              - identifier: app
+#                port: *port
+    persistence:
+      models:
+        type: persistentVolumeClaim
+        storageClass: ceph-block
+        accessMode: ReadWriteOnce
+        size: 50Gi
+        globalMounts:
+          - path: /opt/ComfyUI/models
+      output:
+        type: persistentVolumeClaim
+        storageClass: ceph-block
+        accessMode: ReadWriteOnce
+        size: 10Gi
+        globalMounts:
+          - path: /opt/ComfyUI/output
+      tmp:
+        type: emptyDir
