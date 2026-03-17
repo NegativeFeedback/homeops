@@ -1,0 +1,12 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: scanservjs-config
+data:
+  config.local.js: |
+    module.exports = {
+      afterConfig(config) {
+        config.port = 8090;
+      }
+    };
