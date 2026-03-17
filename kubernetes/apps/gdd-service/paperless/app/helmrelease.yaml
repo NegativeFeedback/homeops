@@ -121,6 +121,8 @@ spec:
             image:
               repository: ghcr.io/negativefeedback/scanservjs
               tag: sha-63ce849@sha256:5c5cb3f8551cc28d71efb896116f4c3bc072263d6d8978b2d1ef682ec38fef4f
+            env:
+              PORT: "8090"
             resources:
               requests:
                 cpu: 10m
@@ -146,7 +148,7 @@ spec:
         controller: paperless
         ports:
           http:
-            port: 8080
+            port: 8090
     serviceMonitor:
       app:
         service:
