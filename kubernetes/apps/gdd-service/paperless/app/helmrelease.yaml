@@ -126,6 +126,11 @@ spec:
         ports:
           http:
             port: &port 8000
+      paperless-gpt:
+        controller: paperless
+        ports:
+          http:
+            port: 8080
     serviceMonitor:
       app:
         endpoints:
