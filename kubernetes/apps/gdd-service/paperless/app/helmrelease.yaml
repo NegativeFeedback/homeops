@@ -31,16 +31,14 @@ spec:
             env:
               PROMETHEUS_ENABLED: true
               TZ: America/Chicago
-              # PAPERLESS_APPS: allauth.socialaccount.providers.openid_connect
               PAPERLESS_URL: https://paperless.${SECRET_DOMAIN}
               PAPERLESS_TIME_ZONE: America/Chicago
               PAPERLESS_WEBSERVER_WORKERS: "2"
               PAPERLESS_TASK_WORKERS: "2"
               PAPERLESS_ACCOUNT_ALLOW_SIGNUPS: "false"
               PAPERLESS_SOCIALACCOUNT_ALLOW_SIGNUPS: "true"
-              # PAPERLESS_CONSUMPTION_DIR: /data/nas/consume
+              PAPERLESS_CONSUMPTION_DIR: /data/consume
               PAPERLESS_DATA_DIR: /config/data
-              # PAPERLESS_EXPORT_DIR: /data/nas/export
               PAPERLESS_MEDIA_ROOT: /config/media
               PAPERLESS_CONSUMER_POLLING: "60"
               PAPERLESS_CONSUMER_RECURSIVE: "true"
@@ -55,16 +53,70 @@ spec:
               PAPERLESS_AUTO_LOGIN: "true"
               PAPERLESS_AUTO_CREATE: "true"
               PAPERLESS_LOGOUT_REDIRECT_URL: https://sso.gddnet.io/application/o/paperless/end-session/
+              PAPERLESS_TIKA_ENABLED: "true"
+              PAPERLESS_TIKA_ENDPOINT: http://localhost:9998
+              PAPERLESS_GOTENBERG_ENDPOINT: http://localhost:3000
             envFrom:
               - secretRef:
                   name: paperless-secret
-
             resources:
               requests:
                 cpu: 100m
                 memory: 250Mi
               limits:
                 memory: 1Gi
+
+          tika:
+            image:
+              repository: docker.io/apache/tika
+              tag: 3.1.0
+            resources:
+              requests:
+                cpu: 50m
+                memory: 256Mi
+              limits:
+                memory: 1Gi
+
+          gotenberg:
+            image:
+              repository: docker.io/gotenberg/gotenberg
+              tag: "8"
+            args:
+              - gotenberg
+              - --chromium-disable-routes=true
+            resources:
+              requests:
+                cpu: 50m
+                memory: 256Mi
+              limits:
+                memory: 1Gi
+
+          paperless-gpt:
+            image:
+              repository: ghcr.io/icereed/paperless-gpt
+              tag: latest
+            env:
+              PAPERLESS_BASE_URL: http://localhost:8000
+              LLM_PROVIDER: ollama
+              LLM_MODEL: llama3.2:3b
+              OLLAMA_HOST: http://ollama.gdd-ai.svc.cluster.local:11434
+              AUTO_TAG: "true"
+              AUTO_TITLE: "true"
+              AUTO_TAG_TRIGGER_TAG: paperless-gpt-auto
+              AUTO_OCR_TAG: "paperless-gpt-ocr-auto"
+              MANUAL_TAG: "paperless-gpt-manual"
+              PDF_OCR_TAGGING: "true"
+              PDF_OCR_COMPLETE_TAG: "paperless-gpt-ocr-complete"
+            envFrom:
+              - secretRef:
+                  name: paperless-secret
+            resources:
+              requests:
+                cpu: 10m
+                memory: 64Mi
+              limits:
+                memory: 256Mi
+
     service:
       app:
         annotations:
@@ -84,3 +136,9 @@ spec:
         existingClaim: paperless
         globalMounts:
           - path: /config
+      consume:
+        type: nfs
+        server: 10.0.30.134
+        path: /medianfs/paperless/consume
+        globalMounts:
+          - path: /data/consume
