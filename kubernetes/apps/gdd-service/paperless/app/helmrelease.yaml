@@ -168,7 +168,7 @@ spec:
         advancedMounts:
           paperless:
             scanservjs:
-              - path: /app/data/output
+              - path: /var/lib/scanservjs/output
       scanservjs-config:
         type: configMap
         name: scanservjs-config
