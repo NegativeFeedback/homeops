@@ -117,6 +117,17 @@ spec:
               limits:
                 memory: 256Mi
 
+          scanservjs:
+            image:
+              repository: ghcr.io/negativefeedback/scanservjs
+              tag: sha-63ce849@sha256:5c5cb3f8551cc28d71efb896116f4c3bc072263d6d8978b2d1ef682ec38fef4f
+            resources:
+              requests:
+                cpu: 10m
+                memory: 64Mi
+              limits:
+                memory: 256Mi
+
     service:
       app:
         annotations:
@@ -131,8 +142,15 @@ spec:
         ports:
           http:
             port: 8080
+      scanservjs:
+        controller: paperless
+        ports:
+          http:
+            port: 8080
     serviceMonitor:
       app:
+        service:
+          identifier: app
         endpoints:
           - port: http
 
@@ -147,3 +165,7 @@ spec:
         path: /medianfs/paperless/consume
         globalMounts:
           - path: /data/consume
+        advancedMounts:
+          paperless:
+            scanservjs:
+              - path: /app/data/output
