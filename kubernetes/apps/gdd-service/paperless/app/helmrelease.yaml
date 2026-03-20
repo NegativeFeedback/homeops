@@ -53,6 +53,7 @@ spec:
               PAPERLESS_TIKA_ENABLED: "true"
               PAPERLESS_TIKA_ENDPOINT: http://localhost:9998
               PAPERLESS_GOTENBERG_ENDPOINT: http://localhost:3000
+              PAPERLESS_PRE_CONSUME_SCRIPT: /scripts/rotate180.sh
             envFrom:
               - secretRef:
                   name: paperless-secret
@@ -93,13 +94,12 @@ spec:
               repository: ghcr.io/icereed/paperless-gpt
               tag: latest
             env:
-              PAPERLESS_BASE_URL: http://localhost:8000
+              PAPERLESS_BASE_URL: http://127.0.0.1:8000
               LLM_PROVIDER: ollama
               LLM_MODEL: llama3.2:3b
               OLLAMA_HOST: http://ollama.gdd-ai.svc.cluster.local:11434
-              AUTO_TAG: "true"
+              AUTO_TAG: "paperless-gpt-auto"
               AUTO_TITLE: "true"
-              AUTO_TAG_TRIGGER_TAG: paperless-gpt-auto
               AUTO_OCR_TAG: "paperless-gpt-ocr-auto"
               MANUAL_TAG: "paperless-gpt-manual"
               PDF_OCR_TAGGING: "true"
@@ -170,3 +170,12 @@ spec:
             scanservjs:
               - path: /etc/scanservjs/config.local.js
                 subPath: config.local.js
+      pre-consume:
+        type: configMap
+        name: paperless-pre-consume
+        defaultMode: 0755
+        advancedMounts:
+          paperless:
+            app:
+              - path: /scripts/rotate180.sh
+                subPath: rotate180.sh
