@@ -8,7 +8,7 @@ metadata:
 spec:
   ingressClassName: tailscale
   rules:
-    - host: paperless
+    - host: paperless.barn-walleye.ts.net
       http:
         paths:
           - path: /
@@ -20,4 +20,4 @@ spec:
                   number: 8000
   tls:
     - hosts:
-        - paperless
+        - paperless.barn-walleye.ts.net
