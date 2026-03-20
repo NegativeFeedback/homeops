@@ -6,4 +6,5 @@ resources:
   - ./helmrelease.yaml
   - ./externalsecret.yaml
   - ./scanservjs-config.yaml
+  - ./ingress.yaml
 #  - ./netpol.yaml
