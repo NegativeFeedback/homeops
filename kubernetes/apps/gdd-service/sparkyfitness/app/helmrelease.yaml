@@ -27,7 +27,7 @@ spec:
           main:
             image:
               repository: ghcr.io/codewithcj/sparkyfitness-frontend
-              tag: v0.16.4.5@sha256:cb719e99b3dd4e8dc10b6e00c727071e41582601dfdd3551b55b1ba2e369b3ab
+              tag: v0.16.5.4@sha256:f3ac7bd81cc0f553d6e43a7b75fb0d3282748fba1f355e55d4736e067b1d9754
             env:
               PROMETHEUS_ENABLED: true
               TZ: America/Chicago
