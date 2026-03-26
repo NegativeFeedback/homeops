@@ -85,6 +85,8 @@ spec:
               '10.0.0.0/8',
             ),
             'forwarded_for_headers' => array('HTTP_X_FORWARDED_FOR'),
+            'overwrite.cli.url' => 'https://next.gddnet.io',
+            'overwriteprotocol' => 'https',
             'default_phone_region' => 'EN',
             'auth.bruteforce.protection.enabled' => true,
             'maintenance_window_start' => 1,

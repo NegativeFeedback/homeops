@@ -1,0 +1,44 @@
+---
+# Run once to fix admin warnings. Re-run by deleting and letting Flux recreate, or re-applying.
+# kustomize.toolkit.fluxcd.io/prune: disabled prevents Flux from deleting after Job completes.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: nextcloud-occ-maintenance
+  namespace: gdd-service
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+spec:
+  ttlSecondsAfterFinished: 600
+  template:
+    metadata:
+      labels:
+        app: nextcloud-occ-maintenance
+    spec:
+      restartPolicy: OnFailure
+      securityContext:
+        runAsUser: 82
+        runAsGroup: 82
+        fsGroup: 82
+        fsGroupChangePolicy: OnRootMismatch
+      containers:
+        - name: occ
+          # Use same flavor as the running nextcloud pod; pin tag if needed
+          image: nextcloud:fpm-alpine
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -e
+              echo "=== Adding missing database indices ==="
+              php /var/www/html/occ db:add-missing-indices --no-interaction
+              echo "=== Running mimetype migration (may take a while on large instances) ==="
+              php /var/www/html/occ maintenance:repair --include-expensive --no-interaction
+              echo "=== Done ==="
+          volumeMounts:
+            - name: nextcloud-config
+              mountPath: /var/www/html
+      volumes:
+        - name: nextcloud-config
+          persistentVolumeClaim:
+            claimName: nextcloud
