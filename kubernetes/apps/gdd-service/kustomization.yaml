@@ -18,5 +18,5 @@ resources:
   - ./nextcloud/ks.yaml
   - ./monica/ks.yaml
   - ./paperless/ks.yaml
-  - ./sparkyfitness/ks.yaml
   - ./homebox/ks.yaml
+  - ./forgejo/ks.yaml
