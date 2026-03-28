@@ -28,7 +28,7 @@ spec:
           app:
             image:
               repository: collabora/code
-              tag: 24.04.13.2.1
+              tag: 24.04.13.3.1
             env:
               TZ: America/Chicago
               # Regex of allowed Nextcloud domains — dots must be escaped
