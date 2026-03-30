@@ -1,0 +1,136 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: gitea-charts
+spec:
+  interval: 2h
+  url: https://dl.gitea.com/charts/
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.18b.haus/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: forgejo
+spec:
+  chart:
+    spec:
+      # renovate: registryUrl=https://dl.gitea.com/charts/ chart=gitea
+      chart: gitea
+      version: 10.6.0
+      sourceRef:
+        kind: HelmRepository
+        name: gitea-charts
+  interval: 2h
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  dependsOn:
+    - name: cloudflare-tunnel
+      namespace: network
+  values:
+    # Use Forgejo image instead of Gitea
+    image:
+      registry: codeberg.org
+      repository: forgejo/forgejo
+      tag: 10.0.3
+      rootless: true
+
+    replicaCount: 1
+
+    containerSecurityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      readOnlyRootFilesystem: true
+      runAsNonRoot: true
+
+    podSecurityContext:
+      fsGroup: 1000
+      runAsNonRoot: true
+      seccompProfile:
+        type: RuntimeDefault
+
+    resources:
+      requests:
+        cpu: 50m
+        memory: 256Mi
+      limits:
+        memory: 512Mi
+
+    # Disable bundled DB — use cluster-wide CNPG instance
+    postgresql-ha:
+      enabled: false
+    postgresql:
+      enabled: false
+    redis-cluster:
+      enabled: false
+
+    persistence:
+      enabled: true
+      existingClaim: forgejo
+
+    gitea:
+      admin:
+        existingSecret: forgejo-secret
+        # First-run admin is created from POSTGRES_USER/POSTGRES_PASSWORD keys in the secret.
+        # You can override this after first install via the UI.
+        username: admin
+        passwordMode: keepUpdated
+
+      config:
+        APP_NAME: "GDD Forgejo"
+        server:
+          DOMAIN: "git.${SECRET_DOMAIN}"
+          ROOT_URL: "https://git.${SECRET_DOMAIN}/"
+          SSH_DOMAIN: "git.${SECRET_DOMAIN}"
+          SSH_PORT: 22
+          SSH_LISTEN_PORT: 2222
+          LFS_START_SERVER: true
+        database:
+          DB_TYPE: postgres
+          HOST: "postgres-rw.database.svc.cluster.local:5432"
+          NAME: forgejo
+          SSL_MODE: require
+        service:
+          DISABLE_REGISTRATION: true
+          REQUIRE_SIGNIN_VIEW: false
+        # Authentik OIDC — enable once the Authentik provider is configured
+        # oauth2_client:
+        #   ENABLE_AUTO_REGISTRATION: true
+        #   USERNAME: preferred_username
+        #   UPDATE_AVATAR: true
+        #   ACCOUNT_LINKING: login
+        cache:
+          ADAPTER: redis
+          HOST: "redis+cluster://dragonfly.database.svc.cluster.local:6379/3?pool_size=100&idle_timeout=180s"
+        session:
+          PROVIDER: redis
+          PROVIDER_CONFIG: "network=tcp,addr=dragonfly.database.svc.cluster.local:6379,db=4,pool_size=100,idle_timeout=180"
+        queue:
+          TYPE: redis
+          CONN_STR: "redis://dragonfly.database.svc.cluster.local:6379/5"
+        indexer:
+          ISSUE_INDEXER_TYPE: bleve
+          REPO_INDEXER_ENABLED: true
+          REPO_INDEXER_TYPE: bleve
+        mailer:
+          ENABLED: false  # Enable and configure once SMTP is verified
+
+      existingSecret: forgejo-secret
+
+    service:
+      http:
+        type: ClusterIP
+        port: 3000
+      ssh:
+        type: ClusterIP
+        port: 22
+
+    ingress:
+      enabled: false

@@ -19,5 +19,5 @@ resources:
   - ./monica/ks.yaml
   - ./paperless/ks.yaml
   - ./homebox/ks.yaml
-#  - ./forgejo/ks.yaml
+  - ./forgejo/ks.yaml
   - ./collabora/ks.yaml

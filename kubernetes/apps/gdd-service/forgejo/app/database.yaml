@@ -1,0 +1,52 @@
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: forgejo
+  namespace: database
+spec:
+  cluster:
+    name: postgres
+  name: forgejo
+  owner: forgejo
+  ensure: present
+---
+apiVersion: generators.external-secrets.io/v1alpha1
+kind: Password
+metadata:
+  name: forgejo-db-password
+  namespace: database
+spec:
+  length: 48
+  digits: 10
+  symbols: 0
+  noUpper: false
+  allowRepeat: true
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: forgejo-db-secret
+  namespace: database
+spec:
+  refreshInterval: 12h
+  target:
+    name: forgejo-db-secret
+    creationPolicy: Owner
+    template:
+      engineVersion: v2
+      data:
+        username: forgejo
+        password: "{{ .password | toString }}"
+        POSTGRES_URL: "postgresql://forgejo:{{ .password | toString }}@postgres-rw.database.svc.cluster.local:5432/forgejo"
+        POSTGRES_HOST: "postgres-rw.database.svc.cluster.local"
+        POSTGRES_PORT: "5432"
+        POSTGRES_DB: "forgejo"
+        POSTGRES_USER: "forgejo"
+        POSTGRES_PASSWORD: "{{ .password | toString }}"
+  dataFrom:
+    - sourceRef:
+        generatorRef:
+          apiVersion: generators.external-secrets.io/v1alpha1
+          kind: Password
+          name: forgejo-db-password
