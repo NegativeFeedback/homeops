@@ -125,6 +125,18 @@ spec:
 
       existingSecret: forgejo-secret
 
+    extraEnv:
+      - name: GITEA__database__PASSWD
+        valueFrom:
+          secretKeyRef:
+            name: forgejo-secret
+            key: POSTGRES_PASSWORD
+      - name: GITEA__database__USER
+        valueFrom:
+          secretKeyRef:
+            name: forgejo-secret
+            key: POSTGRES_USER
+
     service:
       http:
         type: ClusterIP
