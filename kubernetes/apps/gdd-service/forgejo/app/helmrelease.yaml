@@ -95,7 +95,8 @@ spec:
         database:
           DB_TYPE: postgres
           HOST: "postgres-rw.database.svc.cluster.local:5432"
-          NAME: forgejo
+          NAME: service_forgejo
+          USER: service_forgejo_user
           SSL_MODE: require
         service:
           DISABLE_REGISTRATION: true

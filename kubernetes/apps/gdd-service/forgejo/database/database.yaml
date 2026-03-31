@@ -7,8 +7,8 @@ metadata:
 spec:
   cluster:
     name: postgres
-  name: forgejo
-  owner: forgejo
+  name: service_forgejo
+  owner: service_forgejo_user
   ensure: present
 ---
 apiVersion: generators.external-secrets.io/v1alpha1
@@ -36,13 +36,13 @@ spec:
     template:
       engineVersion: v2
       data:
-        username: forgejo
+        username: service_forgejo_user
         password: "{{ .password | toString }}"
-        POSTGRES_URL: "postgresql://forgejo:{{ .password | toString }}@postgres-rw.database.svc.cluster.local:5432/forgejo"
+        POSTGRES_URL: "postgresql://service_forgejo_user:{{ .password | toString }}@postgres-rw.database.svc.cluster.local:5432/service_forgejo"
         POSTGRES_HOST: "postgres-rw.database.svc.cluster.local"
         POSTGRES_PORT: "5432"
-        POSTGRES_DB: "forgejo"
-        POSTGRES_USER: "forgejo"
+        POSTGRES_DB: "service_forgejo"
+        POSTGRES_USER: "service_forgejo_user"
         POSTGRES_PASSWORD: "{{ .password | toString }}"
   dataFrom:
     - sourceRef:
