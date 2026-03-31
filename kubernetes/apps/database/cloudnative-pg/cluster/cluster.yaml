@@ -22,6 +22,14 @@ spec:
 #      parameters:
 #        barmanObjectName: &store garage-store
 
+  managed:
+    roles:
+      - name: service_forgejo_user
+        ensure: present
+        login: true
+        passwordSecret:
+          name: forgejo-db-secret
+
   monitoring:
     enablePodMonitor: true
 
