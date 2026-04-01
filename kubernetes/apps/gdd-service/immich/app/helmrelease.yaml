@@ -1,0 +1,96 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: immich
+spec:
+  type: oci
+  interval: 2h
+  url: oci://ghcr.io/immich-app/immich-charts
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.18b.haus/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: immich
+spec:
+  chart:
+    spec:
+      # renovate: registryUrl=oci://ghcr.io/immich-app/immich-charts chart=immich
+      chart: immich
+      version: 0.9.3
+      sourceRef:
+        kind: HelmRepository
+        name: immich
+  interval: 2h
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  dependsOn:
+    - name: cloudflare-tunnel
+      namespace: network
+  values:
+    immich:
+      persistence:
+        library:
+          existingClaim: immich-library
+
+    postgresql:
+      enabled: false
+
+    redis:
+      enabled: false
+
+    env:
+      TZ: America/Chicago
+      DB_HOSTNAME: "postgres-rw.database.svc.cluster.local"
+      DB_PORT: "5432"
+      DB_DATABASE_NAME: "gdd-service-immich"
+      DB_USERNAME:
+        valueFrom:
+          secretKeyRef:
+            name: immich-secret
+            key: POSTGRES_USER
+      DB_PASSWORD:
+        valueFrom:
+          secretKeyRef:
+            name: immich-secret
+            key: POSTGRES_PASSWORD
+      REDIS_HOSTNAME: "dragonfly.database.svc.cluster.local"
+      REDIS_PORT: "6379"
+      REDIS_DBINDEX: "2"
+
+    server:
+      enabled: true
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+        limits:
+          memory: 1Gi
+      ingress:
+        main:
+          enabled: false
+
+    microservices:
+      enabled: true
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+        limits:
+          memory: 1Gi
+
+    machine-learning:
+      enabled: true
+      resources:
+        requests:
+          cpu: 100m
+          memory: 1Gi
+        limits:
+          gpu.intel.com/i915: 1
+          memory: 4Gi

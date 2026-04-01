@@ -29,6 +29,16 @@ spec:
         login: true
         passwordSecret:
           name: forgejo-db-secret
+      - name: gdd-social-synapse-user
+        ensure: present
+        login: true
+        passwordSecret:
+          name: synapse-db-secret
+      - name: gdd-service-immich-user
+        ensure: present
+        login: true
+        passwordSecret:
+          name: immich-db-secret
 
   monitoring:
     enablePodMonitor: true
