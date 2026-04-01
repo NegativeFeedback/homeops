@@ -90,6 +90,9 @@ spec:
       limits:
         memory: 512Mi
 
+    sharedStorage:
+      enabled: false
+
     # Disable bundled DB — use cluster-wide CNPG instance
     postgresql-ha:
       enabled: false
