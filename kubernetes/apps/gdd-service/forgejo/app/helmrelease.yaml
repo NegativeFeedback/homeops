@@ -32,6 +32,33 @@ spec:
   dependsOn:
     - name: cloudflare-tunnel
       namespace: network
+  postRenderers:
+    - kustomize:
+        patches:
+          - target:
+              kind: Deployment
+              name: forgejo
+            patch: |
+              apiVersion: apps/v1
+              kind: Deployment
+              metadata:
+                name: forgejo
+              spec:
+                template:
+                  spec:
+                    initContainers:
+                      - name: configure-gitea
+                        env:
+                          - name: GITEA__database__PASSWD
+                            valueFrom:
+                              secretKeyRef:
+                                name: forgejo-secret
+                                key: POSTGRES_PASSWORD
+                          - name: GITEA__database__USER
+                            valueFrom:
+                              secretKeyRef:
+                                name: forgejo-secret
+                                key: POSTGRES_USER
   values:
     # Use Forgejo image instead of Gitea
     image:
