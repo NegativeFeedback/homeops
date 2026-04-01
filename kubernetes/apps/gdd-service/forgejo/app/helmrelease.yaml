@@ -49,12 +49,12 @@ spec:
                     initContainers:
                       - name: configure-gitea
                         env:
-                          - name: GITEA__database__PASSWD
+                          - name: FORGEJO__database__PASSWD
                             valueFrom:
                               secretKeyRef:
                                 name: forgejo-secret
                                 key: POSTGRES_PASSWORD
-                          - name: GITEA__database__USER
+                          - name: FORGEJO__database__USER
                             valueFrom:
                               secretKeyRef:
                                 name: forgejo-secret
@@ -153,12 +153,12 @@ spec:
       existingSecret: forgejo-secret
 
     extraEnv:
-      - name: GITEA__database__PASSWD
+      - name: FORGEJO__database__PASSWD
         valueFrom:
           secretKeyRef:
             name: forgejo-secret
             key: POSTGRES_PASSWORD
-      - name: GITEA__database__USER
+      - name: FORGEJO__database__USER
         valueFrom:
           secretKeyRef:
             name: forgejo-secret
