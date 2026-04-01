@@ -27,3 +27,4 @@ spec:
   values:
     nodeSelector:
       intel.feature.node.kubernetes.io/gpu: "true"
+    sharedDevNum: 10
