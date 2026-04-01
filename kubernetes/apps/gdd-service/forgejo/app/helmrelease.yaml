@@ -47,6 +47,8 @@ spec:
                 template:
                   spec:
                     initContainers:
+                      - name: init-directories
+                      - name: init-app-ini
                       - name: configure-gitea
                         env:
                           - name: FORGEJO__database__PASSWD
