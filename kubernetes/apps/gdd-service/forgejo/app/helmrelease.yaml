@@ -113,9 +113,12 @@ spec:
           HOST: "postgres-rw.database.svc.cluster.local:5432"
           SSL_MODE: require
         service:
-          DISABLE_REGISTRATION: true
+          DISABLE_REGISTRATION: false
+          ALLOW_ONLY_EXTERNAL_REGISTRATION: true
+          SHOW_REGISTRATION_BUTTON: false
           REQUIRE_SIGNIN_VIEW: false
           ALLOW_ONLY_EXTERNAL_REGISTRATION: true
+          ENABLE_PASSWORD_SIGNIN_FORM = false
         oauth2_client:
           ENABLE_AUTO_REGISTRATION: true
           USERNAME: preferred_username
@@ -144,6 +147,7 @@ spec:
           autoDiscoverUrl: "https://sso.${SECRET_DOMAIN}/application/o/forgejo/.well-known/openid-configuration"
           groupClaimName: groups
           adminGroup: service-authentik-admin
+          iconUrl: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/main/png/authentik.png"
 
       existingSecret: forgejo-secret
 
