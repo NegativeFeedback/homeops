@@ -32,35 +32,19 @@ spec:
   dependsOn:
     - name: cloudflare-tunnel
       namespace: network
-  postRenderers:
-    - kustomize:
-        patches:
-          - target:
-              kind: Deployment
-              name: forgejo
-            patch: |
-              apiVersion: apps/v1
-              kind: Deployment
-              metadata:
-                name: forgejo
-              spec:
-                template:
-                  spec:
-                    initContainers:
-                      - name: init-directories
-                      - name: init-app-ini
-                      - name: configure-gitea
-                        env:
-                          - name: FORGEJO__database__PASSWD
-                            valueFrom:
-                              secretKeyRef:
-                                name: forgejo-secret
-                                key: POSTGRES_PASSWORD
-                          - name: FORGEJO__database__USER
-                            valueFrom:
-                              secretKeyRef:
-                                name: forgejo-secret
-                                key: POSTGRES_USER
+  valuesFrom:
+    - targetPath: gitea.config.database.PASSWD
+      kind: Secret
+      name: forgejo-secret
+      valuesKey: POSTGRES_PASSWORD
+    - targetPath: gitea.config.database.USER
+      kind: Secret
+      name: forgejo-secret
+      valuesKey: POSTGRES_USER
+    - targetPath: gitea.config.database.NAME
+      kind: Secret
+      name: forgejo-secret
+      valuesKey: POSTGRES_DB
   values:
     fullnameOverride: forgejo
 
@@ -112,8 +96,6 @@ spec:
     gitea:
       admin:
         existingSecret: forgejo-secret
-        # First-run admin is created from POSTGRES_USER/POSTGRES_PASSWORD keys in the secret.
-        # You can override this after first install via the UI.
         username: admin
         passwordMode: keepUpdated
 
@@ -129,18 +111,10 @@ spec:
         database:
           DB_TYPE: postgres
           HOST: "postgres-rw.database.svc.cluster.local:5432"
-          NAME: service_forgejo
-          USER: service_forgejo_user
           SSL_MODE: require
         service:
           DISABLE_REGISTRATION: true
           REQUIRE_SIGNIN_VIEW: false
-        # Authentik OIDC — enable once the Authentik provider is configured
-        # oauth2_client:
-        #   ENABLE_AUTO_REGISTRATION: true
-        #   USERNAME: preferred_username
-        #   UPDATE_AVATAR: true
-        #   ACCOUNT_LINKING: login
         cache:
           ADAPTER: redis
           HOST: "redis+cluster://dragonfly.database.svc.cluster.local:6379/3?pool_size=100&idle_timeout=180s"
@@ -155,21 +129,9 @@ spec:
           REPO_INDEXER_ENABLED: true
           REPO_INDEXER_TYPE: bleve
         mailer:
-          ENABLED: false  # Enable and configure once SMTP is verified
+          ENABLED: false
 
       existingSecret: forgejo-secret
-
-    extraEnv:
-      - name: FORGEJO__database__PASSWD
-        valueFrom:
-          secretKeyRef:
-            name: forgejo-secret
-            key: POSTGRES_PASSWORD
-      - name: FORGEJO__database__USER
-        valueFrom:
-          secretKeyRef:
-            name: forgejo-secret
-            key: POSTGRES_USER
 
     service:
       http:
