@@ -141,7 +141,7 @@ spec:
         - name: Authentik
           provider: openidConnect
           existingSecret: forgejo-oidc-secret
-          autoDiscoverUrl: "https://authentik.${SECRET_DOMAIN}/application/o/forgejo/.well-known/openid-configuration"
+          autoDiscoverUrl: "https://sso.${SECRET_DOMAIN}/application/o/forgejo/.well-known/openid-configuration"
           groupClaimName: groups
           adminGroup: service-authentik-admin
 
