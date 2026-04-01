@@ -115,6 +115,12 @@ spec:
         service:
           DISABLE_REGISTRATION: true
           REQUIRE_SIGNIN_VIEW: false
+          ALLOW_ONLY_EXTERNAL_REGISTRATION: true
+        oauth2_client:
+          ENABLE_AUTO_REGISTRATION: true
+          USERNAME: preferred_username
+          UPDATE_AVATAR: true
+          ACCOUNT_LINKING: login
         cache:
           ADAPTER: redis
           HOST: "redis+cluster://dragonfly.database.svc.cluster.local:6379/3?pool_size=100&idle_timeout=180s"
@@ -130,6 +136,14 @@ spec:
           REPO_INDEXER_TYPE: bleve
         mailer:
           ENABLED: false
+
+      oauth:
+        - name: Authentik
+          provider: openidConnect
+          existingSecret: forgejo-oidc-secret
+          autoDiscoverUrl: "https://authentik.${SECRET_DOMAIN}/application/o/forgejo/.well-known/openid-configuration"
+          groupClaimName: groups
+          adminGroup: service-authentik-admin
 
       existingSecret: forgejo-secret
 
