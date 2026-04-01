@@ -18,7 +18,7 @@ spec:
     spec:
       # renovate: registryUrl=oci://ghcr.io/immich-app/immich-charts chart=immich
       chart: immich
-      version: 0.9.3
+      version: 0.11.1
       sourceRef:
         kind: HelmRepository
         name: immich
@@ -34,63 +34,63 @@ spec:
     - name: cloudflare-tunnel
       namespace: network
   values:
+    controllers:
+      main:
+        containers:
+          main:
+            env:
+              TZ: America/Chicago
+              DB_HOSTNAME: "postgres-rw.database.svc.cluster.local"
+              DB_PORT: "5432"
+              DB_DATABASE_NAME: "gdd-service-immich"
+              DB_USERNAME:
+                valueFrom:
+                  secretKeyRef:
+                    name: immich-secret
+                    key: POSTGRES_USER
+              DB_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: immich-secret
+                    key: POSTGRES_PASSWORD
+              REDIS_HOSTNAME: "dragonfly.database.svc.cluster.local"
+              REDIS_PORT: "6379"
+              REDIS_DBINDEX: "2"
+
     immich:
       persistence:
         library:
           existingClaim: immich-library
 
-    postgresql:
+    valkey:
       enabled: false
-
-    redis:
-      enabled: false
-
-    env:
-      TZ: America/Chicago
-      DB_HOSTNAME: "postgres-rw.database.svc.cluster.local"
-      DB_PORT: "5432"
-      DB_DATABASE_NAME: "gdd-service-immich"
-      DB_USERNAME:
-        valueFrom:
-          secretKeyRef:
-            name: immich-secret
-            key: POSTGRES_USER
-      DB_PASSWORD:
-        valueFrom:
-          secretKeyRef:
-            name: immich-secret
-            key: POSTGRES_PASSWORD
-      REDIS_HOSTNAME: "dragonfly.database.svc.cluster.local"
-      REDIS_PORT: "6379"
-      REDIS_DBINDEX: "2"
 
     server:
       enabled: true
-      resources:
-        requests:
-          cpu: 100m
-          memory: 256Mi
-        limits:
-          memory: 1Gi
+      controllers:
+        main:
+          containers:
+            main:
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 256Mi
+                limits:
+                  memory: 1Gi
       ingress:
         main:
           enabled: false
 
-    microservices:
-      enabled: true
-      resources:
-        requests:
-          cpu: 100m
-          memory: 256Mi
-        limits:
-          memory: 1Gi
-
     machine-learning:
       enabled: true
-      resources:
-        requests:
-          cpu: 100m
-          memory: 1Gi
-        limits:
-          gpu.intel.com/i915: 1
-          memory: 4Gi
+      controllers:
+        main:
+          containers:
+            main:
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 1Gi
+                limits:
+                  gpu.intel.com/i915: 1
+                  memory: 4Gi
