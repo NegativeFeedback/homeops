@@ -1,0 +1,34 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/objectbucket.io/objectbucketclaim_v1alpha1.json
+apiVersion: objectbucket.io/v1alpha1
+kind: ObjectBucketClaim
+metadata:
+  name: tsrecorder
+  namespace: network
+spec:
+  bucketName: tsrecorder
+  storageClassName: ceph-bucket
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/tailscale.com/recorder_v1alpha1.json
+apiVersion: tailscale.com/v1alpha1
+kind: Recorder
+metadata:
+  name: tsrecorder
+  namespace: network
+spec:
+  enableUI: true
+  storage:
+    s3:
+      endpoint: "http://rook-ceph-rgw-ceph-objectstore.rook-ceph.svc"
+      bucket: "tsrecorder"
+      credentials:
+        accessKeyID:
+          secret:
+            name: tsrecorder
+            key: AWS_ACCESS_KEY_ID
+        secretAccessKey:
+          secret:
+            name: tsrecorder
+            key: AWS_SECRET_ACCESS_KEY
+  tags:
+    - "tag:recorder"
