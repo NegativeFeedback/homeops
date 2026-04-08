@@ -24,9 +24,11 @@ spec:
     kind: OCIRepository
     name: envoy-gateway
   install:
+    crds: CreateReplace
     remediation:
       retries: -1
   upgrade:
+    crds: CreateReplace
     cleanupOnFail: true
     remediation:
       retries: 3
