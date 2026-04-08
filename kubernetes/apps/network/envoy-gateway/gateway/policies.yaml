@@ -45,10 +45,6 @@ spec:
     interval: 75s
   headers:
     enableEnvoyHeaders: false
-  compression:
-    - type: Gzip
-    - type: Brotli
-    - type: Zstd
 ---
 # Redirect all plain HTTP to HTTPS across all gateways
 apiVersion: gateway.networking.k8s.io/v1
