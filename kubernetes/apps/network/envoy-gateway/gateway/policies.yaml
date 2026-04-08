@@ -1,0 +1,69 @@
+---
+# Retry policy applied to all three gateways
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: BackendTrafficPolicy
+metadata:
+  name: retry-policy
+spec:
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: envoy-external
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: envoy-internal
+  retry:
+    numRetries: 2
+    retryOn:
+      triggers:
+        - ConnectFailure
+        - Reset
+---
+# Client-facing settings: TLS floor, HTTP/3, response compression, keepalive, real-IP detection
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: ClientTrafficPolicy
+metadata:
+  name: client-settings
+spec:
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: envoy-external
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: envoy-internal
+  clientIPDetection:
+    xForwardedFor:
+      numTrustedHops: 1
+  tls:
+    minVersion: "1.2"
+  http3:
+    enabled: true
+  tcpKeepalive:
+    probes: 9
+    idleTime: 7200s
+    interval: 75s
+  headers:
+    enableEnvoyHeaders: false
+  compression:
+    - type: Gzip
+    - type: Brotli
+    - type: Zstd
+---
+# Redirect all plain HTTP to HTTPS across all gateways
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: http-to-https-redirect
+spec:
+  parentRefs:
+    - name: envoy-external
+      sectionName: http
+    - name: envoy-internal
+      sectionName: http
+  rules:
+    - filters:
+        - type: RequestRedirect
+          requestRedirect:
+            scheme: https
+            statusCode: 301
