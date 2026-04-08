@@ -22,13 +22,7 @@ spec:
       endpoint: "http://rook-ceph-rgw-ceph-objectstore.rook-ceph.svc"
       bucket: "tsrecorder"
       credentials:
-        accessKeyID:
-          secret:
-            name: tsrecorder
-            key: AWS_ACCESS_KEY_ID
-        secretAccessKey:
-          secret:
-            name: tsrecorder
-            key: AWS_SECRET_ACCESS_KEY
+        secret:
+          name: tsrecorder
   tags:
     - "tag:recorder"

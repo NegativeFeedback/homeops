@@ -16,8 +16,8 @@ spec:
     numRetries: 2
     retryOn:
       triggers:
-        - ConnectFailure
-        - Reset
+        - connect-failure
+        - reset
 ---
 # Client-facing settings: TLS floor, HTTP/3, response compression, keepalive, real-IP detection
 apiVersion: gateway.envoyproxy.io/v1alpha1
