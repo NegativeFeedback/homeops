@@ -20,24 +20,6 @@ spec:
     controllers:
       junimoserver:
         strategy: Recreate
-        initContainers:
-          # Downloads game files and establishes Steam session before server starts
-          steam-auth:
-            image:
-              repository: docker.io/sdvd/steam-service
-              tag: preview
-            env:
-              PORT: "3001"
-              GAME_DIR: "/data/game"
-              SESSION_DIR: "/data/steam-session"
-            envFrom:
-              - secretRef:
-                  name: junimoserver-secret
-            securityContext:
-              allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: false
-              capabilities:
-                drop: ["ALL"]
         containers:
           server:
             image:
