@@ -1,0 +1,123 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: junimoserver
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  values:
+    controllers:
+      junimoserver:
+        strategy: Recreate
+        initContainers:
+          # Downloads game files and establishes Steam session before server starts
+          steam-auth:
+            image:
+              repository: docker.io/sdvd/steam-service
+              tag: latest
+            env:
+              PORT: "3001"
+              GAME_DIR: "/data/game"
+              SESSION_DIR: "/data/steam-session"
+            envFrom:
+              - secretRef:
+                  name: junimoserver-secret
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: false
+              capabilities:
+                drop: ["ALL"]
+        containers:
+          server:
+            image:
+              repository: docker.io/sdvd/server
+              tag: latest
+            env:
+              TZ: America/Chicago
+              DISABLE_RENDERING: "true"
+              SETTINGS_PATH: "/data/settings/server-settings.json"
+              API_ENABLED: "true"
+              API_PORT: "8080"
+            envFrom:
+              - secretRef:
+                  name: junimoserver-secret
+            ports:
+              - containerPort: 24642
+                hostPort: 24642
+                protocol: UDP
+              - containerPort: 27015
+                hostPort: 27015
+                protocol: UDP
+            securityContext:
+              allowPrivilegeEscalation: true
+              readOnlyRootFilesystem: false
+              capabilities:
+                add: ["SYS_TIME"]
+                drop: []
+
+      discord-bot:
+        strategy: Recreate
+        containers:
+          app:
+            image:
+              repository: docker.io/sdvd/discord-bot
+              tag: latest
+            env:
+              API_URL: "http://junimoserver:8080"
+              UPDATE_INTERVAL_MS: "30000"
+              DISCORD_BOT_NICKNAME: "Charlie"
+              DISCORD_CHAT_CHANNEL_ID: "1060057280168607837"
+
+            envFrom:
+              - secretRef:
+                  name: junimoserver-secret
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop: ["ALL"]
+
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: false
+        runAsUser: 0
+        fsGroup: 0
+        fsGroupChangePolicy: OnRootMismatch
+
+    service:
+      app:
+        controller: junimoserver
+        ports:
+          vnc:
+            port: 5800
+          api:
+            port: 8080
+
+    persistence:
+      data:
+        existingClaim: junimoserver
+        advancedMounts:
+          junimoserver:
+            steam-auth:
+              - path: /data/game
+                subPath: game
+              - path: /data/steam-session
+                subPath: steam-session
+            server:
+              - path: /data/game
+                subPath: game
+              - path: /config/xdg/config/StardewValley
+                subPath: saves
+              - path: /data/settings
+                subPath: settings
