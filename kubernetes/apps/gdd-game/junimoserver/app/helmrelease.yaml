@@ -21,12 +21,29 @@ spec:
       junimoserver:
         strategy: Recreate
         containers:
+          steam-auth:
+            image:
+              repository: docker.io/sdvd/steam-service
+              tag: preview
+            env:
+              PORT: "3001"
+              GAME_DIR: "/data/game"
+              SESSION_DIR: "/data/steam-session"
+            envFrom:
+              - secretRef:
+                  name: junimoserver-secret
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: false
+              capabilities:
+                drop: ["ALL"]
           server:
             image:
               repository: docker.io/sdvd/server
               tag: preview
             env:
               TZ: America/Chicago
+              STEAM_AUTH_URL: "http://localhost:3001"
               DISABLE_RENDERING: "true"
               SETTINGS_PATH: "/data/settings/server-settings.json"
               API_ENABLED: "true"
