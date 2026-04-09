@@ -25,7 +25,7 @@ spec:
           steam-auth:
             image:
               repository: docker.io/sdvd/steam-service
-              tag: latest
+              tag: preview
             env:
               PORT: "3001"
               GAME_DIR: "/data/game"
@@ -42,7 +42,7 @@ spec:
           server:
             image:
               repository: docker.io/sdvd/server
-              tag: latest
+              tag: preview
             env:
               TZ: America/Chicago
               DISABLE_RENDERING: "true"
@@ -72,7 +72,7 @@ spec:
           app:
             image:
               repository: docker.io/sdvd/discord-bot
-              tag: latest
+              tag: preview
             env:
               API_URL: "http://junimoserver:8080"
               UPDATE_INTERVAL_MS: "30000"
