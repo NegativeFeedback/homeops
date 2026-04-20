@@ -39,13 +39,30 @@ spec:
               requests:
                 cpu: 100m
                 memory: 1Gi
+                gpu.intel.com/i915: 1
               limits:
                 memory: 8Gi
+                gpu.intel.com/i915: 1
     defaultPodOptions:
       securityContext:
         runAsNonRoot: false
         runAsUser: 0
         fsGroup: 0
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: intel.feature.node.kubernetes.io/gpu
+                    operator: In
+                    values: ["true"]
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              preference:
+                matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values: ["gddnet-w9"]
     service:
       app:
         ports:
