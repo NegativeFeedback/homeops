@@ -24,10 +24,15 @@ spec:
           app:
             image:
               repository: ghcr.io/ai-dock/comfyui
-              tag: latest
+              # XPU variant required for Intel Arc — check ghcr.io/ai-dock/comfyui tags for latest xpu build
+              tag: pytorch-2.6.0-py3.11-xpu-ubuntu-22.04
             env:
               TZ: America/Chicago
               AUTO_UPDATE: "false"
+              # Intel Arc XPU settings
+              PYTORCH_DEVICE: xpu
+              ONEAPI_DEVICE_SELECTOR: "level_zero:0"
+              SYCL_CACHE_PERSISTENT: "1"
             probes:
               liveness:
                 enabled: false
@@ -38,11 +43,11 @@ spec:
             resources:
               requests:
                 cpu: 100m
-                memory: 1Gi
-                gpu.intel.com/i915: 1
+                memory: 4Gi
+                gpu.intel.com/xe: 1
               limits:
-                memory: 8Gi
-                gpu.intel.com/i915: 1
+                memory: 24Gi
+                gpu.intel.com/xe: 1
     defaultPodOptions:
       securityContext:
         runAsNonRoot: false
@@ -90,14 +95,14 @@ spec:
         type: persistentVolumeClaim
         storageClass: ceph-block
         accessMode: ReadWriteOnce
-        size: 50Gi
+        size: 500Gi
         globalMounts:
           - path: /opt/ComfyUI/models
       output:
         type: persistentVolumeClaim
         storageClass: ceph-block
         accessMode: ReadWriteOnce
-        size: 10Gi
+        size: 50Gi
         globalMounts:
           - path: /opt/ComfyUI/output
       tmp:
