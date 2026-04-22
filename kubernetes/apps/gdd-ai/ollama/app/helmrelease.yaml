@@ -23,12 +23,16 @@ spec:
         containers:
           app:
             image:
-              repository: docker.io/ollama/ollama
+              repository: docker.io/visitsb/ollama-ipex
               tag: latest
             env:
               TZ: America/Chicago
               OLLAMA_MODELS: /models
-              OLLAMA_INTEL_GPU: "1"
+              SYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS: "1"
+              SYCL_CACHE_PERSISTENT: "1"
+              ZES_ENABLE_SYSMAN: "1"
+              OLLAMA_NUM_GPU: "999"
+              OLLAMA_KEEP_ALIVE: "-1"
             probes:
               liveness:
                 enabled: true
@@ -95,3 +99,9 @@ spec:
           - path: /models
       tmp:
         type: emptyDir
+      shm:
+        type: emptyDir
+        medium: Memory
+        sizeLimit: 16Gi
+        globalMounts:
+          - path: /dev/shm

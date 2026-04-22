@@ -24,13 +24,10 @@ spec:
           app:
             image:
               repository: yanwk/comfyui-boot
-              tag: xpu
+              tag: xpu-20260420
             env:
               TZ: America/Chicago
-              AUTO_UPDATE: "false"
-              PYTORCH_DEVICE: xpu
-              ONEAPI_DEVICE_SELECTOR: "level_zero:0"
-              SYCL_CACHE_PERSISTENT: "1"
+              CLI_ARGS: ""
             probes:
               liveness:
                 enabled: false
@@ -51,6 +48,7 @@ spec:
         runAsNonRoot: false
         runAsUser: 0
         fsGroup: 0
+      hostIPC: true
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -95,13 +93,13 @@ spec:
         accessMode: ReadWriteOnce
         size: 500Gi
         globalMounts:
-          - path: /opt/ComfyUI/models
+          - path: /root/ComfyUI/models
       output:
         type: persistentVolumeClaim
         storageClass: ceph-block
         accessMode: ReadWriteOnce
         size: 50Gi
         globalMounts:
-          - path: /opt/ComfyUI/output
+          - path: /root/ComfyUI/output
       tmp:
         type: emptyDir
