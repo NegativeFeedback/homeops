@@ -23,13 +23,11 @@ spec:
         containers:
           app:
             image:
-              repository: ghcr.io/ai-dock/comfyui
-              # XPU variant required for Intel Arc — check ghcr.io/ai-dock/comfyui tags for latest xpu build
-              tag: pytorch-2.6.0-py3.11-xpu-ubuntu-22.04
+              repository: yanwk/comfyui-boot
+              tag: xpu
             env:
               TZ: America/Chicago
               AUTO_UPDATE: "false"
-              # Intel Arc XPU settings
               PYTORCH_DEVICE: xpu
               ONEAPI_DEVICE_SELECTOR: "level_zero:0"
               SYCL_CACHE_PERSISTENT: "1"
