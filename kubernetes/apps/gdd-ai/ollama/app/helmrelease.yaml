@@ -23,16 +23,20 @@ spec:
         containers:
           app:
             image:
-              repository: docker.io/visitsb/ollama-ipex
+              repository: docker.io/intelanalytics/ipex-llm-inference-cpp-xpu
               tag: latest
+            command: ["/bin/bash", "-c"]
+            args: ["cd /llm/scripts && source ipex-llm-init --gpu --device Arc && bash start-ollama.sh"]
             env:
               TZ: America/Chicago
               OLLAMA_MODELS: /models
-              SYCL_PI_LEVEL_ZERO_USE_IMMEDIATE_COMMANDLISTS: "1"
+              OLLAMA_HOST: "0.0.0.0:11434"
+              DEVICE: Arc
               SYCL_CACHE_PERSISTENT: "1"
               ZES_ENABLE_SYSMAN: "1"
               OLLAMA_NUM_GPU: "999"
               OLLAMA_KEEP_ALIVE: "-1"
+              no_proxy: "localhost,127.0.0.1"
             probes:
               liveness:
                 enabled: true
