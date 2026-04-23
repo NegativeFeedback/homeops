@@ -31,6 +31,7 @@ spec:
               OLLAMA_MODELS: /models
               OLLAMA_NUM_GPU: "999"
               OLLAMA_KEEP_ALIVE: "-1"
+              OLLAMA_VULKAN: "1"
             probes:
               liveness:
                 enabled: true
