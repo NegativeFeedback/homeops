@@ -23,21 +23,13 @@ spec:
         containers:
           app:
             image:
-              repository: docker.io/intelanalytics/ipex-llm-inference-cpp-xpu
+              repository: git.gddnet.io/negativefeedback/ollama-intel-arc
               tag: latest
-            args: ["source /opt/intel/oneapi/setvars.sh --force && mkdir -p /llm/ollama && cd /llm/ollama && init-ollama && ./ollama serve"]
             env:
               TZ: America/Chicago
               OLLAMA_MODELS: /models
-              OLLAMA_HOST: "0.0.0.0:11434"
-              DEVICE: Arc
-              OLLAMA_INTEL_GPU: "1"
-              SYCL_CACHE_PERSISTENT: "1"
-              ZES_ENABLE_SYSMAN: "1"
-              ZE_ENABLE_ALT_DRIVERS: /usr/lib/x86_64-linux-gnu/libze_intel_gpu.so.1
               OLLAMA_NUM_GPU: "999"
               OLLAMA_KEEP_ALIVE: "-1"
-              no_proxy: "localhost,127.0.0.1"
             probes:
               liveness:
                 enabled: true
@@ -104,9 +96,3 @@ spec:
           - path: /models
       tmp:
         type: emptyDir
-      shm:
-        type: emptyDir
-        medium: Memory
-        sizeLimit: 16Gi
-        globalMounts:
-          - path: /dev/shm
