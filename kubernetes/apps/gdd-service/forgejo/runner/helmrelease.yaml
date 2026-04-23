@@ -1,0 +1,68 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: forgejo-runner
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: forgejo-runner
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  values:
+    replicaCount: 1
+
+    image:
+      repository: code.forgejo.org/forgejo/runner
+      tag: "6.3.1"
+
+    # Runner registration token from Forgejo admin
+    secret:
+      create: false
+      name: forgejo-runner-secret
+
+    config:
+      runner:
+        name: "k8s-runner"
+        capacity: 3
+        labels:
+          - "ubuntu-latest:docker://node:20-bullseye"
+          - "ubuntu-22.04:docker://node:20-bullseye"
+          - "ubuntu-24.04:docker://node:20-bookworm"
+          - "self-hosted"
+
+      cache:
+        enabled: true
+
+      container:
+        # "-" means auto-detect Docker socket
+        docker_host: "-"
+        privileged: true
+
+      fetch_interval: 2s
+      fetch_timeout: 5s
+      job_timeout: 3h
+
+    # Forgejo instance URL
+    instanceURL: "https://git.${SECRET_DOMAIN}"
+
+    securityContext:
+      privileged: true
+
+    persistence:
+      enabled: true
+      storageClass: ceph-block
+      size: 5Gi
+
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 3
+      targetCPUUtilizationPercentage: 80
