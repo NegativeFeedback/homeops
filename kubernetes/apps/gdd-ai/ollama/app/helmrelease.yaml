@@ -25,6 +25,7 @@ spec:
             image:
               repository: git.gddnet.io/negativefeedback/ollama-intel-arc
               tag: latest
+            command: ["/bin/ollama", "serve"]
             env:
               TZ: America/Chicago
               OLLAMA_MODELS: /models
