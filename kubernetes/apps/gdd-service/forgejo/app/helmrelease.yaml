@@ -52,7 +52,7 @@ spec:
     image:
       registry: codeberg.org
       repository: forgejo/forgejo
-      tag: 15.0.0
+      tag: 15.0.1
       rootless: true
 
     replicaCount: 1
