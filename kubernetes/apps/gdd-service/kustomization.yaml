@@ -23,3 +23,5 @@ resources:
   - ./collabora/ks.yaml
   - ./immich/ks.yaml
   - ./sparkyfitness/ks.yaml
+  - ./bambubuddy/ks.yaml
+#  - ./spoolman/ks.yaml
