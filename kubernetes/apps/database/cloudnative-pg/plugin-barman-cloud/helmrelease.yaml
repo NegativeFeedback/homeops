@@ -269,10 +269,10 @@ spec:
             identifier: *app
           subjects: *subject
     rawResources:
-      client: &cert
+      client:
         apiVersion: cert-manager.io/v1
         kind: Certificate
-        spec: &certSpec
+        spec:
           commonName: barman-cloud-client
           duration: 2160h
           isCA: false
@@ -281,16 +281,23 @@ spec:
             kind: ClusterIssuer
             group: cert-manager.io
           renewBefore: 360h
-          secretName: *clientCert
+          secretName: barman-cloud-client-tls
           usages:
             - client auth
       server:
-        <<: *cert
+        apiVersion: cert-manager.io/v1
+        kind: Certificate
         spec:
-          <<: *certSpec
           commonName: barman-cloud
           dnsNames:
             - barman-cloud
-          secretName: *serverCert
+          duration: 2160h
+          isCA: false
+          issuerRef:
+            name: cluster-selfsigned-issuer
+            kind: ClusterIssuer
+            group: cert-manager.io
+          renewBefore: 360h
+          secretName: barman-cloud-server-tls
           usages:
             - server auth
