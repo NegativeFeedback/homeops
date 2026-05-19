@@ -109,13 +109,6 @@ spec:
         existingClaim: homeassistant
         globalMounts:
           - path: /config
-      venv-cache:
-        type: persistentVolumeClaim
-        storageClass: ceph-block
-        accessMode: ReadWriteOnce
-        size: 2Gi
-        globalMounts:
-          - path: /config/.venv
       tmpfs:
         type: emptyDir
         advancedMounts:
