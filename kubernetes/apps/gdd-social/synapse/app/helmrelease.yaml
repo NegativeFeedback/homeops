@@ -1,0 +1,115 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: ess-matrix-charts
+spec:
+  type: oci
+  interval: 2h
+  url: oci://ghcr.io/element-hq/ess-helm
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/common-3.0.1/charts/library/common/values.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: synapse
+  namespace: gdd-social
+spec:
+  releaseName: synapse
+  interval: 15m
+  chart:
+    spec:
+      # renovate: registryUrl=oci://ghcr.io/element-hq/ess-helm/matrix-stack
+      chart: matrix-stack
+      version: 26.2.0
+      interval: 15m
+      sourceRef:
+        kind: HelmRepository
+        name: ess-matrix-charts
+  values:
+    serverName: ${SECRET_DOMAIN_SECONDARY}
+
+    ingress:
+      annotations:
+        kubernetes.io/tls-acme: "true"
+        cert-manager.io/cluster-issuer: letsencrypt-prod
+        nginx.ingress.kubernetes.io/custom-http-errors: "418"
+        nginx.ingress.kubernetes.io/default-backend: "synapse"
+        nginx.ingress.kubernetes.io/proxy-body-size: 100m
+        nginx.org/client-max-body-size: 100m
+      className: nginx-external
+
+    matrixRTC:
+      enabled: true
+      ingress:
+        host: mrtc.${SECRET_DOMAIN}
+
+    elementWeb:
+      enabled: true
+      ingress:
+        host: chat.${SECRET_DOMAIN}
+
+    postgres:
+      enabled: true # Will use my own CNPG instance
+
+    wellKnownDelegation:
+      enabled: true
+      baseDomainRedirect:
+        enabled: false
+
+    elementAdmin:
+      enabled: true
+      ingress:
+        host: madmin.${SECRET_DOMAIN}
+        className: nginx-internal
+
+    matrixAuthenticationService:
+      ingress:
+        host: mas.${SECRET_DOMAIN}
+      postgres:
+        host: postgres-rw.database.svc.cluster.local
+        port: 5432
+        user: synapse-mas
+        password:
+          value: ${SECRET_SYNAPSE_PSQL_MAS_PASS}
+        database: synapse-mas
+        sslMode: prefer
+
+    # hookshot:
+    #   enabled: true
+    #   storage:
+    #     existingClaim: synapse-hookshot-pvc
+
+    synapse:
+      ingress:
+        host: synapse.${SECRET_DOMAIN}
+      media:
+        storage:
+          existingClaim: synapse-media-pvc
+      postgres:
+        host: postgres-rw.database.svc.cluster.local
+        port: 5432
+        user: gdd-social-synapse-user
+        password:
+          value: ${SECRET_SYNAPSE_PSQL_PASS}
+        database: gdd-social-synapse
+        sslMode: prefer
+      workers:
+        initial-synchrotron:
+          enabled: true
+        synchrotron:
+          enabled: true
+        federation-sender:
+          enabled: true
+          replicas: 2
+      additional:
+        1-experimental-features:
+          config: |
+            experimental_features:
+              msc4190_enabled: true
+              msc3202_device_masquerading: true
+      appservices:
+      - secret: appservices-secrets
+        secretKey: mautrix-slack.yaml
+      - secret: appservices-secrets
+        secretKey: doublepuppet.yaml
