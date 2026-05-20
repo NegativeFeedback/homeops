@@ -37,6 +37,9 @@ spec:
       masquerade: true
       # Ref: https://github.com/siderolabs/talos/issues/10002
       hostLegacyRouting: true
+      vlanBypassIDs:
+        - 50
+        - 60
     bgpControlPlane:
       enabled: true
     cni:
