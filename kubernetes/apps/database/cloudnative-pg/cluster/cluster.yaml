@@ -39,6 +39,11 @@ spec:
         login: true
         passwordSecret:
           name: immich-db-secret
+      - name: gdd_jellystat_user
+        ensure: present
+        login: true
+        passwordSecret:
+          name: jellystat-db-secret
 
   monitoring:
     enablePodMonitor: true
