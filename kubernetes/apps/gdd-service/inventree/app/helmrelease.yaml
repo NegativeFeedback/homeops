@@ -27,7 +27,7 @@ spec:
         containers:
           server:
             image:
-              repository: inventreedb/inventree
+              repository: inventree/inventree
               tag: stable
             command: [invoke, server]
             env: &env
@@ -83,7 +83,7 @@ spec:
 
           worker:
             image:
-              repository: inventreedb/inventree
+              repository: inventree/inventree
               tag: stable
             command: [invoke, worker]
             env: *env
