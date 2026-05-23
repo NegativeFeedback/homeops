@@ -44,6 +44,11 @@ spec:
         login: true
         passwordSecret:
           name: jellystat-db-secret
+      - name: gdd_inventree_user
+        ensure: present
+        login: true
+        passwordSecret:
+          name: inventree-db-secret
 
   monitoring:
     enablePodMonitor: true

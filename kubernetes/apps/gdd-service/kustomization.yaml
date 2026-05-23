@@ -25,3 +25,4 @@ resources:
   - ./sparkyfitness/ks.yaml
   - ./bambubuddy/ks.yaml
   - ./spoolman/ks.yaml
+  - ./inventree/ks.yaml
