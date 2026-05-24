@@ -47,6 +47,8 @@ spec:
               INVENTREE_LOGIN_ENABLE_SSO: "True"
               INVENTREE_LOGIN_ENABLE_SSO_REG: "True"
               INVENTREE_SOCIAL_BACKENDS: "allauth.socialaccount.providers.openid_connect"
+              INVENTREE_EMAIL_HOST: "localhost"
+              INVENTREE_LOGIN_MAIL_REQUIRED: "False"
             envFrom: &envFrom
               - secretRef:
                   name: inventree-secret
