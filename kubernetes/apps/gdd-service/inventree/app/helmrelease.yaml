@@ -46,6 +46,7 @@ spec:
               INVENTREE_CACHE_PORT: "6379"
               INVENTREE_LOGIN_ENABLE_SSO: "True"
               INVENTREE_LOGIN_ENABLE_SSO_REG: "False"
+              INVENTREE_SOCIAL_BACKENDS: "allauth.socialaccount.providers.openid_connect"
             envFrom: &envFrom
               - secretRef:
                   name: inventree-secret
