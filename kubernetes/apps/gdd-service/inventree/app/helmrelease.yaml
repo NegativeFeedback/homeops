@@ -55,7 +55,7 @@ spec:
             image:
               repository: inventree/inventree
               tag: stable
-            command: [gunicorn, -c, /home/inventree/gunicorn.conf.py, InvenTree.wsgi]
+            command: [gunicorn, -c, /home/inventree/gunicorn.conf.py, --chdir, /home/inventree/src/backend, --workers, "2", InvenTree.wsgi]
             env: *env
             envFrom: *envFrom
             probes:
@@ -98,9 +98,9 @@ spec:
             resources:
               requests:
                 cpu: 25m
-                memory: 128Mi
+                memory: 256Mi
               limits:
-                memory: 512Mi
+                memory: 1Gi
 
     service:
       app:
