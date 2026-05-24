@@ -11,6 +11,7 @@ spec:
     name: app-template
   maxHistory: 2
   install:
+    timeout: 10m
     remediation:
       retries: -1
   upgrade:
@@ -54,7 +55,7 @@ spec:
             image:
               repository: inventree/inventree
               tag: stable
-            command: [invoke, server]
+            command: [gunicorn, -c, /home/inventree/gunicorn.conf.py, InvenTree.wsgi]
             env: *env
             envFrom: *envFrom
             probes:
