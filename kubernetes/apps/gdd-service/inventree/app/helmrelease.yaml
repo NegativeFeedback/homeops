@@ -25,12 +25,11 @@ spec:
       inventree:
         annotations:
           reloader.stakater.com/auto: "true"
-        initContainers:
-          init-db:
+        containers:
+          server:
             image:
               repository: inventree/inventree
               tag: stable
-            command: [invoke, update]
             env: &env
               TZ: America/Chicago
               INVENTREE_DB_ENGINE: postgresql
@@ -50,14 +49,6 @@ spec:
             envFrom: &envFrom
               - secretRef:
                   name: inventree-secret
-        containers:
-          server:
-            image:
-              repository: inventree/inventree
-              tag: stable
-            command: [gunicorn, -c, /home/inventree/gunicorn.conf.py, --chdir, /home/inventree/src/backend, --workers, "2", InvenTree.wsgi]
-            env: *env
-            envFrom: *envFrom
             probes:
               liveness: &probes
                 enabled: true
@@ -66,7 +57,7 @@ spec:
                   httpGet:
                     path: /api/
                     port: &port 8000
-                  initialDelaySeconds: 30
+                  initialDelaySeconds: 60
                   periodSeconds: 30
                   timeoutSeconds: 5
                   failureThreshold: 6
@@ -78,7 +69,7 @@ spec:
                   httpGet:
                     path: /api/
                     port: *port
-                  initialDelaySeconds: 30
+                  initialDelaySeconds: 60
                   periodSeconds: 10
                   failureThreshold: 30
             resources:
@@ -92,7 +83,7 @@ spec:
             image:
               repository: inventree/inventree
               tag: stable
-            command: [invoke, worker]
+            args: [invoke, worker]
             env: *env
             envFrom: *envFrom
             resources:
