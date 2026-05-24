@@ -24,12 +24,12 @@ spec:
       inventree:
         annotations:
           reloader.stakater.com/auto: "true"
-        containers:
-          server:
+        initContainers:
+          init-db:
             image:
               repository: inventree/inventree
               tag: stable
-            command: [invoke, server]
+            command: [invoke, update]
             env: &env
               TZ: America/Chicago
               INVENTREE_DB_ENGINE: postgresql
@@ -44,13 +44,19 @@ spec:
               INVENTREE_BACKUP_DIR: /home/inventree/data/backup
               INVENTREE_CACHE_HOST: dragonfly.database.svc.cluster.local
               INVENTREE_CACHE_PORT: "6379"
-              # OIDC is enabled; configure the social app via InvenTree admin panel
-              # after first login: Admin > Social Accounts > Add Social Application
               INVENTREE_LOGIN_ENABLE_SSO: "True"
               INVENTREE_LOGIN_ENABLE_SSO_REG: "False"
             envFrom: &envFrom
               - secretRef:
                   name: inventree-secret
+        containers:
+          server:
+            image:
+              repository: inventree/inventree
+              tag: stable
+            command: [invoke, server]
+            env: *env
+            envFrom: *envFrom
             probes:
               liveness: &probes
                 enabled: true
