@@ -1,0 +1,28 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: inventree
+  annotations:
+    tailscale.com/proxy-group: ts-ingress
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: Service
+    gethomepage.dev/name: InvenTree
+    gethomepage.dev/icon: inventree.svg
+    gethomepage.dev/description: "Inventory management"
+spec:
+  ingressClassName: tailscale
+  rules:
+    - host: inventree.barn-walleye.ts.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: inventree
+                port:
+                  number: 8000
+  tls:
+    - hosts:
+        - inventree.barn-walleye.ts.net
