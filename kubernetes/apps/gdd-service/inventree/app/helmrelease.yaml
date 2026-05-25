@@ -45,6 +45,7 @@ spec:
               INVENTREE_CACHE_HOST: dragonfly.database.svc.cluster.local
               INVENTREE_CACHE_PORT: "6379"
               INVENTREE_USE_X_FORWARDED_HOST: "True"
+              INVENTREE_USE_HTTPS: "True"
               INVENTREE_LOGIN_ENABLE_SSO: "True"
               INVENTREE_LOGIN_ENABLE_SSO_REG: "True"
               INVENTREE_LOGIN_MAIL_REQUIRED: "False"
