@@ -38,7 +38,7 @@ spec:
               INVENTREE_DB_NAME: gdd_inventree
               INVENTREE_DB_USER: gdd_inventree_user
               INVENTREE_SITE_URL: "https://inventree.barn-walleye.ts.net"
-              INVENTREE_DEBUG: "0"
+              INVENTREE_DEBUG: "1"
               INVENTREE_MEDIA_ROOT: /home/inventree/data/media
               INVENTREE_STATIC_ROOT: /home/inventree/data/static
               INVENTREE_BACKUP_DIR: /home/inventree/data/backup
