@@ -26,8 +26,8 @@ spec:
         containers:
           app:
             image:
-              repository: docker.io/felddy/foundryvtt
-              tag: 14.361.0@sha256:88399d7707a5ee548283a66947e54f69eaad68f27433c0f57c8940b44794fdfc
+              repository: ghcr.io/felddy/foundryvtt
+              tag: 14.363.0
             env:
               TZ: America/Chicago
               CONTAINER_CACHE: /data/container_cache
