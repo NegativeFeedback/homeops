@@ -57,6 +57,7 @@ spec:
               INVENTREE_EMAIL_TLS: "False"
               INVENTREE_EMAIL_SSL: "False"
               INVENTREE_EMAIL_SENDER: "noreply@gddnet.io"
+              INVENTREE_PLUGINS_ENABLED: "True"
             envFrom: &envFrom
               - secretRef:
                   name: inventree-secret
