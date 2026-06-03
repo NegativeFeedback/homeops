@@ -78,10 +78,6 @@ spec:
       limits:
         memory: 512Mi
 
-    sharedStorage:
-      enabled: true
-      existingClaim: forgejo
-
     # Disable bundled DB — use cluster-wide CNPG instance
     postgresql-ha:
       enabled: false
@@ -91,7 +87,8 @@ spec:
       enabled: false
 
     persistence:
-      enabled: false
+      enabled: true
+      existingClaim: forgejo
 
     gitea:
       admin:
@@ -140,7 +137,7 @@ spec:
           ENABLED: false
         actions:
           ENABLED: true
-          DEFAULT_ACTIONS_URL: https://data.forgejo.org
+          DEFAULT_ACTIONS_URL: http://forgejo-http:3000
 
       oauth:
         - name: Authentik
