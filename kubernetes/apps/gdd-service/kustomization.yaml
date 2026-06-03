@@ -26,3 +26,16 @@ resources:
   - ./bambubuddy/ks.yaml
   - ./spoolman/ks.yaml
   - ./inventree/ks.yaml
+
+patches:
+  - patch: |-
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        labels:
+          pod-security.kubernetes.io/audit: privileged
+          pod-security.kubernetes.io/enforce: privileged
+          pod-security.kubernetes.io/warn: privileged
+        name: not-used
+    target:
+      kind: Namespace
