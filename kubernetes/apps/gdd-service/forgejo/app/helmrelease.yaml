@@ -137,6 +137,7 @@ spec:
           ENABLED: false
         actions:
           ENABLED: true
+          DEFAULT_ACTIONS_URL: https://data.forgejo.org
 
       oauth:
         - name: Authentik
