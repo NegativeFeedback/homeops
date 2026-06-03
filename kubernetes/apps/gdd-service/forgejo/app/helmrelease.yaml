@@ -137,7 +137,6 @@ spec:
           ENABLED: false
         actions:
           ENABLED: true
-          DEFAULT_ACTIONS_URL: http://forgejo-http:3000
 
       oauth:
         - name: Authentik
