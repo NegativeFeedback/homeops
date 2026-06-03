@@ -1,15 +1,13 @@
 ---
-# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/ocirepository-source-v1beta2.json
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: OCIRepository
 metadata:
-  name: forgejo-runner
+  name: app-template-v5
 spec:
   interval: 15m
-  url: oci://code.forgejo.org/forgejo-helm/forgejo/forgejo-runner
+  url: oci://ghcr.io/bjw-s-labs/helm/app-template
   ref:
-    # renovate: registryUrl=oci://code.forgejo.org/forgejo-helm/forgejo chart=forgejo-runner
-    tag: "0.2.0"
+    tag: 5.0.1
   layerSelector:
     mediaType: "application/vnd.cncf.helm.chart.content.v1.tar+gzip"
     operation: copy
