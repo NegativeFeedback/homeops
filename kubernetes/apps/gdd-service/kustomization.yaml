@@ -26,6 +26,7 @@ resources:
   - ./bambubuddy/ks.yaml
   - ./spoolman/ks.yaml
   - ./inventree/ks.yaml
+  - ./keepit/ks.yaml
 
 patches:
   - patch: |-
