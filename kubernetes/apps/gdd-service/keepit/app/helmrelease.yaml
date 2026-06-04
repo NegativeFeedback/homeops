@@ -33,7 +33,7 @@ spec:
               DB_PATH: /data/keepit.db
               REDDIT_USER_AGENT: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.3
               DEFAULT_SCRAPE_INTERVAL_HOURS: "24"
-              MAX_CONCURRENT_DOWNLOADS: "8"
+              MAX_CONCURRENT_DOWNLOADS: "24"
               YTDLP_PATH: yt-dlp
               BROWSER_HEADLESS: "true"
             envFrom:
@@ -69,10 +69,10 @@ spec:
                   failureThreshold: 3
             resources:
               requests:
-                cpu: 50m
-                memory: 256Mi
+                cpu: 100m
+                memory: 512Mi
               limits:
-                memory: 2Gi
+                memory: 8Gi
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
