@@ -25,7 +25,7 @@ spec:
           app:
             image:
               repository: git.gddnet.io/negativefeedback/keepit
-              tag: v0.1.7@sha256:f3717cbed6dcb2da3e74b158a5221c42c7a392c840a07357030cd45913156ae1
+              tag: v0.1.9@sha256:c74b33de22819854bfe0ae57333c0963b29caee75fe19b1ff610d21bc930deae
             env:
               TZ: ${TIMEZONE}
               PORT: &port 8080
@@ -34,8 +34,16 @@ spec:
               REDDIT_USER_AGENT: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.3
               DEFAULT_SCRAPE_INTERVAL_HOURS: "24"
               MAX_CONCURRENT_DOWNLOADS: "24"
+              DOWNLOAD_TIMEOUT_SECONDS: 300
+              FAST_CHECK_INTERVAL_MINUTES: 0
+              DELETION_CHECK_INTERVAL_HOURS: 168
+              WEBHOOK_URL: https://discord.com/api/webhooks/1441144884802224178/1tWxLnoiF-z7u-3DYi1dl1HXJWJM4BMh-2IoLI8BvV0g2J3GvtXdAEvl9viIt86hCweR
+              FFMPEG_PATH: ffmpeg
+              MAX_RETRIES: 3
               YTDLP_PATH: yt-dlp
               BROWSER_HEADLESS: "true"
+              SESSION_AUTO_SCRAPE: false
+
             envFrom:
               - secretRef:
                   name: keepit-secret
