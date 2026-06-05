@@ -29,8 +29,8 @@ spec:
             env:
               TZ: ${TIMEZONE}
               PORT: &port 8080
-              DATA_PATH: /data
-              DB_PATH: /data/keepit.db
+              DATA_PATH: /media
+              DB_PATH: /db/keepit.db
               REDDIT_USER_AGENT: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.3
               DEFAULT_SCRAPE_INTERVAL_HOURS: "24"
               MAX_CONCURRENT_DOWNLOADS: "12"
