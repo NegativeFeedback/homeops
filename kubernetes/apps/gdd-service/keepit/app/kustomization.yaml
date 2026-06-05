@@ -7,3 +7,4 @@ resources:
   - ./ingress.yaml
   - ./externalsecret.yaml
   - ./netpol.yaml
+  - ./volsync-db.yaml
