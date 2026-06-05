@@ -96,6 +96,12 @@ spec:
             port: *port
 
     persistence:
+      db:
+        existingClaim: keepit
+        advancedMounts:
+          keepit:
+            app:
+              - path: /db
       data:
         type: persistentVolumeClaim
         accessMode: ReadWriteOnce
@@ -104,6 +110,14 @@ spec:
           keepit:
             app:
               - path: /data
+      media:
+        type: nfs
+        server: 10.0.30.160
+        path: /mnt/user/reddit
+        advancedMounts:
+          keepit:
+            app:
+              - path: /media
       tmpfs:
         type: emptyDir
         medium: Memory
