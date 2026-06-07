@@ -1,0 +1,33 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: keepit-debug
+  namespace: gdd-service
+spec:
+  securityContext:
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+  containers:
+    - name: debug
+      image: busybox
+      command: ["sleep", "infinity"]
+      volumeMounts:
+        - name: db
+          mountPath: /db
+        - name: data
+          mountPath: /data
+        - name: media
+          mountPath: /media
+  volumes:
+    - name: db
+      persistentVolumeClaim:
+        claimName: keepit-db
+    - name: data
+      persistentVolumeClaim:
+        claimName: keepit-data
+    - name: media
+      nfs:
+        server: 10.0.30.160
+        path: /mnt/user/reddit
