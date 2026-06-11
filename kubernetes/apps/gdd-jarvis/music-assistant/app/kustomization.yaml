@@ -1,0 +1,19 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/kustomization
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ./helmrelease.yaml
+  - ./ingress.yaml
+# Fresh-start patch: the component's PVC has dataSourceRef which blocks creation
+# until a restic restore succeeds. No backup exists yet so we strip it out.
+# The name must match the literal pre-substitution value kustomize sees.
+patches:
+  - target:
+      group: ""
+      version: v1
+      kind: PersistentVolumeClaim
+      name: ${APP}
+    patch: |
+      - op: remove
+        path: /spec/dataSourceRef

@@ -10,6 +10,7 @@ resources:
   - ./zigbee2mqtt/ks.yaml
   - ./homeassistant/ks.yaml
   - ./esphome/ks.yaml
+  - ./music-assistant/ks.yaml
 
 patches:
   - patch: |-
