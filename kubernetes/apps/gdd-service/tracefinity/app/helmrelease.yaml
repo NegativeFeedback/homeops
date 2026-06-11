@@ -99,3 +99,7 @@ spec:
           tracefinity:
             app:
               - path: /tmp
+              - path: /var/log/nginx
+                subPath: nginx-logs
+              - path: /var/lib/nginx
+                subPath: nginx-lib
