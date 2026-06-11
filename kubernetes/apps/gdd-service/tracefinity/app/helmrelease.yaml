@@ -1,0 +1,99 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: tracefinity
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  values:
+    controllers:
+      tracefinity:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            image:
+              repository: ghcr.io/tracefinity/tracefinity
+              tag: 0.4.0@sha256:39df55295788e95d6777cca10ec3f8501097e74a2d6597473b402c1185134db7
+            env:
+              TZ: ${TIMEZONE}
+              # Local CPU tracing; prefer BiRefNet Lite, fall back to IS-Net
+              TRACERS: birefnet-lite,isnet
+              TRACEFINITY_ONNX_PROVIDER: cpu
+            securityContext:
+              allowPrivilegeEscalation: false
+              # nginx/supervisor/onnx write to /app/.u2net, /var, /tmp; not read-only
+              readOnlyRootFilesystem: false
+              capabilities:
+                drop:
+                  - ALL
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: &port 3000
+                  initialDelaySeconds: 30
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 3
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: *port
+                  initialDelaySeconds: 20
+                  periodSeconds: 15
+                  timeoutSeconds: 5
+                  failureThreshold: 3
+            resources:
+              requests:
+                cpu: 250m
+                memory: 2Gi
+              limits:
+                memory: 10Gi
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+    service:
+      app:
+        ports:
+          http:
+            port: *port
+    persistence:
+      storage:
+        type: persistentVolumeClaim
+        storageClass: ceph-block
+        accessMode: ReadWriteOnce
+        size: 15Gi
+        advancedMounts:
+          tracefinity:
+            app:
+              - path: /app/storage
+                subPath: storage
+              # cache downloaded ONNX models so they survive restarts
+              - path: /app/.u2net
+                subPath: u2net
+      tmp:
+        type: emptyDir
+        advancedMounts:
+          tracefinity:
+            app:
+              - path: /tmp

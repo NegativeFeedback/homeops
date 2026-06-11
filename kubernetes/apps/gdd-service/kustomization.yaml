@@ -27,6 +27,7 @@ resources:
   - ./spoolman/ks.yaml
   - ./inventree/ks.yaml
   - ./keepit/ks.yaml
+  - ./tracefinity/ks.yaml
 
 patches:
   - patch: |-
