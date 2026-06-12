@@ -44,6 +44,8 @@ spec:
             runner:
               capacity: 4
               file: /data/.runner
+              keepalive_time: 10m
+              keepalive_timeout: 5m
               labels:
                 - ubuntu-latest:k8s:/config/podspec-default.yaml
                 - ubuntu-24.04:k8spod:/config/podspec-default.yaml
