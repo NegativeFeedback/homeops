@@ -1,0 +1,276 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ghostwriter-postgres
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 20Gi
+  storageClassName: ceph-block
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ghostwriter-media
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 20Gi
+  storageClassName: ceph-block
+# =============================================================================
+# Postgres database backups
+# =============================================================================
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: ghostwriter-postgres-local-volsync
+spec:
+  refreshInterval: 12h
+  secretStoreRef:
+    name: bitwarden
+    kind: ClusterSecretStore
+  data:
+    - secretKey: VOLSYNC_LOCAL_RESTIC_PASSWORD
+      remoteRef:
+        key: "57657703-39e1-41a7-a226-b3860141f806"
+    - secretKey: VOLSYNC_LOCAL_ACCESS_KEY_ID
+      remoteRef:
+        key: "072086ba-6674-4801-a2a7-b38601421aa1"
+    - secretKey: VOLSYNC_LOCAL_BUCKET_ENDPOINT
+      remoteRef:
+        key: "be3c5c1a-1c6f-4e92-93e6-b38601422f4e"
+    - secretKey: VOLSYNC_LOCAL_SECRET_ACCESS_KEY
+      remoteRef:
+        key: "25acb515-115c-435e-ad10-b3860142453b"
+  target:
+    template:
+      engineVersion: v2
+      data:
+        RESTIC_REPOSITORY: "{{ .VOLSYNC_LOCAL_BUCKET_ENDPOINT }}/volsync/seclab-ghostwriter/ghostwriter-postgres"
+        RESTIC_PASSWORD: "{{ .VOLSYNC_LOCAL_RESTIC_PASSWORD }}"
+        AWS_ACCESS_KEY_ID: "{{ .VOLSYNC_LOCAL_ACCESS_KEY_ID }}"
+        AWS_SECRET_ACCESS_KEY: "{{ .VOLSYNC_LOCAL_SECRET_ACCESS_KEY }}"
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: ghostwriter-postgres-b2-volsync
+spec:
+  refreshInterval: 12h
+  secretStoreRef:
+    name: bitwarden
+    kind: ClusterSecretStore
+  data:
+    - secretKey: VOLSYNC_B2_RESTIC_PASSWORD
+      remoteRef:
+        key: "ba58f8dc-b191-4224-90a3-b38601425ace"
+    - secretKey: VOLSYNC_B2_ACCESS_KEY_ID
+      remoteRef:
+        key: "0d408eae-142c-4947-ba64-b38601426e3b"
+    - secretKey: VOLSYNC_B2_BUCKET_ENDPOINT
+      remoteRef:
+        key: "4604a62e-9d1c-4655-99c2-b386014285af"
+    - secretKey: VOLSYNC_B2_SECRET_ACCESS_KEY
+      remoteRef:
+        key: "11ce4859-90d2-4501-ac01-b3860142ab16"
+  target:
+    template:
+      engineVersion: v2
+      data:
+        RESTIC_REPOSITORY: "s3:https://{{ .VOLSYNC_B2_BUCKET_ENDPOINT }}/omni-talos-gdd/seclab-ghostwriter/ghostwriter-postgres"
+        RESTIC_PASSWORD: "{{ .VOLSYNC_B2_RESTIC_PASSWORD }}"
+        AWS_ACCESS_KEY_ID: "{{ .VOLSYNC_B2_ACCESS_KEY_ID }}"
+        AWS_SECRET_ACCESS_KEY: "{{ .VOLSYNC_B2_SECRET_ACCESS_KEY }}"
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.18b.haus/volsync.backube/replicationsource_v1alpha1.json
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationSource
+metadata:
+  name: ghostwriter-postgres
+spec:
+  sourcePVC: ghostwriter-postgres
+  trigger:
+    schedule: "0 3 * * *"
+  restic:
+    copyMethod: Snapshot
+    pruneIntervalDays: 7
+    repository: ghostwriter-postgres-local-volsync
+    volumeSnapshotClassName: csi-ceph-blockpool
+    cacheCapacity: 1Gi
+    cacheStorageClassName: openebs-hostpath
+    cacheAccessModes: ["ReadWriteOnce"]
+    storageClassName: ceph-block
+    accessModes: ["ReadWriteOnce"]
+    retain:
+      hourly: 24
+      daily: 7
+      weekly: 4
+      monthly: 6
+    moverResources:
+      requests:
+        memory: 1Gi
+    moverSecurityContext:
+      fsGroup: 0
+      runAsGroup: 0
+      runAsUser: 0
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.18b.haus/volsync.backube/replicationsource_v1alpha1.json
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationSource
+metadata:
+  name: ghostwriter-postgres-b2
+spec:
+  sourcePVC: ghostwriter-postgres
+  trigger:
+    schedule: "0 4 * * 0"
+  restic:
+    copyMethod: Snapshot
+    pruneIntervalDays: 7
+    repository: ghostwriter-postgres-b2-volsync
+    volumeSnapshotClassName: csi-ceph-blockpool
+    cacheCapacity: 1Gi
+    cacheStorageClassName: openebs-hostpath
+    cacheAccessModes: ["ReadWriteOnce"]
+    storageClassName: ceph-block
+    accessModes: ["ReadWriteOnce"]
+    retain:
+      daily: 7
+      weekly: 4
+    moverResources:
+      requests:
+        memory: 1Gi
+    moverSecurityContext:
+      fsGroup: 0
+      runAsGroup: 0
+      runAsUser: 0
+# =============================================================================
+# Uploaded media (evidence / report files) backups
+# =============================================================================
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: ghostwriter-media-local-volsync
+spec:
+  refreshInterval: 12h
+  secretStoreRef:
+    name: bitwarden
+    kind: ClusterSecretStore
+  data:
+    - secretKey: VOLSYNC_LOCAL_RESTIC_PASSWORD
+      remoteRef:
+        key: "57657703-39e1-41a7-a226-b3860141f806"
+    - secretKey: VOLSYNC_LOCAL_ACCESS_KEY_ID
+      remoteRef:
+        key: "072086ba-6674-4801-a2a7-b38601421aa1"
+    - secretKey: VOLSYNC_LOCAL_BUCKET_ENDPOINT
+      remoteRef:
+        key: "be3c5c1a-1c6f-4e92-93e6-b38601422f4e"
+    - secretKey: VOLSYNC_LOCAL_SECRET_ACCESS_KEY
+      remoteRef:
+        key: "25acb515-115c-435e-ad10-b3860142453b"
+  target:
+    template:
+      engineVersion: v2
+      data:
+        RESTIC_REPOSITORY: "{{ .VOLSYNC_LOCAL_BUCKET_ENDPOINT }}/volsync/seclab-ghostwriter/ghostwriter-media"
+        RESTIC_PASSWORD: "{{ .VOLSYNC_LOCAL_RESTIC_PASSWORD }}"
+        AWS_ACCESS_KEY_ID: "{{ .VOLSYNC_LOCAL_ACCESS_KEY_ID }}"
+        AWS_SECRET_ACCESS_KEY: "{{ .VOLSYNC_LOCAL_SECRET_ACCESS_KEY }}"
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: ghostwriter-media-b2-volsync
+spec:
+  refreshInterval: 12h
+  secretStoreRef:
+    name: bitwarden
+    kind: ClusterSecretStore
+  data:
+    - secretKey: VOLSYNC_B2_RESTIC_PASSWORD
+      remoteRef:
+        key: "ba58f8dc-b191-4224-90a3-b38601425ace"
+    - secretKey: VOLSYNC_B2_ACCESS_KEY_ID
+      remoteRef:
+        key: "0d408eae-142c-4947-ba64-b38601426e3b"
+    - secretKey: VOLSYNC_B2_BUCKET_ENDPOINT
+      remoteRef:
+        key: "4604a62e-9d1c-4655-99c2-b386014285af"
+    - secretKey: VOLSYNC_B2_SECRET_ACCESS_KEY
+      remoteRef:
+        key: "11ce4859-90d2-4501-ac01-b3860142ab16"
+  target:
+    template:
+      engineVersion: v2
+      data:
+        RESTIC_REPOSITORY: "s3:https://{{ .VOLSYNC_B2_BUCKET_ENDPOINT }}/omni-talos-gdd/seclab-ghostwriter/ghostwriter-media"
+        RESTIC_PASSWORD: "{{ .VOLSYNC_B2_RESTIC_PASSWORD }}"
+        AWS_ACCESS_KEY_ID: "{{ .VOLSYNC_B2_ACCESS_KEY_ID }}"
+        AWS_SECRET_ACCESS_KEY: "{{ .VOLSYNC_B2_SECRET_ACCESS_KEY }}"
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.18b.haus/volsync.backube/replicationsource_v1alpha1.json
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationSource
+metadata:
+  name: ghostwriter-media
+spec:
+  sourcePVC: ghostwriter-media
+  trigger:
+    schedule: "0 3 * * *"
+  restic:
+    copyMethod: Snapshot
+    pruneIntervalDays: 7
+    repository: ghostwriter-media-local-volsync
+    volumeSnapshotClassName: csi-ceph-blockpool
+    cacheCapacity: 1Gi
+    cacheStorageClassName: openebs-hostpath
+    cacheAccessModes: ["ReadWriteOnce"]
+    storageClassName: ceph-block
+    accessModes: ["ReadWriteOnce"]
+    retain:
+      hourly: 24
+      daily: 7
+      weekly: 4
+      monthly: 6
+    moverResources:
+      requests:
+        memory: 1Gi
+    moverSecurityContext:
+      fsGroup: 0
+      runAsGroup: 0
+      runAsUser: 0
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.18b.haus/volsync.backube/replicationsource_v1alpha1.json
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationSource
+metadata:
+  name: ghostwriter-media-b2
+spec:
+  sourcePVC: ghostwriter-media
+  trigger:
+    schedule: "0 4 * * 0"
+  restic:
+    copyMethod: Snapshot
+    pruneIntervalDays: 7
+    repository: ghostwriter-media-b2-volsync
+    volumeSnapshotClassName: csi-ceph-blockpool
+    cacheCapacity: 1Gi
+    cacheStorageClassName: openebs-hostpath
+    cacheAccessModes: ["ReadWriteOnce"]
+    storageClassName: ceph-block
+    accessModes: ["ReadWriteOnce"]
+    retain:
+      daily: 7
+      weekly: 4
+    moverResources:
+      requests:
+        memory: 1Gi
+    moverSecurityContext:
+      fsGroup: 0
+      runAsGroup: 0
+      runAsUser: 0
