@@ -1,0 +1,63 @@
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: ghostwriter
+spec:
+  # Applies to every pod in the namespace
+  endpointSelector: {}
+  ingress:
+    # Same namespace: django <-> nginx <-> hasura <-> collab <-> postgres <-> redis.
+    # Tailnet traffic terminates inside the pod (tailscale sidecar -> localhost),
+    # so no cross-namespace ingress is needed.
+    - fromEndpoints:
+        - {}
+    # Tailscale direct (NAT-traversal) inbound — falls back to DERP relay if blocked
+    - fromEntities:
+        - world
+      toPorts:
+        - ports:
+            - port: "41641"
+              protocol: UDP
+  egress:
+    # Same namespace
+    - toEndpoints:
+        - {}
+    # Other seclab-* namespaces (carry the `seclab: "true"` namespace label)
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace.labels.seclab: "true"
+    # DNS resolution via CoreDNS
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:app.kubernetes.io/name: coredns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+    # External internet (Tailscale control/DERP over 443, app egress), but NOT the
+    # local homelab LAN (10.0.0.0/16).
+    - toCIDRSet:
+        - cidr: 0.0.0.0/0
+          except:
+            - 10.0.0.0/16
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP
+            - port: "443"
+              protocol: TCP
+    # Tailscale NAT traversal / DERP (STUN 3478, direct 41641)
+    - toCIDRSet:
+        - cidr: 0.0.0.0/0
+          except:
+            - 10.0.0.0/16
+      toPorts:
+        - ports:
+            - port: "3478"
+              protocol: UDP
+            - port: "41641"
+              protocol: UDP
