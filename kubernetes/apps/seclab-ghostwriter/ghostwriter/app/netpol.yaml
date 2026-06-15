@@ -23,6 +23,11 @@ spec:
     # Same namespace
     - toEndpoints:
         - {}
+    # Kubernetes API — the tailscale sidecar stores its node state in a Secret
+    # (TS_KUBE_SECRET). The API server has its own Cilium identity, so a CIDR
+    # egress rule does NOT cover it; this entity rule is required.
+    - toEntities:
+        - kube-apiserver
     # Other seclab-* namespaces (carry the `seclab: "true"` namespace label)
     - toEndpoints:
         - matchLabels:
