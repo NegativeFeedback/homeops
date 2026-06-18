@@ -13,3 +13,14 @@ labels:
     includeSelectors: false
 resources:
   - ./ghostwriter/ks.yaml
+
+patches:
+  - patch: |-
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        labels:
+          pod-security.kubernetes.io/enforce: privileged
+        name: not-used
+    target:
+      kind: Namespace
