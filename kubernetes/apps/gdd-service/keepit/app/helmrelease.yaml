@@ -25,7 +25,7 @@ spec:
           app:
             image:
               repository: git.gddnet.io/negativefeedback/keepit
-              tag: v0.1.36@sha256:f1da37d797536b8c179160772b814222db6f754aaa6b5d47a53668ab14caafea
+              tag: v0.1.37@sha256:c0c9cd4c092e32444365d763a2e98c2ad4c17faf8d97db02729001affc473660
             env:
               TZ: ${TIMEZONE}
               PORT: &port 8080
@@ -43,6 +43,9 @@ spec:
               YTDLP_PATH: yt-dlp
               BROWSER_HEADLESS: "true"
               SESSION_AUTO_SCRAPE: "false"
+              GLUETUN_CONTROL_URL: http://localhost:8000
+              VIDEO_REQUIRE_VPN: "true"
+
 
             envFrom:
               - secretRef:
@@ -81,6 +84,48 @@ spec:
                 memory: 512Mi
               limits:
                 memory: 8Gi
+          gluetun:
+            image:
+              repository: ghcr.io/qdm12/gluetun
+              tag: v3.40.0
+            env:
+              VPN_SERVICE_PROVIDER: protonvpn
+              VPN_TYPE: wireguard
+              SERVER_COUNTRIES: United States
+              SERVER_CITIES: Chicago,New York
+              FIREWALL_OUTBOUND_SUBNETS: 10.244.0.0/16,10.96.0.0/12
+              HTTP_CONTROL_SERVER_ADDRESS: ":8000"
+              HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH: /gluetun/auth/config.toml
+              DOT: "on"
+              UPDATER_PERIOD: 24h
+              TZ: ${TIMEZONE}
+            envFrom:
+              - secretRef:
+                  name: keepit-gluetun-secret
+            securityContext:
+              runAsUser: 0
+              runAsGroup: 0
+              runAsNonRoot: false
+              allowPrivilegeEscalation: false
+              capabilities:
+                add: ["NET_ADMIN"]
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /v1/openvpn/status
+                    port: 8000
+                  initialDelaySeconds: 20
+                  periodSeconds: 30
+                  failureThreshold: 5
+            resources:
+              requests:
+                cpu: 25m
+                memory: 64Mi
+              limits:
+                memory: 256Mi
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
@@ -129,3 +174,12 @@ spec:
                 subPath: tmp
               - path: /dev/shm
                 subPath: shm
+      gluetun-auth:
+        type: configMap
+        name: keepit-gluetun-auth
+        advancedMounts:
+          keepit:
+            gluetun:
+              - path: /gluetun/auth/config.toml
+                subPath: config.toml
+                readOnly: true
