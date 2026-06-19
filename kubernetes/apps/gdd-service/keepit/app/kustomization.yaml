@@ -6,5 +6,7 @@ resources:
   - ./helmrelease.yaml
   - ./ingress.yaml
   - ./externalsecret.yaml
+  - ./gluetun-secret.yaml
+  - ./gluetun-auth.yaml
   - ./netpol.yaml
   - ./volsync-db.yaml
