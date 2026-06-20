@@ -134,6 +134,15 @@ spec:
               limits:
                 memory: 256Mi
     defaultPodOptions:
+      # Video downloads use gluetun's DoT resolver, which doesn't know
+      # cluster.local. With the default ndots:5, external names like
+      # media.redgifs.com get the cluster search domains prepended first and
+      # the musl resolver fails before trying the bare name. ndots:1 makes
+      # dotted external names resolve as-is.
+      dnsConfig:
+        options:
+          - name: ndots
+            value: "1"
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
