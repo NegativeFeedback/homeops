@@ -29,6 +29,7 @@ spec:
             env:
               TZ: ${TIMEZONE}
               HOME: /config
+              USER: stash
               STASH_PORT: &port 9999
               STASH_STASH: /data/
               STASH_GENERATED: /generated/
