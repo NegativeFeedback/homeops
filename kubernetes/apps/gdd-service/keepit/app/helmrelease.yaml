@@ -93,7 +93,10 @@ spec:
               VPN_TYPE: wireguard
               SERVER_COUNTRIES: United States
               SERVER_CITIES: Chicago,New York
-              FIREWALL_OUTBOUND_SUBNETS: 10.244.0.0/16,10.96.0.0/12
+              # pod CIDR, service CIDR, and node CIDR (10.0.31.0/24) — the node
+              # subnet is required so kubelet liveness/readiness probe replies
+              # route back out eth0 instead of into the WireGuard tunnel.
+              FIREWALL_OUTBOUND_SUBNETS: 10.244.0.0/16,10.96.0.0/12,10.0.31.0/24
               HTTP_CONTROL_SERVER_ADDRESS: ":8000"
               HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH: /gluetun/auth/config.toml
               DOT: "on"
