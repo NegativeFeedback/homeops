@@ -116,7 +116,7 @@ spec:
               - path: /cache
       media:
         type: nfs
-        server: 10.0.30.160
+        server: 10.0.30.175
         path: /mnt/user/reddit
         advancedMounts:
           stash:
