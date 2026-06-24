@@ -33,3 +33,12 @@ spec:
               protocol: TCP
             - port: "443"
               protocol: TCP
+    # keepit Enrich plugin fetches keepit's /api/export
+    - toEndpoints:
+        - matchLabels:
+            k8s:app.kubernetes.io/name: keepit
+            k8s:io.kubernetes.pod.namespace: gdd-service
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP

@@ -12,6 +12,15 @@ spec:
     - fromEndpoints:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: network
+    # Allow the stash keepit-Enrich plugin to fetch /api/export
+    - fromEndpoints:
+        - matchLabels:
+            k8s:app.kubernetes.io/name: stash
+            k8s:io.kubernetes.pod.namespace: gdd-service
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
   egress:
     # DNS resolution via CoreDNS
     - toEndpoints:
