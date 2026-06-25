@@ -11,16 +11,12 @@ spec:
       "plugins": [
         {
           "type": "macvlan",
-          "master": "enp6259326.60",
+          "master": "enp2da31d1.60",
           "mode": "bridge",
           "ipam": {
             "type": "static",
-            "addresses": [],
-            "routes": [
-              { "dst": "0.0.0.0/0", "gw": "10.0.60.1" }
-            ]
+            "addresses": []
           }
-        },
-        { "type": "sbr" }
+        }
       ]
     }
