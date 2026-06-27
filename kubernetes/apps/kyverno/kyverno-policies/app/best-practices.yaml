@@ -1,0 +1,205 @@
+---
+# Best-practice policies, all AUDIT-only (validate.failureAction: Audit).
+# These never block admission — they only populate PolicyReports / metrics.
+#
+# Two escape hatches per rule:
+#   1. Namespace-wide: add the namespace to the excluded list.
+#   2. Single workload: label the Pod (template) with `kyverno.io/exclude: "true"`.
+#
+# NOTE: YAML anchors cannot cross "---" document boundaries, so the exclude
+# block is repeated in each policy on purpose. Keep the lists in sync.
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: require-requests-limits
+  annotations:
+    policies.kyverno.io/title: Require Requests and Limits
+    policies.kyverno.io/category: Best Practices
+    policies.kyverno.io/severity: medium
+spec:
+  background: true
+  rules:
+    - name: validate-resources
+      match:
+        any:
+          - resources:
+              kinds: ["Pod"]
+      exclude:
+        any:
+          - resources:
+              namespaces:
+                - kube-system
+                - flux-system
+                - cert-manager
+                - rook-ceph
+                - openebs-system
+                - volsync-system
+                - kyverno
+          - resources:
+              selector:
+                matchLabels:
+                  kyverno.io/exclude: "true"
+      validate:
+        failureAction: Audit
+        message: >-
+          CPU/memory requests and memory limits are required for every container.
+        pattern:
+          spec:
+            containers:
+              - resources:
+                  requests:
+                    cpu: "?*"
+                    memory: "?*"
+                  limits:
+                    memory: "?*"
+---
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: disallow-latest-tag
+  annotations:
+    policies.kyverno.io/title: Disallow Latest Tag
+    policies.kyverno.io/category: Best Practices
+    policies.kyverno.io/severity: medium
+spec:
+  background: true
+  rules:
+    - name: require-image-tag
+      match:
+        any:
+          - resources:
+              kinds: ["Pod"]
+      exclude:
+        any:
+          - resources:
+              namespaces:
+                - kube-system
+                - flux-system
+                - cert-manager
+                - rook-ceph
+                - openebs-system
+                - volsync-system
+                - kyverno
+          - resources:
+              selector:
+                matchLabels:
+                  kyverno.io/exclude: "true"
+      validate:
+        failureAction: Audit
+        message: "An explicit image tag is required (no ':latest' / untagged images)."
+        pattern:
+          spec:
+            containers:
+              - image: "*:*"
+    - name: disallow-latest-tag
+      match:
+        any:
+          - resources:
+              kinds: ["Pod"]
+      exclude:
+        any:
+          - resources:
+              namespaces:
+                - kube-system
+                - flux-system
+                - cert-manager
+                - rook-ceph
+                - openebs-system
+                - volsync-system
+                - kyverno
+          - resources:
+              selector:
+                matchLabels:
+                  kyverno.io/exclude: "true"
+      validate:
+        failureAction: Audit
+        message: "Using a mutable ':latest' image tag is not allowed."
+        pattern:
+          spec:
+            containers:
+              - image: "!*:latest"
+---
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: require-pod-probes
+  annotations:
+    policies.kyverno.io/title: Require Liveness and Readiness Probes
+    policies.kyverno.io/category: Best Practices
+    policies.kyverno.io/severity: medium
+spec:
+  background: true
+  rules:
+    - name: validate-probes
+      match:
+        any:
+          - resources:
+              kinds: ["Pod"]
+      exclude:
+        any:
+          - resources:
+              namespaces:
+                - kube-system
+                - flux-system
+                - cert-manager
+                - rook-ceph
+                - openebs-system
+                - volsync-system
+                - kyverno
+          - resources:
+              selector:
+                matchLabels:
+                  kyverno.io/exclude: "true"
+      validate:
+        failureAction: Audit
+        message: "Liveness and readiness probes are required for every container."
+        foreach:
+          - list: request.object.spec.containers
+            deny:
+              conditions:
+                any:
+                  - key: "{{ element.livenessProbe || `` }}"
+                    operator: Equals
+                    value: ""
+                  - key: "{{ element.readinessProbe || `` }}"
+                    operator: Equals
+                    value: ""
+---
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: require-app-labels
+  annotations:
+    policies.kyverno.io/title: Require Standard Labels
+    policies.kyverno.io/category: Best Practices
+    policies.kyverno.io/severity: low
+spec:
+  background: true
+  rules:
+    - name: require-app-name-label
+      match:
+        any:
+          - resources:
+              kinds: ["Pod"]
+      exclude:
+        any:
+          - resources:
+              namespaces:
+                - kube-system
+                - flux-system
+                - cert-manager
+                - rook-ceph
+                - openebs-system
+                - volsync-system
+                - kyverno
+          - resources:
+              selector:
+                matchLabels:
+                  kyverno.io/exclude: "true"
+      validate:
+        failureAction: Audit
+        message: "The recommended label 'app.kubernetes.io/name' is missing."
+        pattern:
+          metadata:
+            labels:
+              app.kubernetes.io/name: "?*"

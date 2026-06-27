@@ -1,0 +1,66 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: kyverno-policies
+spec:
+  interval: 1h
+  url: oci://ghcr.io/kyverno/charts/kyverno-policies
+  ref:
+    semver: "3.x"
+  layerSelector:
+    mediaType: "application/vnd.cncf.helm.chart.content.v1.tar+gzip"
+    operation: copy
+
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app kyverno-policies
+spec:
+  interval: 1h
+  releaseName: *app
+
+  chartRef:
+    kind: OCIRepository
+    name: kyverno-policies
+
+  install:
+    remediation:
+      retries: -1
+
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+
+  values:
+    # "restricted" generates BOTH the baseline and restricted Pod Security
+    # Standards profiles. Everything is Audit-only for now — nothing is blocked,
+    # violations only surface as PolicyReports / metrics.
+    podSecurityStandard: restricted
+    podSecuritySeverity: medium
+    validationFailureAction: Audit
+
+    # Evaluate already-running workloads, not just new admission requests.
+    background: true
+
+    # Cluster namespaces that should never be evaluated by the PSS policies.
+    # (System / privileged-by-design namespaces.) Add to this list rather than
+    # weakening a policy globally.
+    policyExclude:
+      disallow-host-namespaces: &systemExclude
+        any:
+          - resources:
+              namespaces:
+                - kube-system
+                - flux-system
+                - cert-manager
+                - rook-ceph
+                - openebs-system
+                - volsync-system
+                - kyverno
+      host-path-volumes: *systemExclude
+      privileged-containers: *systemExclude
+      host-process-containers: *systemExclude
+      host-ports: *systemExclude
