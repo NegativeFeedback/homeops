@@ -8,6 +8,7 @@ components:
 resources:
   - ./jellyfin/ks.yaml
   - ./jellyseerr/ks.yaml
+  - ./musicseerr/ks.yaml
   - ./sonarr/ks.yaml
   - ./radarr/ks.yaml
   - ./lidarr/ks.yaml
