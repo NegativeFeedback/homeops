@@ -153,17 +153,13 @@ spec:
       validate:
         failureAction: Audit
         message: "Liveness and readiness probes are required for every container."
-        foreach:
-          - list: request.object.spec.containers
-            deny:
-              conditions:
-                any:
-                  - key: "{{ element.livenessProbe || `` }}"
-                    operator: Equals
-                    value: ""
-                  - key: "{{ element.readinessProbe || `` }}"
-                    operator: Equals
-                    value: ""
+        pattern:
+          spec:
+            containers:
+              - livenessProbe:
+                  periodSeconds: ">0"
+                readinessProbe:
+                  periodSeconds: ">0"
 ---
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
