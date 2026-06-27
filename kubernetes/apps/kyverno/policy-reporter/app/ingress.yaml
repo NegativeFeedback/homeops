@@ -1,0 +1,23 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: policy-reporter-ui
+  annotations:
+    tailscale.com/proxy-group: ts-ingress
+spec:
+  ingressClassName: tailscale
+  rules:
+    - host: kyverno.barn-walleye.ts.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: policy-reporter-ui
+                port:
+                  number: 8080
+  tls:
+    - hosts:
+        - kyverno.barn-walleye.ts.net

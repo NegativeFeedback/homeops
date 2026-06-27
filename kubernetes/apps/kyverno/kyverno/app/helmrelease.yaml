@@ -1,0 +1,91 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: kyverno
+spec:
+  interval: 1h
+  url: oci://ghcr.io/kyverno/charts/kyverno
+  ref:
+    semver: "3.x"
+  layerSelector:
+    mediaType: "application/vnd.cncf.helm.chart.content.v1.tar+gzip"
+    operation: copy
+
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app kyverno
+spec:
+  interval: 1h
+  releaseName: *app
+
+  chartRef:
+    kind: OCIRepository
+    name: kyverno
+
+  install:
+    remediation:
+      retries: -1
+    crds: CreateReplace
+
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+    crds: CreateReplace
+
+  values:
+    # CRDs (kyverno + wgpolicyk8s.io PolicyReport CRDs consumed by policy-reporter)
+    # are reconciled by Flux via crds: CreateReplace above.
+    crds:
+      install: true
+
+    # Admission controller. Bump replicas to 3 for HA if you later enforce.
+    admissionController:
+      replicas: 1
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+        limits:
+          memory: 512Mi
+
+    # Background controller generates PolicyReports for already-existing
+    # resources (needed for full audit visibility, not just new admissions).
+    backgroundController:
+      enabled: true
+      resources:
+        requests:
+          cpu: 50m
+          memory: 128Mi
+        limits:
+          memory: 256Mi
+
+    # Reports controller writes the PolicyReport CRs that Policy Reporter reads.
+    reportsController:
+      enabled: true
+      resources:
+        requests:
+          cpu: 50m
+          memory: 128Mi
+        limits:
+          memory: 256Mi
+
+    cleanupController:
+      enabled: true
+      resources:
+        requests:
+          cpu: 50m
+          memory: 64Mi
+        limits:
+          memory: 128Mi
+
+    # Expose /metrics for the kube-prometheus-stack scrape.
+    metricsService:
+      create: true
+
+    # ServiceMonitor for the Kyverno controllers themselves.
+    serviceMonitor:
+      enabled: true
