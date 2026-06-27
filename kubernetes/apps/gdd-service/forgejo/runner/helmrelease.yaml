@@ -172,7 +172,7 @@ spec:
             image:
               pullPolicy: Always
               repository: git.erwanleboucher.dev/eleboucher/runner-k8s-plugin
-              tag: 12.10.3@sha256:3d2c4c6486400dcd770a7bb296a309ed979d951b168b878316f80f7367887080
+              tag: 12.10.6@sha256:b0ffe279448c70fb3327485163da8da2ce12fa9cc39a29231edd676c9025c036
             args:
               - --listen
               - unix:///plugin/forgejo-runner-k8s.sock
