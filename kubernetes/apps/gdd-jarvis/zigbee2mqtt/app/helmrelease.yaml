@@ -24,7 +24,7 @@ spec:
   values:
     controllers:
       zigbee2mqtt:
-        strategy: RollingUpdate
+        strategy: Recreate
         containers:
           app:
             image:
