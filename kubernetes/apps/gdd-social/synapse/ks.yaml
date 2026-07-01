@@ -3,7 +3,29 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app synapse-database
+  name: synapse-database
+  namespace: gdd-social
+spec:
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: synapse
+  interval: 1h
+  path: ./kubernetes/apps/gdd-social/synapse/database
+  prune: true
+  retryInterval: 2m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: database
+  timeout: 5m
+  wait: true
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/kustomization-kustomize-v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app synapse
   namespace: &namespace gdd-social
 spec:
   commonMetadata:
@@ -13,6 +35,8 @@ spec:
     provider: sops
     secretRef:
       name: sops-age
+  dependsOn:
+    - name: synapse-database
   interval: 1h
   path: ./kubernetes/apps/gdd-social/synapse/app
   postBuild:
@@ -20,13 +44,14 @@ spec:
       - name: cluster-secrets
         kind: Secret
     substitute:
-       APP: synapse
-       NS: *namespace
+      APP: *app
+      NS: *namespace
   prune: true
   retryInterval: 2m
   sourceRef:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
+  targetNamespace: *namespace
   timeout: 5m
   wait: false

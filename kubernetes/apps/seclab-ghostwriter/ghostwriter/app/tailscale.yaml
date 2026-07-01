@@ -1,0 +1,21 @@
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: ghostwriter-tailscale-oauth
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: bitwarden
+    kind: ClusterSecretStore
+  target:
+    name: ghostwriter-tailscale-oauth
+    creationPolicy: Owner
+    template:
+      engineVersion: v2
+      data:
+        TS_AUTHKEY: "{{ .client_secret }}"
+  data:
+    - secretKey: client_secret
+      remoteRef:
+        key: "2b29f086-b929-4c6c-92af-b46a00471da2"

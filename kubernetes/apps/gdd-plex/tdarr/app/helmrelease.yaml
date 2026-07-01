@@ -1,0 +1,136 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app tdarr
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  values:
+    controllers:
+      tdarr:
+        strategy: Recreate
+        containers:
+          app:
+            image:
+              repository: ghcr.io/haveagitgat/tdarr
+              # TODO: confirm latest version and pin a digest (vX.Y.Z@sha256:…)
+              tag: 2.45.01
+            env:
+              TZ: America/Chicago
+              # Run as root inside the container to match the GPU/render device perms.
+              PUID: "0"
+              PGID: "0"
+              UMASK_SET: "002"
+              # Combined server + internal worker node in one pod.
+              serverIP: 0.0.0.0
+              serverPort: "8266"
+              webUIPort: "8265"
+              internalNode: "true"
+              inContainer: "true"
+              nodeName: InternalNode
+              # Use bundled ffmpeg 7 (Intel QSV/VAAPI capable).
+              ffmpegVersion: "7"
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: &port 8265
+                  initialDelaySeconds: 30
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness: *probes
+            securityContext:
+              # Tdarr writes throughout /app at runtime; rootfs must be writable.
+              readOnlyRootFilesystem: false
+              allowPrivilegeEscalation: false
+              # s6 init drops privileges to PUID/PGID at startup (setuid/setgid +
+              # setgroups), so SETUID/SETGID/CHOWN/etc. must remain available.
+              capabilities:
+                drop: ["ALL"]
+                add: ["CHOWN", "DAC_OVERRIDE", "FOWNER", "FSETID", "KILL", "SETGID", "SETUID", "SETPCAP"]
+            resources:
+              requests:
+                cpu: 200m
+                memory: 512Mi
+                gpu.intel.com/xe: "1"
+              limits:
+                memory: 8Gi
+                gpu.intel.com/xe: "1"
+    defaultPodOptions:
+      # GPU device access (Intel Arc B70 / xe render node on gddnet-w9) requires
+      # running as root, matching the other GPU workloads in this cluster.
+      securityContext:
+        runAsNonRoot: false
+        runAsUser: 0
+        runAsGroup: 0
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: intel.feature.node.kubernetes.io/gpu
+                    operator: In
+                    values: ["true"]
+    service:
+      app:
+        ports:
+          http:
+            port: *port
+    persistence:
+      # Server DB + Tdarr state — plain ceph-block claim (no backup).
+      server:
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
+        size: 10Gi
+        storageClass: ceph-block
+        globalMounts:
+          - path: /app/server
+      configs:
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
+        size: 2Gi
+        storageClass: ceph-block
+        globalMounts:
+          - path: /app/configs
+      logs:
+        type: emptyDir
+        globalMounts:
+          - path: /app/logs
+      # In-progress transcode scratch space (node-local, transient).
+      transcode-cache:
+        type: emptyDir
+        globalMounts:
+          - path: /temp
+      # Media shares mounted at the SAME paths the source apps use so Tdarr's
+      # libraries line up with sonarr/radarr/whisparr and stash.
+      media:
+        type: nfs
+        server: 10.0.30.134
+        path: /medianfs
+        globalMounts:
+          - path: /mnt/media
+      reddit:
+        type: nfs
+        server: 10.0.30.175
+        path: /mnt/user/reddit
+        globalMounts:
+          - path: /data/reddit
+      tmp:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp

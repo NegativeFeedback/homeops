@@ -8,6 +8,7 @@ components:
 resources:
   - ./jellyfin/ks.yaml
   - ./jellyseerr/ks.yaml
+  - ./musicseerr/ks.yaml
   - ./sonarr/ks.yaml
   - ./radarr/ks.yaml
   - ./lidarr/ks.yaml
@@ -18,3 +19,4 @@ resources:
 #  - ./lidarify/ks.yaml
 #  - ./soulbeet/ks.yaml
   - ./tidarr/ks.yaml
+  - ./tdarr/ks.yaml

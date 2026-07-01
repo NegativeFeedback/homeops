@@ -27,7 +27,7 @@ spec:
           app:
             image:
               repository: ghcr.io/jellyfin/jellyfin
-              tag: 10.11.6@sha256:25db4eb10143c1c12adb79ed978e31d94fc98dc499fbae2d38b2c935089ced3e
+              tag: 10.11.9@sha256:ef4d95143a5475d1ba4d9a6983342cac300044d676a30648b7d0e0688961712a
             env:
               TZ: America/Chicago
             probes:
@@ -51,8 +51,10 @@ spec:
               requests:
                 cpu: 10m
                 memory: 250Mi
+                gpu.intel.com/xe: 1
               limits:
                 memory: 6500Mi
+                gpu.intel.com/xe: 1
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true

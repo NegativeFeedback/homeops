@@ -1,0 +1,25 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/kustomization
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: kyverno
+components:
+  - ../../components/common
+resources:
+  - ./kyverno/ks.yaml
+  - ./kyverno-policies/ks.yaml
+  - ./policy-reporter/ks.yaml
+patches:
+  # Kyverno's admission/cleanup controllers run with elevated requirements;
+  # keep its own namespace privileged so PSA never blocks the controllers.
+  - patch: |-
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        labels:
+          pod-security.kubernetes.io/audit: privileged
+          pod-security.kubernetes.io/enforce: privileged
+          pod-security.kubernetes.io/warn: privileged
+        name: not-used
+    target:
+      kind: Namespace

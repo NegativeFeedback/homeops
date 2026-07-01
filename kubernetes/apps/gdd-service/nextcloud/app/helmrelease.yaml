@@ -16,7 +16,7 @@ spec:
   chart:
     spec:
       chart: nextcloud
-      version: 8.9.1
+      version: 9.0.6
       sourceRef:
         kind: HelmRepository
         name: nextcloud
@@ -35,12 +35,6 @@ spec:
       enabled: true
     nextcloud:
       host: next.gddnet.io
-      securityContext:
-        runAsUser: 82
-        runAsGroup: 82
-        runAsNonRoot: true
-        readOnlyRootFilesystem: false
-
       extraEnv:
         - name: REDIS_HOST
           value: dragonfly.database.svc.cluster.local
@@ -85,6 +79,8 @@ spec:
               '10.0.0.0/8',
             ),
             'forwarded_for_headers' => array('HTTP_X_FORWARDED_FOR'),
+            'overwrite.cli.url' => 'https://next.gddnet.io',
+            'overwriteprotocol' => 'https',
             'default_phone_region' => 'EN',
             'auth.bruteforce.protection.enabled' => true,
             'maintenance_window_start' => 1,

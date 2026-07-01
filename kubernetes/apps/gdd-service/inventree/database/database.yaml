@@ -1,0 +1,85 @@
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: inventree
+  namespace: database
+spec:
+  cluster:
+    name: postgres
+  name: gdd_inventree
+  owner: gdd_inventree_user
+  ensure: present
+---
+apiVersion: generators.external-secrets.io/v1alpha1
+kind: Password
+metadata:
+  name: inventree-db-password
+  namespace: database
+spec:
+  length: 48
+  digits: 10
+  symbols: 0
+  noUpper: false
+  allowRepeat: true
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: inventree-db-secret
+  namespace: database
+spec:
+  refreshInterval: 0
+  target:
+    name: inventree-db-secret
+    creationPolicy: Owner
+    template:
+      engineVersion: v2
+      data:
+        username: gdd_inventree_user
+        password: "{{ .password | toString }}"
+        POSTGRES_URL: "postgresql://gdd_inventree_user:{{ .password | toString }}@postgres-rw.database.svc.cluster.local:5432/gdd_inventree"
+        POSTGRES_HOST: "postgres-rw.database.svc.cluster.local"
+        POSTGRES_PORT: "5432"
+        POSTGRES_DB: "gdd_inventree"
+        POSTGRES_USER: "gdd_inventree_user"
+        POSTGRES_PASSWORD: "{{ .password | toString }}"
+  dataFrom:
+    - sourceRef:
+        generatorRef:
+          apiVersion: generators.external-secrets.io/v1alpha1
+          kind: Password
+          name: inventree-db-password
+---
+apiVersion: generators.external-secrets.io/v1alpha1
+kind: Password
+metadata:
+  name: inventree-secret-key
+  namespace: database
+spec:
+  length: 64
+  digits: 10
+  symbols: 0
+  noUpper: false
+  allowRepeat: true
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: inventree-app-secret
+  namespace: database
+spec:
+  refreshInterval: 0
+  target:
+    name: inventree-app-secret
+    creationPolicy: Owner
+    template:
+      engineVersion: v2
+      data:
+        SECRET_KEY: "{{ .password | toString }}"
+  dataFrom:
+    - sourceRef:
+        generatorRef:
+          apiVersion: generators.external-secrets.io/v1alpha1
+          kind: Password
+          name: inventree-secret-key

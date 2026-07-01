@@ -28,12 +28,14 @@ spec:
   values:
     controllers:
       homeassistant:
+        annotations:
+          reloader.stakater.com/auto: "true"
         strategy: RollingUpdate
         containers:
           app:
             image:
               repository: ghcr.io/home-operations/home-assistant
-              tag: 2026.2.3@sha256:d73c9c53a8562e12211f24fd7303c422051220636972485df291dbec885d8a3d
+              tag: 2026.6.4@sha256:4d510e8826491e17049ede51d8c89afba28791e7bf7ba72ab8411e66e02255e6
             env:
               TZ: America/Chicago
               HASS_HTTP_TRUSTED_PROXY_1: 10.244.0.0/16
@@ -103,11 +105,8 @@ spec:
               - identifier: app
                 port: *port
     persistence:
-      app:
-        type: persistentVolumeClaim
-        storageClass: ceph-block
-        accessMode: ReadWriteOnce
-        size: 500Mi
+      config:
+        existingClaim: homeassistant
         globalMounts:
           - path: /config
       tmpfs:

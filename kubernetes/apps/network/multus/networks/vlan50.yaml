@@ -1,0 +1,22 @@
+---
+apiVersion: k8s.cni.cncf.io/v1
+kind: NetworkAttachmentDefinition
+metadata:
+  name: multus-vlan50
+spec:
+  config: |
+    {
+      "cniVersion": "1.1.0",
+      "name": "multus-vlan50",
+      "plugins": [
+        {
+          "type": "macvlan",
+          "master": "enp2da31d1.50",
+          "mode": "bridge",
+          "ipam": {
+            "type": "static",
+            "addresses": []
+          }
+        }
+      ]
+    }

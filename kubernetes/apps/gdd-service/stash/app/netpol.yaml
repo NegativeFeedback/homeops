@@ -1,0 +1,44 @@
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: stash
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: stash
+  ingress:
+    # Allow tailscale ingress proxy-group to reach the app
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: network
+  egress:
+    # DNS resolution via CoreDNS
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:app.kubernetes.io/name: coredns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+    # Internet egress: metadata scrapers (StashDB/ThePornDB), image/scraper downloads
+    - toEntities:
+        - world
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP
+            - port: "443"
+              protocol: TCP
+    # keepit Enrich plugin fetches keepit's /api/export
+    - toEndpoints:
+        - matchLabels:
+            k8s:app.kubernetes.io/name: keepit
+            k8s:io.kubernetes.pod.namespace: gdd-service
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
