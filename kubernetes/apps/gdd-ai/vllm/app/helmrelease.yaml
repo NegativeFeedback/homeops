@@ -20,6 +20,23 @@ spec:
     cleanupOnFail: true
     remediation:
       retries: 3
+  # The Deployment's default progressDeadlineSeconds (600s) is far shorter than the
+  # ~25min first-boot (64GB download + online INT4 quant), so it reports
+  # ProgressDeadlineExceeded and Flux aborts the install before the 90m timeout.
+  # app-template doesn't expose the field, so patch the rendered Deployment.
+  postRenderers:
+    - kustomize:
+        patches:
+          - target:
+              kind: Deployment
+              name: vllm
+            patch: |
+              apiVersion: apps/v1
+              kind: Deployment
+              metadata:
+                name: vllm
+              spec:
+                progressDeadlineSeconds: 3600
   values:
     controllers:
       vllm:
