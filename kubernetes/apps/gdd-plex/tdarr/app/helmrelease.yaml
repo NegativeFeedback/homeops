@@ -88,9 +88,12 @@ spec:
           http:
             port: *port
     persistence:
-      # Server DB + Tdarr state — the volsync-backed claim.
+      # Server DB + Tdarr state — plain ceph-block claim (no backup).
       server:
-        existingClaim: *app
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
+        size: 10Gi
+        storageClass: ceph-block
         globalMounts:
           - path: /app/server
       configs:
