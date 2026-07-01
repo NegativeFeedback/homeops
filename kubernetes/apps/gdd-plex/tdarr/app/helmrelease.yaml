@@ -58,7 +58,11 @@ spec:
               # Tdarr writes throughout /app at runtime; rootfs must be writable.
               readOnlyRootFilesystem: false
               allowPrivilegeEscalation: false
-              capabilities: { drop: ["ALL"] }
+              # s6 init drops privileges to PUID/PGID at startup (setuid/setgid +
+              # setgroups), so SETUID/SETGID/CHOWN/etc. must remain available.
+              capabilities:
+                drop: ["ALL"]
+                add: ["CHOWN", "DAC_OVERRIDE", "FOWNER", "FSETID", "KILL", "SETGID", "SETUID", "SETPCAP"]
             resources:
               requests:
                 cpu: 200m
