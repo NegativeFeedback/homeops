@@ -42,10 +42,19 @@ spec:
                   echo "Model already downloaded."; exit 0
                 fi
                 python3 -m pip install -q hf-transfer huggingface_hub
-                HF_HUB_ENABLE_HF_TRANSFER=1 huggingface-cli download \
+                # `huggingface-cli` is deprecated/no-op in newer hub; use `hf`.
+                HF_HUB_ENABLE_HF_TRANSFER=1 hf download \
                   huihui-ai/Qwen3-32B-abliterated \
-                  --local-dir ${BF16_DIR} \
-                  --local-dir-use-symlinks False
+                  --local-dir ${BF16_DIR}
+            env:
+              # Gated repo — token comes from a manually-created secret (NOT in git,
+              # not Flux-managed):  kubectl create secret generic hf-token -n gdd-ai
+              #   --from-literal=token=hf_xxx
+              HF_TOKEN:
+                valueFrom:
+                  secretKeyRef:
+                    name: hf-token
+                    key: token
             resources:
               requests:
                 cpu: "2"
