@@ -21,8 +21,12 @@ spec:
       vllm:
         strategy: Recreate
         initContainers:
-          # Runs once: downloads huihui-ai/Qwen3-32B-abliterated to the models PVC.
-          # Skips immediately on subsequent boots if INT4 model already exists.
+          # Runs once: downloads the BF16 model to the PVC. No separate quantize
+          # step — the app quantizes to INT4 online at load via --quantization
+          # sym_int4 (Intel XPU's supported INT4 path; AWQ/GPTQ-Marlin are CUDA-only,
+          # and no pre-quantized GPTQ of this abliterated model exists). Kept as an
+          # init (not probe-gated, unlike the app) so the ~64GB pull can't trip the
+          # readiness probe. Skips immediately once the model is present.
           download:
             image:
               repository: intel/llm-scaler-vllm
@@ -34,12 +38,8 @@ spec:
               - |
                 set -e
                 BF16_DIR=/models/Qwen3-32B-abliterated
-                INT4_DIR=/models/Qwen3-32B-abliterated-gptq-int4
-                if [ -f "${INT4_DIR}/config.json" ]; then
-                  echo "INT4 model already exists, skipping download."; exit 0
-                fi
                 if [ -f "${BF16_DIR}/config.json" ]; then
-                  echo "BF16 model already downloaded."; exit 0
+                  echo "Model already downloaded."; exit 0
                 fi
                 python3 -m pip install -q hf-transfer huggingface_hub
                 HF_HUB_ENABLE_HF_TRANSFER=1 huggingface-cli download \
@@ -52,52 +52,6 @@ spec:
                 memory: 8Gi
               limits:
                 memory: 16Gi
-            securityContext:
-              privileged: true
-          # Runs once: quantizes BF16 → GPTQ-INT4 using autoround on the B70.
-          # 32B INT4 = ~16GB weights leaving ~14GB for KV cache in 32GB VRAM.
-          # First run takes ~60-90 minutes; subsequent boots exit immediately.
-          quantize:
-            image:
-              repository: intel/llm-scaler-vllm
-              tag: 0.14.0-b8.2
-            command:
-              - /bin/bash
-              - -c
-            args:
-              - |
-                set -e
-                INT4_DIR=/models/Qwen3-32B-abliterated-gptq-int4
-                BF16_DIR=/models/Qwen3-32B-abliterated
-                if [ -f "${INT4_DIR}/config.json" ]; then
-                  echo "Already quantized."; exit 0
-                fi
-                source /opt/intel/oneapi/setvars.sh --force 2>/dev/null || true
-                python3 -m pip install -q auto-round
-                autoround \
-                  --model ${BF16_DIR} \
-                  --bits 4 \
-                  --group-size 128 \
-                  --format auto_gptq \
-                  --output-dir ${INT4_DIR} \
-                  --device xpu \
-                  --batch-size 4
-                echo "Quantization complete. Removing BF16 model to reclaim space."
-                rm -rf ${BF16_DIR}
-            env:
-              ZES_ENABLE_SYSMAN: "1"
-              ONEAPI_DEVICE_SELECTOR: "level_zero:*"
-              no_proxy: localhost,127.0.0.1
-            resources:
-              requests:
-                cpu: "4"
-                memory: 64Gi
-                gpu.intel.com/xe: "1"
-              limits:
-                memory: 96Gi
-                gpu.intel.com/xe: "1"
-            securityContext:
-              privileged: true
         containers:
           app:
             image:
@@ -109,8 +63,9 @@ spec:
             args:
               - |
                 source /opt/intel/oneapi/setvars.sh --force
-                exec vllm serve /models/Qwen3-32B-abliterated-gptq-int4 \
+                exec vllm serve /models/Qwen3-32B-abliterated \
                   --served-model-name Qwen3-32B-abliterated \
+                  --quantization sym_int4 \
                   --host 0.0.0.0 \
                   --port 8000 \
                   --gpu-memory-util 0.90 \
