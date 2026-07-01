@@ -19,3 +19,4 @@ resources:
 #  - ./lidarify/ks.yaml
 #  - ./soulbeet/ks.yaml
   - ./tidarr/ks.yaml
+  - ./tdarr/ks.yaml
