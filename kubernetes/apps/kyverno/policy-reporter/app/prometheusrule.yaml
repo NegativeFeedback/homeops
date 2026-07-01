@@ -1,0 +1,57 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/monitoring.coreos.com/prometheusrule_v1.json
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: kyverno
+spec:
+  groups:
+    # --- Component health ----------------------------------------------------
+    # These fire on operational problems only. Policy *violations* are Audit
+    # and intentionally do NOT alert here (see Grafana / Policy Reporter UI),
+    # so steady-state audit findings never page you.
+    - name: kyverno.health
+      rules:
+        - alert: KyvernoTargetAbsent
+          annotations:
+            summary: >-
+              No Kyverno/Policy-Reporter metrics targets are being scraped.
+          expr: |
+            absent(up{namespace="kyverno"})
+          for: 15m
+          labels:
+            severity: critical
+        - alert: KyvernoTargetDown
+          annotations:
+            summary: >-
+              Kyverno target {{ $labels.job }} ({{ $labels.pod }}) is down.
+          expr: |
+            up{namespace="kyverno"} == 0
+          for: 15m
+          labels:
+            severity: critical
+        - alert: KyvernoNoPolicies
+          annotations:
+            summary: >-
+              Kyverno reports zero installed policy rules — policies may have
+              failed to load.
+          expr: |
+            sum(kyverno_policy_rule_info_total) == 0
+          for: 30m
+          labels:
+            severity: warning
+    # --- Policy execution errors ---------------------------------------------
+    - name: kyverno.policies
+      rules:
+        - alert: KyvernoPolicyError
+          annotations:
+            summary: >-
+              Kyverno policy {{ $labels.policy_name }} is erroring during
+              evaluation (rule_result=error), not just reporting violations.
+          expr: |
+            sum by (policy_name) (
+              increase(kyverno_policy_results_total{rule_result="error"}[15m])
+            ) > 0
+          for: 30m
+          labels:
+            severity: warning

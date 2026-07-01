@@ -1,0 +1,130 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app inventree
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+  maxHistory: 2
+  install:
+    timeout: 10m
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    controllers:
+      inventree:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          server:
+            image:
+              repository: inventree/inventree
+              tag: 1.4.0@sha256:b083c16f0b938c77f865bb1f85f92c195f009edf99da67332a845722699d7548
+            env: &env
+              TZ: America/Chicago
+              INVENTREE_DB_ENGINE: postgresql
+              INVENTREE_DB_HOST: postgres-rw.database.svc.cluster.local
+              INVENTREE_DB_PORT: "5432"
+              INVENTREE_DB_NAME: gdd_inventree
+              INVENTREE_DB_USER: gdd_inventree_user
+              INVENTREE_SITE_URL: "https://inventree.barn-walleye.ts.net"
+              INVENTREE_DEBUG: "1"
+              INVENTREE_MEDIA_ROOT: /home/inventree/data/media
+              INVENTREE_STATIC_ROOT: /home/inventree/data/static
+              INVENTREE_BACKUP_DIR: /home/inventree/data/backup
+              INVENTREE_CACHE_HOST: dragonfly.database.svc.cluster.local
+              INVENTREE_CACHE_PORT: "6379"
+              INVENTREE_USE_X_FORWARDED_HOST: "True"
+              INVENTREE_USE_X_FORWARDED_PROTO: "True"
+              INVENTREE_LOGIN_ENABLE_SSO: "True"
+              INVENTREE_LOGIN_ENABLE_SSO_REG: "True"
+              INVENTREE_LOGIN_MAIL_REQUIRED: "False"
+              INVENTREE_SOCIAL_BACKENDS: "allauth.socialaccount.providers.openid_connect"
+              INVENTREE_EMAIL_HOST: "localhost"
+              INVENTREE_EMAIL_PORT: "1025"
+              INVENTREE_EMAIL_USERNAME: ""
+              INVENTREE_EMAIL_PREFIX: "[InvenTree]"
+              INVENTREE_EMAIL_TLS: "False"
+              INVENTREE_EMAIL_SSL: "False"
+              INVENTREE_EMAIL_SENDER: "noreply@gddnet.io"
+              INVENTREE_PLUGINS_ENABLED: "True"
+            envFrom: &envFrom
+              - secretRef:
+                  name: inventree-secret
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/
+                    port: &port 8000
+                  initialDelaySeconds: 60
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 6
+              readiness: *probes
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/
+                    port: *port
+                  initialDelaySeconds: 60
+                  periodSeconds: 10
+                  failureThreshold: 30
+            resources:
+              requests:
+                cpu: 50m
+                memory: 256Mi
+              limits:
+                memory: 4Gi
+
+          worker:
+            image:
+              repository: inventree/inventree
+              tag: 1.4.0@sha256:b083c16f0b938c77f865bb1f85f92c195f009edf99da67332a845722699d7548
+            args: [invoke, worker]
+            env: *env
+            envFrom: *envFrom
+            resources:
+              requests:
+                cpu: 250m
+                memory: 256Mi
+              limits:
+                memory: 4Gi
+
+          mailhog:
+            image:
+              repository: mailhog/mailhog
+              tag: latest
+            resources:
+              requests:
+                cpu: 5m
+                memory: 32Mi
+              limits:
+                memory: 64Mi
+
+    service:
+      app:
+        controller: inventree
+        ports:
+          http:
+            port: *port
+
+    persistence:
+      data:
+        existingClaim: *app
+        globalMounts:
+          - path: /home/inventree/data

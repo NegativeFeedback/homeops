@@ -1,0 +1,92 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: policy-reporter
+spec:
+  interval: 1h
+  url: oci://ghcr.io/kyverno/charts/policy-reporter
+  ref:
+    semver: "3.x"
+  layerSelector:
+    mediaType: "application/vnd.cncf.helm.chart.content.v1.tar+gzip"
+    operation: copy
+
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app policy-reporter
+spec:
+  interval: 1h
+  releaseName: *app
+
+  chartRef:
+    kind: OCIRepository
+    name: policy-reporter
+
+  install:
+    remediation:
+      retries: -1
+    crds: CreateReplace
+
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+    crds: CreateReplace
+
+  values:
+    # Core REST API + Prometheus metrics endpoint.
+    rest:
+      enabled: true
+    metrics:
+      enabled: true
+
+    resources:
+      requests:
+        cpu: 25m
+        memory: 128Mi
+      limits:
+        memory: 256Mi
+
+    # Web UI (exposed via the tailscale Ingress in ingress.yaml).
+    ui:
+      enabled: true
+      resources:
+        requests:
+          cpu: 10m
+          memory: 64Mi
+        limits:
+          memory: 128Mi
+
+    # Kyverno plugin: enriches the UI/API with policy & rule details and
+    # exposes its own /metrics endpoint (scraped via the same ServiceMonitor).
+    plugin:
+      kyverno:
+        enabled: true
+        resources:
+          requests:
+            cpu: 10m
+            memory: 64Mi
+          limits:
+            memory: 128Mi
+
+    # Wire into the kube-prometheus-stack + Grafana.
+    monitoring:
+      enabled: true
+      serviceMonitor:
+        enabled: true
+        interval: 30s
+      # Ships Policy Reporter's prebuilt dashboards as labeled ConfigMaps;
+      # the Grafana sidecar (label grafana_dashboard, searchNamespace: ALL)
+      # auto-imports them.
+      grafana:
+        dashboards:
+          enabled: true
+          label: grafana_dashboard
+          value: "1"
+          # Land the dashboards in their own Grafana folder.
+          folder:
+            annotation: grafana_folder
+            value: Kyverno

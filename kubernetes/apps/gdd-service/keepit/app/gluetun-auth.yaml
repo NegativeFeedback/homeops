@@ -1,0 +1,21 @@
+---
+# gluetun control-server authentication (v3.40+). The control server only listens on
+# localhost inside the keepit pod, so the routes keepit needs are exposed without auth.
+# keepit uses: GET /v1/(open)vpn/status, PUT /v1/(open)vpn/status (reconnect/switch),
+# GET /v1/publicip/ip (exit IP).
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: keepit-gluetun-auth
+data:
+  config.toml: |
+    [[roles]]
+    name = "keepit"
+    routes = [
+      "GET /v1/openvpn/status",
+      "PUT /v1/openvpn/status",
+      "GET /v1/vpn/status",
+      "PUT /v1/vpn/status",
+      "GET /v1/publicip/ip",
+    ]
+    auth = "none"

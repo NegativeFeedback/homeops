@@ -1,0 +1,26 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/kustomization
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: seclab-ghostwriter
+components:
+  - ../../components/common
+# Labels the namespace (and its resources) so CiliumNetworkPolicies can match
+# "any seclab zone" namespace. Replicate `seclab: "true"` on future seclab-* namespaces.
+labels:
+  - pairs:
+      seclab: "true"
+    includeSelectors: false
+resources:
+  - ./ghostwriter/ks.yaml
+
+patches:
+  - patch: |-
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        labels:
+          pod-security.kubernetes.io/enforce: privileged
+        name: not-used
+    target:
+      kind: Namespace

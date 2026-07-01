@@ -1,0 +1,58 @@
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: keepit
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: keepit
+  ingress:
+    # Allow tailscale ingress proxy-group to reach the app
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: network
+    # Allow the stash keepit-Enrich plugin to fetch /api/export
+    - fromEndpoints:
+        - matchLabels:
+            k8s:app.kubernetes.io/name: stash
+            k8s:io.kubernetes.pod.namespace: gdd-service
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+  egress:
+    # DNS resolution via CoreDNS
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:app.kubernetes.io/name: coredns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+    # Internet egress: Reddit API, yt-dlp downloads, go-rod scraping targets, and gluetun's
+    # control-plane (server-list fetch over HTTPS). Note: once gluetun is up, the app's
+    # 80/443 traffic is encapsulated in WireGuard, so Cilium mainly sees the UDP handshake.
+    - toEntities:
+        - world
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP
+            - port: "443"
+              protocol: TCP
+    # gluetun WireGuard tunnel (UDP handshake to the VPN endpoint) + DNS-over-TLS.
+    # 51820 is the common WireGuard port; adjust if your provider uses another.
+    - toEntities:
+        - world
+      toPorts:
+        - ports:
+            - port: "51820"
+              protocol: UDP
+            - port: "1637"
+              protocol: UDP
+            - port: "853"
+              protocol: TCP

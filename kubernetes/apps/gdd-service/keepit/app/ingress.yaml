@@ -1,0 +1,23 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: keepit
+  annotations:
+    tailscale.com/proxy-group: ts-ingress
+spec:
+  ingressClassName: tailscale
+  rules:
+    - host: keepit.barn-walleye.ts.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: keepit
+                port:
+                  number: 8080
+  tls:
+    - hosts:
+        - keepit.barn-walleye.ts.net

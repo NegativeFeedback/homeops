@@ -24,14 +24,14 @@ spec:
   values:
     controllers:
       zwave2mqtt:
-        strategy: RollingUpdate
+        strategy: Recreate
         annotations:
           reloader.stakater.com/auto: "true"
         containers:
           app:
             image:
               repository: ghcr.io/zwave-js/zwave-js-ui
-              tag: 11.12.0@sha256:ca599b5d7afd4832848c8fb7a7eded38ea3494bce560a14c1b8304f6497fe17a
+              tag: 11.21.1@sha256:1193b96b31488e5a6c7895f16a27b2ead38f8a0c3d1bec335bb10b6d9f9e2905
             env:
               TZ: America/Chicago
               PORT: &port 80

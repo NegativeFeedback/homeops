@@ -1,0 +1,87 @@
+---
+# Prometheus monitoring for Synapse
+apiVersion: v1
+kind: Service
+metadata:
+  name: synapse-metrics
+  namespace: gdd-social
+  labels:
+    app: synapse
+spec:
+  type: ClusterIP
+  ports:
+    - port: 9090
+      targetPort: metrics
+      protocol: TCP
+      name: metrics
+  selector:
+    app.kubernetes.io/name: matrix-synapse
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: synapse
+  namespace: gdd-social
+  labels:
+    app: synapse
+spec:
+  selector:
+    matchLabels:
+      app: synapse
+  endpoints:
+    - port: metrics
+      path: /_synapse/metrics
+      interval: 30s
+      scrapeTimeout: 10s
+---
+# Grafana Dashboard ConfigMap (optional - import to Grafana)
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: synapse-dashboard
+  namespace: gdd-social
+  labels:
+    grafana_dashboard: "1"
+data:
+  synapse-dashboard.json: |
+    {
+      "dashboard": {
+        "title": "Synapse Metrics",
+        "tags": ["matrix", "synapse"],
+        "timezone": "browser",
+        "panels": [
+          {
+            "title": "Active Users",
+            "targets": [
+              {
+                "expr": "synapse_admin_mau_current"
+              }
+            ]
+          },
+          {
+            "title": "Registered Users",
+            "targets": [
+              {
+                "expr": "synapse_admin_mau_max"
+              }
+            ]
+          },
+          {
+            "title": "HTTP Requests",
+            "targets": [
+              {
+                "expr": "rate(synapse_http_server_requests_total[5m])"
+              }
+            ]
+          },
+          {
+            "title": "Database Connections",
+            "targets": [
+              {
+                "expr": "synapse_database_connections"
+              }
+            ]
+          }
+        ]
+      }
+    }

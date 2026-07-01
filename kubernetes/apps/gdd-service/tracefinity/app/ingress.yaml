@@ -1,0 +1,23 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tracefinity
+  annotations:
+    tailscale.com/proxy-group: ts-ingress
+spec:
+  ingressClassName: tailscale
+  rules:
+    - host: tracefinity.barn-walleye.ts.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: tracefinity
+                port:
+                  number: 3000
+  tls:
+    - hosts:
+        - tracefinity.barn-walleye.ts.net

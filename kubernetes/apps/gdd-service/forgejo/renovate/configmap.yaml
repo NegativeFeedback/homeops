@@ -1,0 +1,22 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: renovate-config
+  namespace: gdd-service
+data:
+  config.js: |
+    module.exports = {
+      platform: 'gitea',
+      endpoint: 'https://git.${SECRET_DOMAIN}/api/v1',
+      gitAuthor: 'Renovate Bot <renovate@${SECRET_DOMAIN}>',
+      autodiscover: true,
+      autodiscoverFilter: ['negativefeedback/**'],
+      onboarding: true,
+      onboardingConfig: {
+        $schema: 'https://docs.renovatebot.com/renovate-schema.json',
+        extends: ['config:recommended'],
+      },
+      requireConfig: 'optional',
+      dryRun: null,
+    };

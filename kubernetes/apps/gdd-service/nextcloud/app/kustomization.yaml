@@ -10,3 +10,4 @@ resources:
   - ./replicationsource.yaml
   - ./pvc.yaml
   - ./helmrelease.yaml
+  - ./occ-maintenance-job.yaml

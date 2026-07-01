@@ -22,6 +22,34 @@ spec:
 #      parameters:
 #        barmanObjectName: &store garage-store
 
+  managed:
+    roles:
+      - name: service_forgejo_user
+        ensure: present
+        login: true
+        passwordSecret:
+          name: forgejo-db-secret
+      - name: gdd-social-synapse-user
+        ensure: present
+        login: true
+        passwordSecret:
+          name: synapse-db-secret
+      - name: gdd-service-immich-user
+        ensure: present
+        login: true
+        passwordSecret:
+          name: immich-db-secret
+      - name: gdd_jellystat_user
+        ensure: present
+        login: true
+        passwordSecret:
+          name: jellystat-db-secret
+      - name: gdd_inventree_user
+        ensure: present
+        login: true
+        passwordSecret:
+          name: inventree-db-secret
+
   monitoring:
     enablePodMonitor: true
 

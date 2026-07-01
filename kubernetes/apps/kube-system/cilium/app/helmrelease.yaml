@@ -112,3 +112,5 @@ spec:
           - SYS_RESOURCE
     socketLB:
       hostNamespaceOnly: true
+    extraConfig:
+      bpf-vlan-bypass-ids: "50,60"

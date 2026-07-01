@@ -18,5 +18,27 @@ resources:
   - ./nextcloud/ks.yaml
   - ./monica/ks.yaml
   - ./paperless/ks.yaml
-  - ./sparkyfitness/ks.yaml
   - ./homebox/ks.yaml
+  - ./forgejo/ks.yaml
+  - ./collabora/ks.yaml
+  - ./immich/ks.yaml
+#  - ./sparkyfitness/ks.yaml
+  - ./bambubuddy/ks.yaml
+  - ./spoolman/ks.yaml
+  - ./inventree/ks.yaml
+  - ./keepit/ks.yaml
+  - ./stash/ks.yaml
+  - ./tracefinity/ks.yaml
+
+patches:
+  - patch: |-
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        labels:
+          pod-security.kubernetes.io/audit: privileged
+          pod-security.kubernetes.io/enforce: privileged
+          pod-security.kubernetes.io/warn: privileged
+        name: not-used
+    target:
+      kind: Namespace
