@@ -30,7 +30,13 @@ spec:
               tag: main
             env:
               TZ: America/Chicago
+              # ollama backend (CPU today — see project notes) for small models.
               OLLAMA_BASE_URL: http://ollama.gdd-ai.svc.cluster.local:11434
+              # vLLM backend (OpenAI-compatible) — GPU inference on the Arc B70.
+              # vLLM ignores the key unless started with --api-key, so any value works.
+              ENABLE_OPENAI_API: "true"
+              OPENAI_API_BASE_URL: http://vllm.gdd-ai.svc.cluster.local:8000/v1
+              OPENAI_API_KEY: "vllm-local-no-auth"
               WEBUI_SECRET_KEY:
                 valueFrom:
                   secretKeyRef:
