@@ -9,4 +9,5 @@ resources:
   - ./comfyui/ks.yaml
   - ./ollama/ks.yaml
   - ./open-webui/ks.yaml
+  - ./vllm/ks.yaml
 #  - ./openclaw/ks.yaml
