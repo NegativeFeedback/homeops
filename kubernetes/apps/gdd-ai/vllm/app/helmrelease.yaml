@@ -6,7 +6,7 @@ metadata:
   name: vllm
 spec:
   interval: 1h
-  # First boot downloads ~64GB then loads + online-quantizes the 32B model, which
+  # First boot downloads ~28GB then loads + online-quantizes the 14B model, which
   # far exceeds the default 5m Helm timeout. Without this, Flux declares the install
   # failed mid-download, uninstalls (killing the pod + PVC), and loops forever.
   timeout: 90m
@@ -58,14 +58,14 @@ spec:
             args:
               - |
                 set -e
-                BF16_DIR=/models/Qwen3-32B-abliterated
+                BF16_DIR=/models/Qwen3-14B-abliterated
                 if [ -f "${BF16_DIR}/config.json" ]; then
                   echo "Model already downloaded."; exit 0
                 fi
                 python3 -m pip install -q hf-transfer huggingface_hub
                 # `huggingface-cli` is deprecated/no-op in newer hub; use `hf`.
                 HF_HUB_ENABLE_HF_TRANSFER=1 hf download \
-                  huihui-ai/Qwen3-32B-abliterated \
+                  huihui-ai/Qwen3-14B-abliterated \
                   --local-dir ${BF16_DIR}
             env:
               # Gated repo — token comes from a manually-created secret (NOT in git,
@@ -93,8 +93,8 @@ spec:
             args:
               - |
                 source /opt/intel/oneapi/setvars.sh --force
-                exec vllm serve /models/Qwen3-32B-abliterated \
-                  --served-model-name Qwen3-32B-abliterated \
+                exec vllm serve /models/Qwen3-14B-abliterated \
+                  --served-model-name Qwen3-14B-abliterated \
                   --quantization sym_int4 \
                   --dtype float16 \
                   --host 0.0.0.0 \
@@ -152,7 +152,8 @@ spec:
                 memory: 8Gi
                 gpu.intel.com/xe: "1"
               limits:
-                memory: 32Gi
+                # 14B fp16 stages at ~28GB during load; headroom above that.
+                memory: 40Gi
                 gpu.intel.com/xe: "1"
     defaultPodOptions:
       securityContext:
