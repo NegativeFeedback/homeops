@@ -92,3 +92,9 @@ spec:
         path: /medianfs
         globalMounts:
           - path: /mnt/media
+      media:
+        type: nfs
+        server: 10.0.30.175
+        path: /mnt/user/p
+        globalMounts:
+          - path: /mnt/p
