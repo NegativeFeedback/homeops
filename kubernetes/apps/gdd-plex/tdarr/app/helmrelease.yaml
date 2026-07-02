@@ -25,7 +25,7 @@ spec:
             image:
               repository: ghcr.io/haveagitgat/tdarr
               # TODO: confirm latest version and pin a digest (vX.Y.Z@sha256:…)
-              tag: 2.45.01
+              tag: 2.81.01
             env:
               TZ: America/Chicago
               # Run as root inside the container to match the GPU/render device perms.
