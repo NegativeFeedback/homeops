@@ -1,0 +1,23 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: whisparr
+  annotations:
+    tailscale.com/proxy-group: ts-ingress
+spec:
+  ingressClassName: tailscale
+  rules:
+    - host: whisparr.barn-walleye.ts.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: whisparr-app
+                port:
+                  number: 6969
+  tls:
+    - hosts:
+        - whisparr.barn-walleye.ts.net
