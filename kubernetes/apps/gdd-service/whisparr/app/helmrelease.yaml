@@ -23,11 +23,15 @@ spec:
         containers:
           app:
             image:
-              # TODO: pin to a digest, e.g. 2.0.0.1234@sha256:… (matches sonarr's image family)
-              repository: ghcr.io/home-operations/whisparr
-              tag: latest
+              repository: ghcr.io/hotio/whisparr
+              tag: v3-v3.3.4@sha256:34726942232998ec714c05da82da7ce1e225c6e37046f44df5d0afe55ad3979b
             env:
               TZ: America/Chicago
+              # hotio s6-overlay drops to this uid/gid at runtime; keep in sync with
+              # defaultPodOptions.securityContext and VOLSYNC_MOVER_* in ks.yaml.
+              PUID: "1000"
+              PGID: "1000"
+              UMASK: "002"
               WHISPARR__APP__INSTANCENAME: Whisparr
               WHISPARR__LOG__LEVEL: info
               WHISPARR__LOG__ANALYTICSENABLED: "False"
@@ -49,7 +53,9 @@ spec:
               readiness: *probes
             securityContext:
               allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
+              # hotio's s6-overlay init writes to the root filesystem, so it can't
+              # run with a read-only rootfs (unlike the home-operations *arr images).
+              readOnlyRootFilesystem: false
               capabilities: { drop: ["ALL"] }
             resources:
               requests:
@@ -74,8 +80,6 @@ spec:
       config:
         enabled: true
         existingClaim: *app
-      tmp:
-        type: emptyDir
       media:
         type: nfs
         server: 10.0.30.134
