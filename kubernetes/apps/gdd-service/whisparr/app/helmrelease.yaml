@@ -56,7 +56,12 @@ spec:
               # hotio's s6-overlay init writes to the root filesystem, so it can't
               # run with a read-only rootfs (unlike the home-operations *arr images).
               readOnlyRootFilesystem: false
-              capabilities: { drop: ["ALL"] }
+              # s6-overlay starts as root (see pod securityContext) to fix /run and
+              # chown /config, then drops to PUID/PGID. Dropping ALL caps would strip
+              # the SETUID/SETGID/CHOWN it needs to do that, so add them back.
+              capabilities:
+                drop: ["ALL"]
+                add: ["CHOWN", "DAC_OVERRIDE", "FOWNER", "SETGID", "SETUID", "KILL"]
             resources:
               requests:
                 cpu: 10m
@@ -65,9 +70,10 @@ spec:
                 memory: 1000Mi
     defaultPodOptions:
       securityContext:
-        runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
+        # hotio images must start as root so s6-overlay can set up /run and drop to
+        # PUID/PGID (=1000). fsGroup 1000 keeps the config PVC writable by the app.
+        runAsUser: 0
+        runAsGroup: 0
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
         seccompProfile: { type: RuntimeDefault }
