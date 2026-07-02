@@ -76,6 +76,11 @@ spec:
                   cpu: 100m
                   memory: 256Mi
                 limits:
+                  # No Intel iGPU available: the onboard i915 was BIOS-disabled to
+                  # bring up the B70 eGPU (reserved for vLLM), so gpu.intel.com/i915
+                  # is 0 on every node. Transcoding runs on CPU until a usable GPU is
+                  # wired up (requesting i915 here left the pod unschedulable and
+                  # stalled the Helm upgrade).
                   memory: 10Gi
       ingress:
         main:
@@ -87,10 +92,12 @@ spec:
         main:
           containers:
             main:
+              # Runs CLIP / face-detection inference on CPU. The OpenVINO/i915 GPU
+              # path was removed: the onboard iGPU is BIOS-disabled (i915 = 0 on all
+              # nodes) and the B70 eGPU is reserved for vLLM.
               resources:
                 requests:
                   cpu: 100m
                   memory: 1Gi
                 limits:
-                  gpu.intel.com/i915: 1
                   memory: 8Gi
