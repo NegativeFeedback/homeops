@@ -29,7 +29,7 @@ metadata:
   name: inventree-db-secret
   namespace: database
 spec:
-  refreshInterval: 0
+  refreshInterval: "0"
   target:
     name: inventree-db-secret
     creationPolicy: Owner
@@ -69,7 +69,7 @@ metadata:
   name: inventree-app-secret
   namespace: database
 spec:
-  refreshInterval: 0
+  refreshInterval: "0"
   target:
     name: inventree-app-secret
     creationPolicy: Owner
