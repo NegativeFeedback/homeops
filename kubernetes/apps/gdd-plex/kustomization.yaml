@@ -20,3 +20,4 @@ resources:
 #  - ./soulbeet/ks.yaml
   - ./tidarr/ks.yaml
   - ./tdarr/ks.yaml
+  - ./fileflows/ks.yaml
