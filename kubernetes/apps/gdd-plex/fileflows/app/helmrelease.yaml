@@ -55,8 +55,8 @@ spec:
                 memory: 512Mi
                 gpu.intel.com/xe: "1"
               limits:
-                memory: 8Gi
-                gpu.intel.com/xe: "1"
+                memory: 16Gi
+                gpu.intel.com/xe: "2"
     defaultPodOptions:
       securityContext:
         runAsNonRoot: false
