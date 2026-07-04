@@ -76,6 +76,10 @@ spec:
         runAsGroup: 0
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
+        # The NFS 'p' share tree is owned by group 100 (users). Join it so
+        # whisparr can write to /mnt/p/downloads (owned 1003:100) alongside the
+        # download client. UMASK 002 keeps whisparr-created files group-writable.
+        supplementalGroups: [100]
         seccompProfile: { type: RuntimeDefault }
     service:
       app:
