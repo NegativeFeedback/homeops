@@ -28,7 +28,7 @@ spec:
               tag: 0.2.4.7@sha256:5126206060784c8ded344bc7a5f1ee5b739926292dd1393c2a01c6eb11446f9b
             env:
               TZ: ${TIMEZONE}
-              LOG_LEVEL: INFO
+              LOG_LEVEL: DEBUG
               PORT: &port 8000
             securityContext:
               allowPrivilegeEscalation: false
@@ -57,32 +57,32 @@ spec:
                 memory: 256Mi
               limits:
                 memory: 4Gi
-#          bambu-studio-api:
-#            image:
-#              repository: ghcr.io/negativefeedback/bambu-studio-api
-#              tag: bambu02.06.00.51
-#            env:
-#              NODE_ENV: production
-#              PORT: &slicerPort 3000
-#            probes:
-#              liveness: &slicerProbes
-#                enabled: true
-#                custom: true
-#                spec:
-#                  httpGet:
-#                    path: /health
-#                    port: *slicerPort
-#                  initialDelaySeconds: 30
-#                  periodSeconds: 30
-#                  timeoutSeconds: 5
-#                  failureThreshold: 3
-#              readiness: *slicerProbes
-#            resources:
-#              requests:
-#                cpu: 50m
-#                memory: 512Mi
-#              limits:
-#                memory: 2Gi
+          bambu-studio-api:
+            image:
+              repository: ghcr.io/negativefeedback/bambu-studio-api
+              tag: bambu02.06.00.51
+            env:
+              NODE_ENV: production
+              PORT: &slicerPort 3000
+            probes:
+              liveness: &slicerProbes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: *slicerPort
+                  initialDelaySeconds: 30
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 3
+              readiness: *slicerProbes
+            resources:
+              requests:
+                cpu: 50m
+                memory: 512Mi
+              limits:
+                memory: 2Gi
     defaultPodOptions:
       annotations:
         k8s.v1.cni.cncf.io/networks: |
@@ -103,9 +103,12 @@ spec:
 
     service:
       app:
+        controller: bambubuddy
         ports:
           http:
             port: *port
+          slicer:
+            port: 3000
     persistence:
       data:
         existingClaim: "{{ .Release.Name }}"
