@@ -26,6 +26,9 @@ spec:
             image:
               repository: ghcr.io/maziggy/bambuddy
               tag: 0.2.4.7@sha256:5126206060784c8ded344bc7a5f1ee5b739926292dd1393c2a01c6eb11446f9b
+            args:
+              - --loop
+              - asyncio
             env:
               TZ: ${TIMEZONE}
               LOG_LEVEL: INFO
