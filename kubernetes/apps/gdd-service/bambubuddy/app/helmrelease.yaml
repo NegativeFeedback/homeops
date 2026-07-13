@@ -65,7 +65,7 @@ spec:
               tag: latest
             env:
               NODE_ENV: production
-              PORT: &slicerPort 3000
+              PORT: &slicerPort 3001
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: false
@@ -120,7 +120,7 @@ spec:
           http:
             port: *port
           slicer:
-            port: 3000
+            port: 3001
     persistence:
       data:
         existingClaim: "{{ .Release.Name }}"
