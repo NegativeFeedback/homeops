@@ -29,6 +29,7 @@ resources:
   - ./keepit/ks.yaml
   - ./stash/ks.yaml
   - ./tracefinity/ks.yaml
+  - ./whisparr/ks.yaml
 
 patches:
   - patch: |-

@@ -57,7 +57,7 @@ spec:
               - env:
                   - name: DEBIAN_FRONTEND
                     value: noninteractive
-                image: ghcr.io/bjw-s-labs/forgejo-runner:ubuntu-24.04@sha256:4288050ddd71ac2e5f42465c474aec8b838792dec85bb284405db7c180138580
+                image: ghcr.io/bjw-s-labs/forgejo-runner:ubuntu-24.04@sha256:fce99eeccdfec1780643510c72d8fcbb8ef5fa82a54066ed4aaab3d03a3eb830
                 imagePullPolicy: IfNotPresent
                 name: main
                 resources:
@@ -108,7 +108,7 @@ spec:
                     value: "1"
                   - name: DOCKER_CERT_PATH
                     value: /certs/client
-                image: ghcr.io/bjw-s-labs/forgejo-runner:ubuntu-24.04@sha256:4288050ddd71ac2e5f42465c474aec8b838792dec85bb284405db7c180138580
+                image: ghcr.io/bjw-s-labs/forgejo-runner:ubuntu-24.04@sha256:fce99eeccdfec1780643510c72d8fcbb8ef5fa82a54066ed4aaab3d03a3eb830
                 imagePullPolicy: IfNotPresent
                 name: main
                 resources:
@@ -172,7 +172,7 @@ spec:
             image:
               pullPolicy: Always
               repository: git.erwanleboucher.dev/eleboucher/runner-k8s-plugin
-              tag: 12.10.3@sha256:3d2c4c6486400dcd770a7bb296a309ed979d951b168b878316f80f7367887080
+              tag: 12.10.6@sha256:b0ffe279448c70fb3327485163da8da2ce12fa9cc39a29231edd676c9025c036
             args:
               - --listen
               - unix:///plugin/forgejo-runner-k8s.sock

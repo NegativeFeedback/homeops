@@ -32,3 +32,4 @@ spec:
   listenersServiceTemplate:
     spec:
       type: LoadBalancer
+      publishNotReadyAddresses: true

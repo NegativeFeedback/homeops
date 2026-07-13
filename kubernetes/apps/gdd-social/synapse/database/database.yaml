@@ -29,7 +29,7 @@ metadata:
   name: synapse-db-secret
   namespace: database
 spec:
-  refreshInterval: 0 # generate password once; rotation breaks long-lived consumers (see jellystat/inventree)
+  refreshInterval: "0" # generate password once; rotation breaks long-lived consumers (see jellystat/inventree)
   target:
     name: synapse-db-secret
     creationPolicy: Owner
