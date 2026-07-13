@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app tdarr
+  name: &app fileflows
 spec:
   interval: 1h
   chartRef:
@@ -18,29 +18,18 @@ spec:
       retries: 3
   values:
     controllers:
-      tdarr:
+      fileflows:
         strategy: Recreate
         containers:
           app:
             image:
-              repository: ghcr.io/haveagitgat/tdarr
-              # TODO: confirm latest version and pin a digest (vX.Y.Z@sha256:…)
-              tag: 2.81.01
+              repository: docker.io/revenz/fileflows
+              tag: latest
             env:
               TZ: America/Chicago
-              # Run as root inside the container to match the GPU/render device perms.
               PUID: "0"
               PGID: "0"
-              UMASK_SET: "002"
-              # Combined server + internal worker node in one pod.
-              serverIP: 0.0.0.0
-              serverPort: "8266"
-              webUIPort: "8265"
-              internalNode: "true"
-              inContainer: "true"
-              nodeName: InternalNode
-              # Use bundled ffmpeg 7 (Intel QSV/VAAPI capable).
-              ffmpegVersion: "7"
+              TempPathHost: /temp
             probes:
               liveness: &probes
                 enabled: true
@@ -48,18 +37,15 @@ spec:
                 spec:
                   httpGet:
                     path: /
-                    port: &port 8265
+                    port: &port 5000
                   initialDelaySeconds: 30
                   periodSeconds: 30
                   timeoutSeconds: 5
                   failureThreshold: 5
               readiness: *probes
             securityContext:
-              # Tdarr writes throughout /app at runtime; rootfs must be writable.
               readOnlyRootFilesystem: false
-              allowPrivilegeEscalation: false
-              # s6 init drops privileges to PUID/PGID at startup (setuid/setgid +
-              # setgroups), so SETUID/SETGID/CHOWN/etc. must remain available.
+              allowPrivilegeEscalation: true
               capabilities:
                 drop: ["ALL"]
                 add: ["CHOWN", "DAC_OVERRIDE", "FOWNER", "FSETID", "KILL", "SETGID", "SETUID", "SETPCAP"]
@@ -69,11 +55,9 @@ spec:
                 memory: 512Mi
                 gpu.intel.com/xe: "1"
               limits:
-                memory: 8Gi
+                memory: 16Gi
                 gpu.intel.com/xe: "1"
     defaultPodOptions:
-      # GPU device access (Intel Arc B70 / xe render node on gddnet-w9) requires
-      # running as root, matching the other GPU workloads in this cluster.
       securityContext:
         runAsNonRoot: false
         runAsUser: 0
@@ -92,32 +76,21 @@ spec:
           http:
             port: *port
     persistence:
-      # Server DB + Tdarr state — plain ceph-block claim (no backup).
-      server:
+      data:
         type: persistentVolumeClaim
         accessMode: ReadWriteOnce
         size: 10Gi
         storageClass: ceph-block
         globalMounts:
-          - path: /app/server
-      configs:
-        type: persistentVolumeClaim
-        accessMode: ReadWriteOnce
-        size: 2Gi
-        storageClass: ceph-block
-        globalMounts:
-          - path: /app/configs
+          - path: /app/Data
       logs:
         type: emptyDir
         globalMounts:
-          - path: /app/logs
-      # In-progress transcode scratch space (node-local, transient).
+          - path: /app/Logs
       transcode-cache:
         type: emptyDir
         globalMounts:
           - path: /temp
-      # Media shares mounted at the SAME paths the source apps use so Tdarr's
-      # libraries line up with sonarr/radarr/whisparr and stash.
       media:
         type: nfs
         server: 10.0.30.134
@@ -130,6 +103,12 @@ spec:
         path: /mnt/user/reddit
         globalMounts:
           - path: /data/reddit
+      p:
+        type: nfs
+        server: 10.0.30.175
+        path: /mnt/user/p
+        globalMounts:
+          - path: /mnt/p
       tmp:
         type: emptyDir
         globalMounts:

@@ -123,6 +123,15 @@ spec:
             app:
               - path: /data/reddit
                 readOnly: true
+      p:
+        type: nfs
+        server: 10.0.30.175
+        path: /mnt/user/p
+        advancedMounts:
+          stash:
+            app:
+              - path: /mnt/p
+                readOnly: true
       tmpfs:
         type: emptyDir
         medium: Memory

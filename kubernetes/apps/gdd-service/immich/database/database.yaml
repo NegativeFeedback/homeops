@@ -29,7 +29,7 @@ metadata:
   name: immich-db-secret
   namespace: database
 spec:
-  refreshInterval: 0 # generate password once; rotation breaks long-lived consumers (see jellystat/inventree)
+  refreshInterval: "0" # generate password once; rotation breaks long-lived consumers (see jellystat/inventree)
   target:
     name: immich-db-secret
     creationPolicy: Owner
