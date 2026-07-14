@@ -1,0 +1,53 @@
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: open-webui
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: open-webui
+  ingress:
+    # Allow tailscale ingress proxy-group to reach the app
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: network
+  egress:
+    # DNS resolution via CoreDNS
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:app.kubernetes.io/name: coredns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+    # Allow communication with ollama backend (CPU inference)
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: gdd-ai
+            k8s:app.kubernetes.io/name: ollama
+      toPorts:
+        - ports:
+            - port: "11434"
+              protocol: TCP
+    # Allow communication with vLLM backend (GPU inference)
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: gdd-ai
+            k8s:app.kubernetes.io/name: vllm
+      toPorts:
+        - ports:
+            - port: "8000"
+              protocol: TCP
+    # Internet egress for model downloads and updates
+    - toEntities:
+        - world
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP
+            - port: "443"
+              protocol: TCP
