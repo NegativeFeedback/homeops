@@ -40,8 +40,8 @@ spec:
                     port: 8096
                   initialDelaySeconds: 10
                   periodSeconds: 10
-                  timeoutSeconds: 1
-                  failureThreshold: 3
+                  timeoutSeconds: 10
+                  failureThreshold: 5
               readiness: *probes
             securityContext:
               allowPrivilegeEscalation: false
