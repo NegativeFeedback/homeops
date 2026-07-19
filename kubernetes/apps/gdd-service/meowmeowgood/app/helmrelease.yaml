@@ -43,6 +43,9 @@ spec:
                   httpGet:
                     path: /healthz/
                     port: &port 8080
+                    httpHeaders:
+                      - name: Host
+                        value: localhost
                   initialDelaySeconds: 10
                   periodSeconds: 10
                   timeoutSeconds: 1
