@@ -23,7 +23,7 @@ spec:
           containers:
             - name: renovate
               # renovate: datasource=docker depName=ghcr.io/renovatebot/renovate
-              image: ghcr.io/renovatebot/renovate:39.264.0
+              image: ghcr.io/renovatebot/renovate:43.271.2
               resources:
                 requests:
                   cpu: 100m
