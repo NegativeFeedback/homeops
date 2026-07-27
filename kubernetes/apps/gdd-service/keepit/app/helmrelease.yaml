@@ -27,6 +27,7 @@ spec:
             image:
               repository: git.gddnet.io/negativefeedback/keepit
               tag: v0.1.50@sha256:ef888882ff47738b7f5f77fdbe802ce24e44df26106e61b86edabfbc857dd9a4
+            env:
               TZ: ${TIMEZONE}
               PORT: &port 8080
               DATA_PATH: /media
@@ -45,8 +46,6 @@ spec:
               SESSION_AUTO_SCRAPE: "false"
               GLUETUN_CONTROL_URL: http://localhost:8000
               VIDEO_REQUIRE_VPN: "true"
-
-
             envFrom:
               - secretRef:
                   name: keepit-secret
