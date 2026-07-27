@@ -6,7 +6,7 @@ metadata:
   name: keepit
 spec:
   interval: 1h
-  timeout: 15m
+  timeout: 30m
   chartRef:
     kind: OCIRepository
     name: app-template
@@ -26,8 +26,7 @@ spec:
           app:
             image:
               repository: git.gddnet.io/negativefeedback/keepit
-              tag: v0.1.47@sha256:ff9d1c9bd54b13ad729d13b607dacd1932f98a93a6be5a8114f10f3e477db686
-            env:
+              tag: v0.1.50@sha256:ef888882ff47738b7f5f77fdbe802ce24e44df26106e61b86edabfbc857dd9a4
               TZ: ${TIMEZONE}
               PORT: &port 8080
               DATA_PATH: /media
@@ -84,7 +83,7 @@ spec:
                     port: *port
                   periodSeconds: 10
                   timeoutSeconds: 5
-                  failureThreshold: 60
+                  failureThreshold: 180
             resources:
               requests:
                 cpu: 100m
