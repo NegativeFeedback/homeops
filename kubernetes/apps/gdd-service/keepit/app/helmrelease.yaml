@@ -102,7 +102,11 @@ spec:
               HTTP_CONTROL_SERVER_ADDRESS: ":8000"
               FIREWALL_INPUT_PORTS: "8080,8000"
               HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH: /gluetun/auth/config.toml
-              DOT: "on"
+              # DNS-over-TLS to Cloudflare (1.0.0.1:853) gets its TLS handshake reset from every
+              # ProtonVPN US exit we've tried (verified 2026-07-28: TCP/443 and plain DNS/53 work
+              # fine through the same tunnel, only the DoT handshake on 853 is killed) — plain DNS
+              # avoids the blocked port instead of chasing a working exit server.
+              DOT: "off"
               UPDATER_PERIOD: 24h
               TZ: ${TIMEZONE}
             envFrom:
