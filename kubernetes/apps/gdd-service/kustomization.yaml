@@ -30,6 +30,7 @@ resources:
   - ./stash/ks.yaml
   - ./tracefinity/ks.yaml
   - ./whisparr/ks.yaml
+  - ./meowmeowgood/ks.yaml
 
 patches:
   - patch: |-

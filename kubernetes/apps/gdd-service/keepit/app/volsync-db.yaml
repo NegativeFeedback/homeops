@@ -11,7 +11,7 @@ spec:
     name: keepit-db-dst
   resources:
     requests:
-      storage: 5Gi
+      storage: 50Gi
   storageClassName: ceph-block
 ---
 # yaml-language-server: $schema=https://kubernetes-schemas.18b.haus/volsync.backube/replicationdestination_v1alpha1.json
@@ -31,7 +31,7 @@ spec:
     cacheAccessModes: ["ReadWriteOnce"]
     storageClassName: ceph-block
     accessModes: ["ReadWriteOnce"]
-    capacity: 5Gi
+    capacity: 50Gi
     moverSecurityContext:
       fsGroup: 1000
       runAsGroup: 1000
