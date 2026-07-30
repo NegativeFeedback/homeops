@@ -24,7 +24,7 @@ spec:
           app:
             image:
               repository: ghcr.io/habirabbu/musicseerr
-              tag: v1.4.2@sha256:d68451a6890a8e808fe7b64d64789eaa0b1db030ec999aea6931bc0a45ad0fe5
+              tag: v2.3.0@sha256:2a64f2cad5e531efb4895df08aec08123e5aa7215658a1a57109bd66588941b6
             env:
               TZ: America/Chicago
               PORT: &port 8688
