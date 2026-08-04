@@ -20,6 +20,23 @@ spec:
     controllers:
       stasharr:
         strategy: RollingUpdate
+        initContainers:
+          init-appdata:
+            # fsGroup only changes group ownership on mount; /var/lib/stasharr
+            # stays owned by root, so the app's own startup chmod on that dir
+            # fails as uid 1000. Fix ownership here, once, before app starts.
+            image:
+              repository: alpine
+              tag: 3.22@sha256:14358309a308569c32bdc37e2e0e9694be33a9d99e68afb0f5ff33cc1f695dce
+            command: ["chown", "-R", "1000:1000", "/var/lib/stasharr"]
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              runAsUser: 0
+              runAsGroup: 0
+              capabilities:
+                drop: ["ALL"]
+                add: ["CHOWN", "FOWNER"]
         containers:
           app:
             image:
@@ -118,6 +135,8 @@ spec:
         storageClass: ceph-block
         advancedMounts:
           stasharr:
+            init-appdata:
+              - path: /var/lib/stasharr
             app:
               - path: /var/lib/stasharr
       pgdata:
