@@ -49,18 +49,32 @@ spec:
               - secretRef:
                   name: homarr-secret
             probes:
-              liveness: &probes
+              # Liveness is intentionally lenient: Homarr can get briefly busy (e.g. the
+              # setup wizard firing off several concurrent integration-connection tests),
+              # and a slow health check should not tear the whole pod down mid-setup.
+              liveness:
                 enabled: true
                 custom: true
                 spec:
                   httpGet:
                     path: /
                     port: &port 7575
+                  initialDelaySeconds: 30
+                  periodSeconds: 20
+                  timeoutSeconds: 10
+                  failureThreshold: 6
+              # Readiness can flap without killing the container, so it's fine to be stricter.
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: *port
                   initialDelaySeconds: 15
-                  periodSeconds: 15
+                  periodSeconds: 10
                   timeoutSeconds: 5
                   failureThreshold: 3
-              readiness: *probes
             securityContext:
               allowPrivilegeEscalation: false
               # Homarr bundles its own nginx (config/logs/tmp under /etc/nginx, /var/lib/nginx)
@@ -74,7 +88,7 @@ spec:
                 add: ["CHOWN", "SETUID", "SETGID", "DAC_OVERRIDE"]
             resources:
               requests:
-                cpu: 50m
+                cpu: 100m
                 memory: 256Mi
               limits:
                 memory: 1Gi
