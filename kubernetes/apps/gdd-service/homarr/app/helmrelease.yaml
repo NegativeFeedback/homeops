@@ -32,9 +32,11 @@ spec:
               tag: v1.73.0
             env:
               TZ: America/Chicago
-              # PUID/PGID are intentionally omitted: setting them makes Homarr's entrypoint
-              # chown -R the whole /app tree at startup, which fails under readOnlyRootFilesystem.
-              # The pod already runs as 1000:1000 via defaultPodOptions, so they're unnecessary.
+              # Homarr's image is LinuxServer.io-style: it must start as root to set up
+              # nginx/redis, then drops privileges to PUID/PGID itself. It cannot start
+              # directly as a non-root UID (see defaultPodOptions below + capabilities.add).
+              PUID: "1000"
+              PGID: "1000"
               # Beta test: native OIDC login via Authentik.
               # Create an OAuth2/OIDC "Provider" + "Application" (slug: homarr) in Authentik first,
               # redirect URI: https://homarr.${SECRET_DOMAIN}/api/auth/callback/oidc
@@ -65,7 +67,11 @@ spec:
               # and redis alongside the Next.js app, all expecting a writable rootfs at startup.
               # Same tradeoff Homepage makes in this repo for the same reason.
               readOnlyRootFilesystem: false
-              capabilities: { drop: ["ALL"] }
+              # CHOWN/SETUID/SETGID/DAC_OVERRIDE are what let root actually fix ownership of
+              # nginx's dirs and then drop to PUID/PGID; without them "root" is powerless here.
+              capabilities:
+                drop: ["ALL"]
+                add: ["CHOWN", "SETUID", "SETGID", "DAC_OVERRIDE"]
             resources:
               requests:
                 cpu: 50m
@@ -74,9 +80,8 @@ spec:
                 memory: 1Gi
     defaultPodOptions:
       securityContext:
-        runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
+        # No runAsNonRoot/runAsUser here: the container must start as root (see PUID/PGID
+        # above) — it drops to 1000:1000 itself once nginx/redis are set up.
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
         seccompProfile: { type: RuntimeDefault }
