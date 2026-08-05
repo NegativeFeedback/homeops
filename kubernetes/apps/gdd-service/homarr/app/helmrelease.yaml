@@ -32,8 +32,9 @@ spec:
               tag: v1.73.0
             env:
               TZ: America/Chicago
-              PUID: "1000"
-              PGID: "1000"
+              # PUID/PGID are intentionally omitted: setting them makes Homarr's entrypoint
+              # chown -R the whole /app tree at startup, which fails under readOnlyRootFilesystem.
+              # The pod already runs as 1000:1000 via defaultPodOptions, so they're unnecessary.
               # Beta test: native OIDC login via Authentik.
               # Create an OAuth2/OIDC "Provider" + "Application" (slug: homarr) in Authentik first,
               # redirect URI: https://homarr.${SECRET_DOMAIN}/api/auth/callback/oidc
