@@ -24,7 +24,9 @@ spec:
       homarr:
         annotations:
           secret.reloader.stakater.com/reload: "auto"
-        strategy: RollingUpdate
+        # RWO PVC (single-node Ceph RBD attach) means RollingUpdate deadlocks: the new pod
+        # can never attach the volume while the old pod still holds it. Recreate avoids that.
+        strategy: Recreate
         containers:
           app:
             image:
