@@ -42,8 +42,18 @@ spec:
               # Beta test: native OIDC login via Authentik.
               # Create an OAuth2/OIDC "Provider" + "Application" (slug: homarr) in Authentik first,
               # redirect URI: https://homarr.${SECRET_DOMAIN}/api/auth/callback/oidc
+              # AUTH_OIDC_* alone only configures the client - AUTH_PROVIDERS is what actually
+              # switches the login screen to offer it. "credentials" kept as a fallback so
+              # testing OIDC can't lock you out; drop it once OIDC is confirmed working.
+              AUTH_PROVIDERS: "oidc,credentials"
+              BASE_URL: https://homarr.${SECRET_DOMAIN}
+              NEXTAUTH_URL: https://homarr.${SECRET_DOMAIN}
               AUTH_OIDC_CLIENT_NAME: Authentik
               AUTH_OIDC_ISSUER: https://sso.gddnet.io/application/o/homarr/
+              AUTH_OIDC_URI: https://sso.gddnet.io/application/o/authorize
+              AUTH_OIDC_SCOPE_OVERWRITE: openid email profile groups
+              AUTH_OIDC_GROUPS_ATTRIBUTE: groups
+              AUTH_LOGOUT_REDIRECT_URL: https://sso.gddnet.io/application/o/homarr/end-session/
               # Left off for now so credentials login still works while OIDC is being verified;
               # flip to "true" once the Authentik provider is confirmed working.
               AUTH_OIDC_AUTO_LOGIN: "false"
