@@ -1,0 +1,45 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dashy
+data:
+  conf.yml: |
+    pageInfo:
+      title: Dashy (Beta)
+      description: Homepage alternative beta test
+      navLinks:
+        - title: GitHub
+          path: https://github.com/lissy93/dashy
+
+    appConfig:
+      theme: colorful
+      layout: auto
+      iconSize: medium
+      language: en
+      startingView: default
+      disableConfigurationForNonAdmin: true
+      enableGuestAccess: false
+      auth:
+        users:
+          # TODO: replace hash. Generate with: echo -n 'yourpassword' | sha256sum
+          - user: admin
+            hash: "REPLACE_WITH_SHA256_HASH"
+            type: admin
+
+    sections:
+      - name: Dashboards
+        icon: far fa-th-large
+        items:
+          - title: Homepage
+            description: Current production dashboard
+            icon: far fa-home
+            url: https://dir.gddnet.io
+          - title: Homarr
+            description: OIDC beta alternative
+            icon: far fa-window-restore
+            url: https://homarr.gddnet.io
+          - title: Authentik
+            description: OIDC user management
+            icon: far fa-key
+            url: https://sso.gddnet.io

@@ -12,6 +12,8 @@ resources:
   - ./donetick/ks.yaml
   - ./tandoor/ks.yaml
   - ./homepage/ks.yaml
+  - ./homarr/ks.yaml
+  - ./dashy/ks.yaml
   - ./minecraft/ks.yaml
   - ./foundryvtt/ks.yaml
   - ./minecraft-create/ks.yaml
