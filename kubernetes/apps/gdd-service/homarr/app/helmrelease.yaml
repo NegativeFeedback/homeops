@@ -61,7 +61,10 @@ spec:
               readiness: *probes
             securityContext:
               allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
+              # Homarr bundles its own nginx (config/logs/tmp under /etc/nginx, /var/lib/nginx)
+              # and redis alongside the Next.js app, all expecting a writable rootfs at startup.
+              # Same tradeoff Homepage makes in this repo for the same reason.
+              readOnlyRootFilesystem: false
               capabilities: { drop: ["ALL"] }
             resources:
               requests:
