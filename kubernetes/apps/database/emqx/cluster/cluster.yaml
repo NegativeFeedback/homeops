@@ -29,6 +29,11 @@ spec:
   coreTemplate:
     spec:
       replicas: 3
+      volumeClaimTemplates:
+        storageClassName: ceph-block
+        resources:
+          requests:
+            storage: 2Gi
   listenersServiceTemplate:
     spec:
       type: LoadBalancer
