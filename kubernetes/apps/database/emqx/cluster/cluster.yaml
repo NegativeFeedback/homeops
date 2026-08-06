@@ -31,6 +31,8 @@ spec:
       replicas: 3
       volumeClaimTemplates:
         storageClassName: ceph-block
+        accessModes:
+          - ReadWriteOnce
         resources:
           requests:
             storage: 2Gi
