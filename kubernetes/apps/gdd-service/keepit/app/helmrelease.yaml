@@ -6,7 +6,7 @@ metadata:
   name: keepit
 spec:
   interval: 1h
-  timeout: 30m
+  timeout: 90m
   chartRef:
     kind: OCIRepository
     name: app-template
@@ -17,6 +17,7 @@ spec:
     cleanupOnFail: true
     remediation:
       retries: 3
+    timeout: 90m
   values:
     controllers:
       keepit:
@@ -82,7 +83,7 @@ spec:
                     port: *port
                   periodSeconds: 10
                   timeoutSeconds: 5
-                  failureThreshold: 180
+                  failureThreshold: 500
             resources:
               requests:
                 cpu: 100m
