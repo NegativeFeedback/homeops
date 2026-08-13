@@ -21,6 +21,15 @@ spec:
         - ports:
             - port: "9999"
               protocol: TCP
+    # whisparr queries this Stash instance over its API
+    - fromEndpoints:
+        - matchLabels:
+            k8s:app.kubernetes.io/name: whisparr
+            k8s:io.kubernetes.pod.namespace: gdd-service
+      toPorts:
+        - ports:
+            - port: "9999"
+              protocol: TCP
   egress:
     # DNS resolution via CoreDNS
     - toEndpoints:
