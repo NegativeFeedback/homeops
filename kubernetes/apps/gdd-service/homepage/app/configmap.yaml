@@ -19,47 +19,87 @@ data:
         - UniFi:
             href: https://unifi.ui.com/
             icon: unifi-controller.png
-    - Security:
-        - Authentik:
-            href: https://sso.gddnet.io/
-            icon: authentik.png
-            group: Infrastructure
-            description: OIDC User Management
+            description: Cloud-hosted network controller
 
   settings.yaml: |
-    background:
-      image: https://ibb.co/mHVM4vT
-      opacity: 25
     color: stone
+    background:
+      image: https://i.ibb.co/K9p3WNh/pixel-citytrain.gif
+      blur: sm
+      saturate: 75
+      brightness: 45
+      opacity: 40
     fiveColumns: false
     headerStyle: clean
     hideErrors: true
     hideVersion: true
     iconStyle: theme
+    quicklaunch:
+      searchDescriptions: true
+      hideInternetSearch: false
+      showSearchSuggestions: true
+      provider: duckduckgo
     layout:
-      Service:
-        style: column
-      Automation:
+      Media:
         style: row
         columns: 3
-      Media:
+      Home:
+        style: row
+        columns: 3
+      Service:
+        style: row
+        columns: 3
+      Chat:
+        style: row
+        columns: 3
+      AI:
+        style: row
+        columns: 3
+      "3D Printing":
+        style: row
+        columns: 3
+      Tools:
+        style: row
+        columns: 3
+      "Media Management":
         style: row
         columns: 3
       Infrastructure:
         style: row
         columns: 3
+      Security:
+        style: row
+        columns: 3
       Observability:
         style: row
         columns: 3
-      Storage:
-        style: column
-      Tools:
-        style: column
-      Quick Links:
+      "Dashboards (Beta)":
+        style: row
+        columns: 3
+      "Quick Links":
         style: row
         columns: 3
     showStats: false
     statusStyle: dot
     target: _blank
     title: Home
-  widgets.yaml: ""
+  widgets.yaml: |
+    - search:
+        provider: duckduckgo
+        focus: true
+        showSearchSuggestions: true
+        target: _blank
+    - kubernetes:
+        cluster:
+          show: true
+          cpu: true
+          memory: true
+          showLabel: true
+          label: "cluster"
+        nodes:
+          show: false
+    - datetime:
+        text_size: xl
+        format:
+          dateStyle: short
+          timeStyle: short
