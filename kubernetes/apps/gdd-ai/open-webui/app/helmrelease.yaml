@@ -22,6 +22,8 @@ spec:
   values:
     controllers:
       open-webui:
+        annotations:
+          reloader.stakater.com/auto: "true"
         strategy: RollingUpdate
         containers:
           app:
@@ -30,10 +32,7 @@ spec:
               tag: main
             env:
               TZ: America/Chicago
-              # ollama backend (CPU today — see project notes) for small models.
               OLLAMA_BASE_URL: http://ollama.gdd-ai.svc.cluster.local:11434
-              # vLLM backend (OpenAI-compatible) — GPU inference on the Arc B70.
-              # vLLM ignores the key unless started with --api-key, so any value works.
               ENABLE_OPENAI_API: "true"
               OPENAI_API_BASE_URL: http://vllm.gdd-ai.svc.cluster.local:8000/v1
               OPENAI_API_KEY: "vllm-local-no-auth"
@@ -42,6 +41,14 @@ spec:
                   secretKeyRef:
                     name: open-webui-secret
                     key: secret_key
+              ENABLE_OAUTH_SIGNUP: "true"
+              OAUTH_MERGE_ACCOUNTS_BY_EMAIL: "true"
+              OAUTH_PROVIDER_NAME: Authentik
+              OAUTH_SCOPES: "openid email profile"
+              OPENID_PROVIDER_URL: https://sso.gddnet.io/application/o/open-webui/.well-known/openid-configuration
+            envFrom:
+              - secretRef:
+                  name: open-webui-authentik-oauth
             probes:
               liveness: &probes
                 enabled: true
@@ -75,23 +82,6 @@ spec:
         ports:
           http:
             port: *port
-#    route:
-#      app:
-#        hostnames: ["open-webui.${SECRET_DOMAIN}"]
-#        annotations:
-#          gethomepage.dev/enabled: "true"
-#          gethomepage.dev/group: AI
-#          gethomepage.dev/name: Open WebUI
-#          gethomepage.dev/icon: open-webui.svg
-#          gethomepage.dev/description: "Chat interface for local LLMs"
-#        parentRefs:
-#          - name: external
-#            namespace: kube-system
-#            sectionName: https
-#        rules:
-#          - backendRefs:
-#              - identifier: app
-#                port: *port
     persistence:
       data:
         type: persistentVolumeClaim

@@ -5,6 +5,21 @@ metadata:
   name: open-webui
   annotations:
     tailscale.com/proxy-group: ts-ingress
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: AI
+    gethomepage.dev/name: Open WebUI
+    gethomepage.dev/icon: open-webui.svg
+    gethomepage.dev/description: "Chat interface for local LLMs"
+    gethomepage.dev/siteMonitor: "http://open-webui.gdd-ai.svc:8080"
+    authentik.gddnet.io/enabled: "true"
+    authentik.gddnet.io/mode: oauth2
+    authentik.gddnet.io/name: Open WebUI
+    authentik.gddnet.io/category: Service
+    authentik.gddnet.io/icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/svg/open-webui.svg"
+    authentik.gddnet.io/description: "Chat interface for local LLMs"
+    authentik.gddnet.io/publisher: Open WebUI
+    authentik.gddnet.io/oauth-redirect-uris: "https://open-webui.barn-walleye.ts.net/oauth/oidc/callback"
+    authentik.gddnet.io/oauth-secret-keys: "OAUTH_CLIENT_ID,OAUTH_CLIENT_SECRET"
 spec:
   ingressClassName: tailscale
   rules:
