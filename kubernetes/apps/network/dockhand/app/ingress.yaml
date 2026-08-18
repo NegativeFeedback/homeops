@@ -1,0 +1,29 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: dockhand
+  annotations:
+    tailscale.com/proxy-group: ts-ingress
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: Infrastructure
+    gethomepage.dev/name: Dockhand
+    gethomepage.dev/icon: docker.png
+    gethomepage.dev/description: "Tailscale only | Docker fleet management"
+    gethomepage.dev/siteMonitor: "http://dockhand.network.svc:3000"
+spec:
+  ingressClassName: tailscale
+  rules:
+    - host: dockhand.barn-walleye.ts.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: dockhand
+                port:
+                  number: 3000
+  tls:
+    - hosts:
+        - dockhand.barn-walleye.ts.net
