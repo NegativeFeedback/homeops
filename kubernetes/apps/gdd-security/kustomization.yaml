@@ -7,5 +7,6 @@ components:
   - ../../components/common
 resources:
   - ./authentik/ks.yaml
+  - ./authentik-operator/ks.yaml
   - ./openbao/ks.yaml
   - ./terrakube/ks.yaml
