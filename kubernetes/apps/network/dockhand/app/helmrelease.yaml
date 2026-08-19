@@ -28,7 +28,7 @@ spec:
             env:
               TZ: ${TIMEZONE}
               DATA_DIR: /app/data
-              DISABLE_LOCAL_LOGIN: "true"
+              DISABLE_LOCAL_LOGIN: "false"
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
