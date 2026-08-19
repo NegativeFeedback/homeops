@@ -11,6 +11,18 @@ metadata:
     gethomepage.dev/icon: docker.png
     gethomepage.dev/description: "Tailscale only | Docker fleet management"
     gethomepage.dev/siteMonitor: "http://dockhand.network.svc:3000"
+    authentik.gddnet.io/enabled: "true"
+    authentik.gddnet.io/mode: oauth2
+    authentik.gddnet.io/name: Dockhand
+    authentik.gddnet.io/category: Infrastructure
+    authentik.gddnet.io/icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/svg/docker.svg"
+    authentik.gddnet.io/description: "Docker fleet management"
+    authentik.gddnet.io/publisher: Finsys
+    # Dockhand has no env-var based OIDC config (client id/secret/issuer are
+    # entered under Settings > Authentication > OIDC Providers in its UI, or
+    # via its API) — this Secret still gets created for convenience, it just
+    # has to be copy-pasted in rather than wired through envFrom.
+    authentik.gddnet.io/oauth-redirect-uris: "https://dockhand.barn-walleye.ts.net/api/auth/oidc/callback"
 spec:
   ingressClassName: tailscale
   rules:
