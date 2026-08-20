@@ -23,8 +23,8 @@ spec:
         containers:
           app:
             image:
-              repository: fnsys/dockhand
-              tag: v1.0.40
+              repository: ghcr.io/negativefeedback/dock
+              tag: sha-1a005b3
             env:
               TZ: ${TIMEZONE}
               DATA_DIR: /app/data
