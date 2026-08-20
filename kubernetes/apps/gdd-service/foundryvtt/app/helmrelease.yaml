@@ -22,7 +22,7 @@ spec:
   values:
     controllers:
       foundryvtt:
-        strategy: RollingUpdate
+        strategy: Recreate
         containers:
           app:
             image:
@@ -83,7 +83,7 @@ spec:
         type: persistentVolumeClaim
         storageClass: ceph-block
         accessMode: ReadWriteOnce
-        size: 5Gi
+        size: 15Gi
       npm-cache:
         type: emptyDir
         globalMounts:
@@ -104,6 +104,7 @@ spec:
           gethomepage.dev/icon: sh-foundry-virtual-tabletop.png
           gethomepage.dev/name: DND
           gethomepage.dev/app: foundryvtt
+          gethomepage.dev/siteMonitor: "https://dnd.gddnet.io"
           gatus.home-operations.com/enabled: "true"
           gatus.home-operations.com/endpoint: |-
             group: Service
