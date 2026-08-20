@@ -86,6 +86,13 @@ spec:
           http:
             port: *port
     persistence:
+      config:
+        type: secret
+        name: romm-config
+        globalMounts:
+          - path: /romm/config/config.yml
+            subPath: config.yml
+            readOnly: true
       data:
         type: persistentVolumeClaim
         storageClass: ceph-block
