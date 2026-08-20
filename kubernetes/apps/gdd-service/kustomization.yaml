@@ -28,6 +28,7 @@ resources:
   - ./bambubuddy/ks.yaml
   - ./spoolman/ks.yaml
   - ./inventree/ks.yaml
+  - ./romm/ks.yaml
   - ./keepit/ks.yaml
   - ./stash/ks.yaml
   - ./tracefinity/ks.yaml

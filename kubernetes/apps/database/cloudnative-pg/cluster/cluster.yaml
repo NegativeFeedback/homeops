@@ -49,6 +49,11 @@ spec:
         login: true
         passwordSecret:
           name: inventree-db-secret
+      - name: gdd-service-romm-user
+        ensure: present
+        login: true
+        passwordSecret:
+          name: romm-db-secret
 
   monitoring:
     enablePodMonitor: true

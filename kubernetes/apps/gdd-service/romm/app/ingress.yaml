@@ -1,0 +1,38 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: romm
+  annotations:
+    tailscale.com/proxy-group: ts-ingress
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: Gaming
+    gethomepage.dev/name: RomM
+    gethomepage.dev/icon: romm.svg
+    gethomepage.dev/description: "Tailscale only | ROM library manager"
+    gethomepage.dev/siteMonitor: "http://romm.gdd-service.svc:8080"
+    authentik.gddnet.io/enabled: "true"
+    authentik.gddnet.io/mode: oauth2
+    authentik.gddnet.io/name: RomM
+    authentik.gddnet.io/category: Gaming
+    authentik.gddnet.io/icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/svg/romm.svg"
+    authentik.gddnet.io/description: "ROM library manager"
+    authentik.gddnet.io/publisher: RomM
+    authentik.gddnet.io/oauth-redirect-uris: "https://romm.barn-walleye.ts.net/api/oauth/openid"
+    authentik.gddnet.io/oauth-secret-keys: "OIDC_CLIENT_ID,OIDC_CLIENT_SECRET"
+spec:
+  ingressClassName: tailscale
+  rules:
+    - host: romm.barn-walleye.ts.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: romm
+                port:
+                  number: 8080
+  tls:
+    - hosts:
+        - romm.barn-walleye.ts.net

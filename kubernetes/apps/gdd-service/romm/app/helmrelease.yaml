@@ -1,0 +1,105 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app romm
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  values:
+    controllers:
+      romm:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            image:
+              repository: ghcr.io/rommapp/romm
+              tag: 5.1.0@sha256:ce9d86ab531e09fede45d00f426e3bf2d1f5dd14846f94d6360d77a92a413028
+            env:
+              TZ: ${TIMEZONE}
+              ROMM_PORT: &port 8080
+              ROMM_DB_DRIVER: postgresql
+              DB_HOST: postgres-rw.database.svc.cluster.local
+              DB_PORT: "5432"
+              DB_NAME: gdd-service-romm
+              DB_USER: gdd-service-romm-user
+              REDIS_HOST: dragonfly.database.svc.cluster.local
+              REDIS_PORT: "6379"
+              REDIS_DB: "6"
+              DISABLE_DOWNLOAD_ENDPOINT_AUTH: "true"
+              ENABLE_SCHEDULED_RESCAN: "true"
+              SCHEDULED_RESCAN_CRON: "0 3 * * *"
+              OIDC_ENABLED: "true"
+              OIDC_PROVIDER: authentik
+              OIDC_REDIRECT_URI: "https://romm.barn-walleye.ts.net/api/oauth/openid"
+              OIDC_SERVER_APPLICATION_URL: "https://sso.${SECRET_DOMAIN}"
+            envFrom:
+              - secretRef:
+                  name: romm-secret
+              - secretRef:
+                  name: romm-authentik-oauth
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: *port
+                  initialDelaySeconds: 10
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: false
+              capabilities: { drop: ["ALL"] }
+            resources:
+              requests:
+                cpu: 50m
+                memory: 256Mi
+              limits:
+                memory: 1Gi
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile: { type: RuntimeDefault }
+    service:
+      app:
+        ports:
+          http:
+            port: *port
+    persistence:
+      data:
+        type: persistentVolumeClaim
+        storageClass: ceph-block
+        accessMode: ReadWriteOnce
+        size: 10Gi
+        globalMounts:
+          - path: /romm/resources
+            subPath: resources
+          - path: /romm/assets
+            subPath: assets
+      library:
+        type: persistentVolumeClaim
+        storageClass: ceph-block
+        accessMode: ReadWriteOnce
+        size: 100Gi
+        globalMounts:
+          - path: /romm/library
