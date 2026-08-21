@@ -21,6 +21,9 @@ spec:
         kind: Secret
       - name: donetick-secret
         kind: Secret
+      - name: donetick-authentik-oauth
+        kind: Secret
+        optional: true
   prune: true
   retryInterval: 2m
   sourceRef:
