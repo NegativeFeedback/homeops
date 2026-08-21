@@ -93,7 +93,7 @@ spec:
           authentik.gddnet.io/description: "Chores & task tracking"
           authentik.gddnet.io/publisher: Donetick
           authentik.gddnet.io/allowed-groups: "sso"
-          authentik.gddnet.io/oauth-redirect-uris: "https://sso.${SECRET_DOMAIN}/auth/oauth2"
+          authentik.gddnet.io/oauth-redirect-uris: "https://todo.${SECRET_DOMAIN}/auth/oauth2"
           authentik.gddnet.io/oauth-secret-keys: "DONETICK_OAUTH_CLIENTID,DONETICK_OAUTH_SECRET"
         parentRefs:
           - name: external
