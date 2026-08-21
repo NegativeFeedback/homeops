@@ -78,6 +78,23 @@ spec:
     route:
       app:
         hostnames: ["todo.${SECRET_DOMAIN}"]
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Service
+          gethomepage.dev/name: Donetick
+          gethomepage.dev/icon: donetick.png
+          gethomepage.dev/description: "Chores & task tracking"
+          gethomepage.dev/siteMonitor: "https://todo.gddnet.io"
+          authentik.gddnet.io/enabled: "true"
+          authentik.gddnet.io/mode: oauth2
+          authentik.gddnet.io/name: Donetick
+          authentik.gddnet.io/category: Service
+          authentik.gddnet.io/icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/svg/donetick.svg"
+          authentik.gddnet.io/description: "Chores & task tracking"
+          authentik.gddnet.io/publisher: Donetick
+          authentik.gddnet.io/allowed-groups: "sso"
+          authentik.gddnet.io/oauth-redirect-uris: "https://sso.${SECRET_DOMAIN}/auth/oauth2"
+          authentik.gddnet.io/oauth-secret-keys: "DONETICK_OAUTH_CLIENTID,DONETICK_OAUTH_SECRET"
         parentRefs:
           - name: external
             namespace: kube-system
@@ -88,10 +105,7 @@ spec:
                 port: *port
     persistence:
       app:
-        type: persistentVolumeClaim
-        storageClass: nfs-csi
-        accessMode: ReadWriteOnce
-        size: 5Gi
+        existingClaim: donetick-data
         globalMounts:
           - path: /donetick-data
       config:
