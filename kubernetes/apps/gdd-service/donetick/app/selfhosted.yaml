@@ -53,7 +53,7 @@ data:
       auth_url: "https://sso.${SECRET_DOMAIN}/application/o/authorize/"
       token_url: "https://sso.${SECRET_DOMAIN}/application/o/token/"
       user_info_url: "https://sso.${SECRET_DOMAIN}/application/o/userinfo/"
-      redirect_url: "https://sso.${SECRET_DOMAIN}/auth/oauth2"
+      redirect_url: "https://todo.${SECRET_DOMAIN}/auth/oauth2"
       name: "authentik"
       scopes:
         - "openid"
