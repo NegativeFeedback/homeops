@@ -5,6 +5,12 @@ metadata:
   name: keepit
   annotations:
     tailscale.com/proxy-group: ts-ingress
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: Tools
+    gethomepage.dev/name: Keepit
+    gethomepage.dev/icon: download.svg
+    gethomepage.dev/description: "Tailscale only | Reddit media backup"
+    gethomepage.dev/siteMonitor: "http://keepit.gdd-service.svc:8080"
 spec:
   ingressClassName: tailscale
   rules:
