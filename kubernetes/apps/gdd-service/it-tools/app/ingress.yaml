@@ -1,0 +1,37 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: it-tools
+  annotations:
+    tailscale.com/proxy-group: ts-ingress
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: Service
+    gethomepage.dev/name: IT Tools
+    gethomepage.dev/icon: it-tools.svg
+    gethomepage.dev/description: "IT utilities"
+    gethomepage.dev/siteMonitor: "http://it-tools.gdd-service.svc:80"
+    authentik.gddnet.io/enabled: "true"
+    authentik.gddnet.io/mode: proxy
+    authentik.gddnet.io/name: IT Tools
+    authentik.gddnet.io/category: Service
+    authentik.gddnet.io/icon: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/svg/it-tools.svg"
+    authentik.gddnet.io/description: "IT utilities"
+    authentik.gddnet.io/publisher: IT Tools
+    authentik.gddnet.io/proxy-hostname: tools.gddnet.io
+spec:
+  ingressClassName: tailscale
+  rules:
+    - host: it-tools.barn-walleye.ts.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: it-tools
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - it-tools.barn-walleye.ts.net

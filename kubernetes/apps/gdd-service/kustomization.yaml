@@ -35,6 +35,18 @@ resources:
   - ./whisparr/ks.yaml
   - ./stasharr/ks.yaml
   - ./meowmeowgood/ks.yaml
+#  - ./snapotter/ks.yaml
+  - ./it-tools/ks.yaml
+#  - ./convertx/ks.yaml
+#  - ./bentopdf/ks.yaml
+#  - ./zipline/ks.yaml
+#  - ./syncthing/ks.yaml
+#  - ./kms/ks.yaml
+#  - ./ferdium/ks.yaml
+#  - ./epicgames/ks.yaml
+#  - ./cve-report/ks.yaml
+#  - ./christmas-community/ks.yaml
+#  - ./actual/ks.yaml
 
 patches:
   - patch: |-
