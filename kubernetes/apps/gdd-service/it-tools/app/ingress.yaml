@@ -10,7 +10,7 @@ metadata:
     gethomepage.dev/name: IT Tools
     gethomepage.dev/icon: it-tools.svg
     gethomepage.dev/description: "IT utilities"
-    gethomepage.dev/siteMonitor: "http://it-tools.gdd-service.svc:80"
+    gethomepage.dev/siteMonitor: "http://it-tools.gdd-service.svc:8080"
     authentik.gddnet.io/enabled: "true"
     authentik.gddnet.io/mode: proxy
     authentik.gddnet.io/name: IT Tools
@@ -31,7 +31,7 @@ spec:
               service:
                 name: it-tools
                 port:
-                  number: 80
+                  number: 8080
   tls:
     - hosts:
         - it-tools.barn-walleye.ts.net
