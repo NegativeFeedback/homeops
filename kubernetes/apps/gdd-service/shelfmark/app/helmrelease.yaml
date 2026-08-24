@@ -27,7 +27,7 @@ spec:
           app:
             image:
               repository: ghcr.io/calibrain/shelfmark
-              tag: v1.3.5@sha256:bd314405a9ca1eb176d1618c38f19948a1feb18ec4190a7665d3096163eab0a4
+              tag: v1.3.12@sha256:e22413551ab647388f0279f1d7b7db3ff4a6fe1151337b5b234d3747cc09f5a3
             command:
               - gunicorn
             args:
@@ -89,9 +89,10 @@ spec:
           gethomepage.dev/enabled: "true"
           gethomepage.dev/description: book Management
           gethomepage.dev/group: Service
-          gethomepage.dev/icon: calibre-web.svg
+          gethomepage.dev/icon: mdi-book-plus
           gethomepage.dev/name: Shelfmark
           gethomepage.dev/app: *app
+          gethomepage.dev/siteMonitor: "https://bookrequest.gddnet.io"
           gatus.home-operations.com/enabled: "true"
           gatus.home-operations.com/endpoint: |-
             group: Service
