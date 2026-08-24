@@ -166,7 +166,7 @@ spec:
 
     persistence:
       db:
-        existingClaim: keepit-db
+        existingClaim: keepit-db-local
         advancedMounts:
           keepit:
             app:
