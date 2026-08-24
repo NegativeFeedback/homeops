@@ -37,25 +37,41 @@ spec:
       runAsGroup: 1000
       runAsUser: 1000
 ---
+# The live db (db/keepit.db, -shm, -wal) moved to keepit-db-local (openebs-hostpath) for I/O
+# latency reasons -- see commit history. openebs-hostpath has no CSI VolumeSnapshot support, so
+# ReplicationSource can no longer take a storage-level snapshot of the live PVC before backing it
+# up (copyMethod: Snapshot would either fail outright or, if it silently fell back, risk reading
+# the actively-written db/-wal/-shm files mid-write). Instead the app itself writes a consistent
+# point-in-time copy every 2h via SQLite's VACUUM INTO (store.StartBackupLoop) to this dedicated
+# PVC, which holds nothing else -- both ReplicationSources below back up *that* static file with
+# copyMethod: Direct, which needs no snapshot capability at all.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: keepit-db-backup
+spec:
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: openebs-hostpath
+  resources:
+    requests:
+      storage: 15Gi
+---
 # yaml-language-server: $schema=https://kubernetes-schemas.18b.haus/volsync.backube/replicationsource_v1alpha1.json
 apiVersion: volsync.backube/v1alpha1
 kind: ReplicationSource
 metadata:
   name: keepit-db
 spec:
-  sourcePVC: keepit-db
+  sourcePVC: keepit-db-backup
   trigger:
     schedule: "0 3 * * *"
   restic:
-    copyMethod: Snapshot
+    copyMethod: Direct
     pruneIntervalDays: 7
     repository: keepit-db-local-volsync
-    volumeSnapshotClassName: csi-ceph-blockpool
     cacheCapacity: 1Gi
     cacheStorageClassName: openebs-hostpath
     cacheAccessModes: ["ReadWriteOnce"]
-    storageClassName: ceph-block
-    accessModes: ["ReadWriteOnce"]
     retain:
       hourly: 24
       daily: 7
@@ -75,19 +91,16 @@ kind: ReplicationSource
 metadata:
   name: keepit-db-b2
 spec:
-  sourcePVC: keepit-db
+  sourcePVC: keepit-db-backup
   trigger:
     schedule: "0 4 * * 0"
   restic:
-    copyMethod: Snapshot
+    copyMethod: Direct
     pruneIntervalDays: 7
     repository: keepit-db-b2-volsync
-    volumeSnapshotClassName: csi-ceph-blockpool
     cacheCapacity: 1Gi
     cacheStorageClassName: openebs-hostpath
     cacheAccessModes: ["ReadWriteOnce"]
-    storageClassName: ceph-block
-    accessModes: ["ReadWriteOnce"]
     retain:
       daily: 7
       weekly: 4

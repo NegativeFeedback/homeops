@@ -33,6 +33,7 @@ spec:
               PORT: &port 8080
               DATA_PATH: /media
               DB_PATH: /db/keepit.db
+              DB_BACKUP_PATH: /backup/keepit-backup.db
               REDDIT_USER_AGENT: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.3
               DEFAULT_SCRAPE_INTERVAL_HOURS: "24"
               MAX_CONCURRENT_DOWNLOADS: "12"
@@ -171,6 +172,16 @@ spec:
           keepit:
             app:
               - path: /db
+      # Holds only the periodic VACUUM INTO snapshot the app writes (StartBackupLoop) -- kept
+      # separate from db/ so volsync can back it up with a plain live copy (copyMethod: Direct).
+      # openebs-hostpath (like db/) has no CSI snapshot support, so this file being static/
+      # consistent the moment it's written is what makes a non-snapshot backup safe here.
+      db-backup:
+        existingClaim: keepit-db-backup
+        advancedMounts:
+          keepit:
+            app:
+              - path: /backup
       data:
         type: persistentVolumeClaim
         accessMode: ReadWriteOnce
