@@ -27,7 +27,7 @@ spec:
           app:
             image:
               repository: git.gddnet.io/negativefeedback/keepit
-              tag: v0.1.73@sha256:14006efc6801ac24b6206bc6cf6a03397ea5078008924cdf5c4b77c9a67d12bb
+              tag: v0.1.76@sha256:c6af0085fdec2737eaf5d8e4c6d45898179c253b76a6b1529d4515c3fa6ceab7
             env:
               TZ: ${TIMEZONE}
               PORT: &port 8080
