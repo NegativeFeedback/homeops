@@ -29,7 +29,7 @@ spec:
               repository: git.gddnet.io/negativefeedback/keepit
               tag: v0.1.78@sha256:79ba7c5cd30cc8a91fdb85b5c198ca3c3b219be17ef8a507e972b1e670afa29c
             env:
-              TZ: ${TIMEZONE}
+              TZ: America/Chicago
               PORT: &port 8080
               DATA_PATH: /media
               DB_PATH: /db/keepit.db
@@ -110,7 +110,7 @@ spec:
               # avoids the blocked port instead of chasing a working exit server.
               DOT: "off"
               UPDATER_PERIOD: 24h
-              TZ: ${TIMEZONE}
+              TZ: America/Chicago
             envFrom:
               - secretRef:
                   name: keepit-gluetun-secret
