@@ -27,7 +27,7 @@ spec:
           app:
             image:
               repository: ghcr.io/vaskozl/ntfy
-              tag: 2.27.0@sha256:9529ef069e05976bf147b4d6e851e29ba1942632b384108c52f60b7b2877adc6
+              tag: 2.27.0@sha256:16e53d97c8146fe5f1a152ce6b691238a1b9efd6231694f90a7335ebc04cda1e
             env:
               PROMETHEUS_ENABLED: true
             probes:
