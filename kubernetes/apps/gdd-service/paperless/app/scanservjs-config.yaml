@@ -20,8 +20,8 @@ data:
     #!/usr/bin/env bash
     set -e
     DOCUMENT="$1"
-    EXT="${DOCUMENT##*.}"
-    if [[ "${EXT,,}" == "pdf" ]]; then
+    EXT="$${DOCUMENT##*.}"
+    if [[ "$${EXT,,}" == "pdf" ]]; then
       python3 -c "
     import sys, pikepdf
     doc = pikepdf.open(sys.argv[1])
