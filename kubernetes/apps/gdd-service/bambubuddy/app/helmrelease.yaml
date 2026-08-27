@@ -27,7 +27,7 @@ spec:
               repository: ghcr.io/maziggy/bambuddy
               tag: 1.2.5.3@sha256:c670164aaa3b0c5af715ca00e9745cdf3a4d7d337fc11d96fc85180371952698
             env:
-              TZ: ${TIMEZONE}
+              TZ: America/Chicago
               LOG_LEVEL: INFO
               PORT: &port 8000
             securityContext:

@@ -27,7 +27,7 @@ spec:
               repository: ghcr.io/rommapp/romm
               tag: 5.2.0@sha256:3512f2ca455782f90247271bed23116e6bc675bc74e379be2c41696e607ab11e
             env:
-              TZ: ${TIMEZONE}
+              TZ: America/Chicago
               ROMM_PORT: &port 8080
               ROMM_DB_DRIVER: postgresql
               DB_HOST: postgres-rw.database.svc.cluster.local

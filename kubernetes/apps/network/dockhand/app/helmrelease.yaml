@@ -26,7 +26,7 @@ spec:
               repository: ghcr.io/negativefeedback/dock
               tag: sha-1a005b3
             env:
-              TZ: ${TIMEZONE}
+              TZ: America/Chicago
               DATA_DIR: /app/data
               DISABLE_LOCAL_LOGIN: "false"
             securityContext:

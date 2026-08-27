@@ -31,7 +31,7 @@ spec:
               repository: ghcr.io/negativefeedback/meowmeowgood
               tag: sha-584c70f
             env:
-              TZ: ${TIMEZONE}
+              TZ: America/Chicago
             envFrom:
               - secretRef:
                   name: meowmeowgood-secret
