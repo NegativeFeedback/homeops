@@ -27,7 +27,7 @@ spec:
               repository: ghcr.io/tracefinity/tracefinity
               tag: 0.8.0@sha256:d042f96a66c0209e3198b294d98017d80e52711670f522105c468ea121b4de28
             env:
-              TZ: ${TIMEZONE}
+              TZ: America/Chicago
               # Local CPU tracing; prefer BiRefNet Lite, fall back to IS-Net
               TRACERS: birefnet-lite,isnet
               TRACEFINITY_ONNX_PROVIDER: cpu
