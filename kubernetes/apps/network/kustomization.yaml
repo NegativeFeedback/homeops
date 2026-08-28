@@ -13,6 +13,7 @@ resources:
   - ./k8s-gateway/ks.yaml
   - ./multus/ks.yaml
   - ./pangolin-operator/ks.yaml
+  - ./pangolin-newtsite/ks.yaml
   - ./tailscale-operator/ks.yaml
   - ./securitylab-tunnel/ks.yaml
 #  - ./smtp-relay/ks.yaml
