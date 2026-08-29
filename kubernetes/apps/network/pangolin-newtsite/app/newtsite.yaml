@@ -1,0 +1,15 @@
+---
+apiVersion: pangolin.home-operations.com/v1alpha1
+kind: NewtSite
+metadata:
+  name: homeops
+spec:
+  name: gddnet-kube
+  type: newt
+  newt:
+    tag: latest
+    logLevel: INFO
+    resources:
+      requests:
+        cpu: 10m
+        memory: 32Mi
