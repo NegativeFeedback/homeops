@@ -69,7 +69,7 @@ spec:
           pangolin-operator/port: http
           pangolin-operator/auth-sso: "true"
           pangolin-operator/auth-sso-roles: Admin
-          pangolin-operator/rules: '[{"action":"ACCEPT","match":"path","value":"api/hawser/connect"},{"action":"PASS","match":"path","value":"*"}]'
+          pangolin-operator/rules: '[{"action":"ACCEPT","match":"path","value":"api/hawser/connect","priority":10}]'
         ports:
           http:
             port: *port
