@@ -63,6 +63,13 @@ spec:
         seccompProfile: { type: RuntimeDefault }
     service:
       app:
+        annotations:
+          pangolin-operator/site-ref: homeops
+          pangolin-operator/full-domain: dockhand.app.gddnet.io
+          pangolin-operator/port: http
+          pangolin-operator/auth-sso: "true"
+          pangolin-operator/auth-sso-roles: Admin
+          pangolin-operator/rules: '[{"action":"ACCEPT","match":"path","value":"api/hawser/connect"},{"action":"PASS","match":"path","value":"*"}]'
         ports:
           http:
             port: *port
