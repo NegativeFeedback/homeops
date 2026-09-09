@@ -26,8 +26,8 @@ spec:
         containers:
           app:
             image:
-              repository: ghcr.io/crocodilestick/calibre-web-automated
-              tag: V4.0.6@sha256:c31a738b6d5ec6982c050063dd3f063b6943eb1051fc81144789f840d9093a8d
+              repository: ghcr.io/new-usemame/calibre-web-nextgen
+              tag: dev-1398@sha256:40d1d75be97419a2d55af8343e0a34b6e5b91602dcf87a485799d617ca0ff531
             env:
               CACHE_DIR: /cache
               S6_YES_I_WANT_A_WORLD_WRITABLE_RUN_BECAUSE_KUBERNETES: 1
@@ -73,6 +73,13 @@ spec:
           gethomepage.dev/icon: calibre-web.svg
           gethomepage.dev/name: Calibre Web
           gethomepage.dev/app: *app
+          gethomepage.dev/siteMonitor: "https://books.gddnet.io"
+          # Templated: uncomment + fill HOMEPAGE_VAR_CALIBREWEB_USER/_PASS in
+          # gdd-service/homepage/app/externalsecret.yaml for a live widget.
+          # gethomepage.dev/widget.type: calibreweb
+          # gethomepage.dev/widget.url: "https://books.gddnet.io"
+          # gethomepage.dev/widget.username: "{{`{{HOMEPAGE_VAR_CALIBREWEB_USER}}`}}"
+          # gethomepage.dev/widget.password: "{{`{{HOMEPAGE_VAR_CALIBREWEB_PASS}}`}}"
           gatus.home-operations.com/enabled: "true"
           gatus.home-operations.com/endpoint: |-
             group: Service
