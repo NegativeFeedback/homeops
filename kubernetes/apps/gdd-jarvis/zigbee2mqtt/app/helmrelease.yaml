@@ -58,6 +58,12 @@ spec:
 
     service:
       app:
+        annotations:
+          pangolin-operator/site-ref: homeops
+          pangolin-operator/full-domain: zigbee.app.gddnet.io
+          pangolin-operator/port: http
+          pangolin-operator/auth-sso: "true"
+          pangolin-operator/auth-sso-roles: Admin
         ports:
           http:
             port: &port 8080
