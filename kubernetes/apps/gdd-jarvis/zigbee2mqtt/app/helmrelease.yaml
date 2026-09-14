@@ -58,6 +58,53 @@ spec:
 
     service:
       app:
+        annotations:
+          # --- Identity / core (active) ---
+          pangolin-operator/site-ref: homeops
+          pangolin-operator/name: Zigbee2MQTT
+          pangolin-operator/full-domain: zigbee.app.gddnet.io
+          pangolin-operator/port: http
+          pangolin-operator/auth-sso: "true"
+          pangolin-operator/auth-sso-roles: Admin
+
+          # --- Identity / core (reference, inactive) ---
+          # pangolin-operator/enabled: "true"              # pause the resource without deleting it
+          # pangolin-operator/protocol: tcp                 # tcp|udp override; omit for http
+          # pangolin-operator/method: http                  # http|https|h2c backend protocol
+          # pangolin-operator/ssl: "true"                   # defaults to true for http
+          # pangolin-operator/host-header: custom.example.com
+          # pangolin-operator/tls-server-name: custom.example.com
+
+          # --- Auth (reference, inactive) ---
+          # pangolin-operator/auth-sso-users: someone@example.com     # CSV of emails
+          # pangolin-operator/auth-sso-idp: "1"                       # Pangolin IdP ID for auto-login
+          # pangolin-operator/auth-whitelist-users: someone@example.com # CSV of emails
+          # pangolin-operator/auth-secret: my-app-auth                # k8s Secret with pincode/password/basic-auth-user/basic-auth-password keys
+
+          # --- Target tuning (reference, inactive) ---
+          # pangolin-operator/target-path: /api
+          # pangolin-operator/target-path-match: prefix       # prefix|exact|regex
+          # pangolin-operator/target-rewrite-path: /
+          # pangolin-operator/target-rewrite-match: stripPrefix # exact|prefix|regex|stripPrefix
+          # pangolin-operator/target-priority: "100"          # 1-1000
+          # pangolin-operator/target-enabled: "true"
+
+          # --- Headers / access rules (reference, inactive; JSON blobs) ---
+          # pangolin-operator/headers: '[{"name":"X-Custom-Header","value":"example"}]'
+          # pangolin-operator/rules: '[{"action":"ACCEPT","match":"cidr","value":"10.0.0.0/8","priority":10}]' # action: ACCEPT|DROP|PASS, match: ip|cidr|path|country
+
+          # --- Maintenance page (reference, inactive) ---
+          # pangolin-operator/maintenance-enabled: "false"
+          # pangolin-operator/maintenance-type: automatic     # forced|automatic
+          # pangolin-operator/maintenance-title: "Under maintenance"
+          # pangolin-operator/maintenance-message: "Back shortly"
+          # pangolin-operator/maintenance-estimated-time: "30 minutes"
+
+          # NOTE: there is no health-check annotation. The `healthcheck` field
+          # on the PublicResource CRD's targets[] is unused dead schema in
+          # this operator version (home-operations/charts/pangolin-operator
+          # 0.1.4) - CreateTargetRequest never sends it to Pangolin's API.
+          # Configure health checks by hand in the Pangolin dashboard.
         ports:
           http:
             port: &port 8080
