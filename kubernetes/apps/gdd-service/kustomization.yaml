@@ -42,7 +42,7 @@ resources:
   - ./convertx/ks.yaml
   - ./bentopdf/ks.yaml
 #  - ./zipline/ks.yaml
-#  - ./syncthing/ks.yaml
+  - ./syncthing/ks.yaml
 #  - ./kms/ks.yaml
 #  - ./ferdium/ks.yaml
 #  - ./epicgames/ks.yaml
