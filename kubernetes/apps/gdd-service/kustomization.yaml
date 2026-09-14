@@ -40,7 +40,7 @@ resources:
   - ./it-tools/ks.yaml
   - ./pangolin-api/ks.yaml
 #  - ./convertx/ks.yaml
-#  - ./bentopdf/ks.yaml
+  - ./bentopdf/ks.yaml
 #  - ./zipline/ks.yaml
 #  - ./syncthing/ks.yaml
 #  - ./kms/ks.yaml
