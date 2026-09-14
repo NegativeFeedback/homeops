@@ -47,7 +47,7 @@ resources:
 #  - ./ferdium/ks.yaml
 #  - ./epicgames/ks.yaml
 #  - ./cve-report/ks.yaml
-#  - ./christmas-community/ks.yaml
+  - ./christmas-community/ks.yaml
 #  - ./actual/ks.yaml
 
 patches:
