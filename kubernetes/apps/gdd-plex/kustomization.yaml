@@ -16,7 +16,7 @@ resources:
   - ./jellystat/ks.yaml
   - ./soulsync/ks.yaml
 #  - ./sabnzbd/ks.yaml
-#  - ./lidarify/ks.yaml
+  - ./lidarify/ks.yaml
 #  - ./soulbeet/ks.yaml
   - ./tidarr/ks.yaml
   - ./tdarr/ks.yaml
