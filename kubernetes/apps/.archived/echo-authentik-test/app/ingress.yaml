@@ -1,0 +1,89 @@
+---
+# TEMPORARY: exercises all three authentik-operator modes against the
+# existing echo service. Safe to delete this whole directory (and the
+# corresponding line in kubernetes/apps/default/kustomization.yaml) once
+# testing is done.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: echo-authentik-blank-test
+  annotations:
+    tailscale.com/proxy-group: ts-ingress
+    authentik.gddnet.io/enabled: "true"
+    authentik.gddnet.io/mode: blank
+    authentik.gddnet.io/name: "Echo Test (Blank)"
+    authentik.gddnet.io/category: Test
+spec:
+  ingressClassName: tailscale
+  rules:
+    - host: echo-authentik-blank-test.barn-walleye.ts.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: echo
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - echo-authentik-blank-test.barn-walleye.ts.net
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: echo-authentik-oauth-test
+  annotations:
+    tailscale.com/proxy-group: ts-ingress
+    authentik.gddnet.io/enabled: "true"
+    authentik.gddnet.io/mode: oauth2
+    authentik.gddnet.io/name: "Echo Test (OAuth2)"
+    authentik.gddnet.io/category: Test
+spec:
+  ingressClassName: tailscale
+  rules:
+    - host: echo-authentik-oauth-test.barn-walleye.ts.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: echo
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - echo-authentik-oauth-test.barn-walleye.ts.net
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: echo-authentik-proxy-test
+  annotations:
+    tailscale.com/proxy-group: ts-ingress
+    authentik.gddnet.io/enabled: "true"
+    authentik.gddnet.io/mode: proxy
+    authentik.gddnet.io/name: "Echo Test (Proxy)"
+    authentik.gddnet.io/category: Test
+    # Hardcoded rather than ${SECRET_DOMAIN}: that only gets substituted by
+    # Flux's postBuild.substituteFrom, which doesn't run on a plain
+    # `kubectl apply` of this file.
+    authentik.gddnet.io/proxy-hostname: echo-proxy-test.gddnet.io
+spec:
+  ingressClassName: tailscale
+  rules:
+    - host: echo-authentik-proxy-test.barn-walleye.ts.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: echo
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - echo-authentik-proxy-test.barn-walleye.ts.net
