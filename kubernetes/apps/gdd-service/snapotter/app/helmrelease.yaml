@@ -1,0 +1,87 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app snapotter
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  values:
+    controllers:
+      snapotter:
+        strategy: Recreate
+        containers:
+          app:
+            image:
+              repository: ghcr.io/snapotter-hq/snapotter
+              tag: 2.2.0
+            env:
+              TZ: America/Chicago
+              PORT: &port 1349
+              AUTH_ENABLED: "false"
+              ANALYTICS_ENABLED: "false"
+              DEFAULT_THEME: dark
+              REDIS_URL: "redis://dragonfly.database.svc.cluster.local:6379/8"
+            envFrom:
+              - secretRef:
+                  name: snapotter-secret
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: *port
+                  initialDelaySeconds: 10
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
+            resources:
+              requests:
+                cpu: 10m
+                memory: 128Mi
+              limits:
+                memory: 512Mi
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile: { type: RuntimeDefault }
+    service:
+      app:
+        annotations:
+          pangolin-operator/site-ref: homeops
+          pangolin-operator/name: Snapotter
+          pangolin-operator/full-domain: snapotter.app.gddnet.io
+          pangolin-operator/port: http
+          pangolin-operator/auth-sso: "true"
+          pangolin-operator/auth-sso-roles: Admin
+        ports:
+          http:
+            port: *port
+    persistence:
+      data:
+        existingClaim: *app
+        globalMounts:
+          - path: /data
+      tmp:
+        type: emptyDir

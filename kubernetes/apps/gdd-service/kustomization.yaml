@@ -36,7 +36,7 @@ resources:
   - ./whisparr/ks.yaml
   - ./stasharr/ks.yaml
   - ./meowmeowgood/ks.yaml
-#  - ./snapotter/ks.yaml
+  - ./snapotter/ks.yaml
   - ./it-tools/ks.yaml
   - ./pangolin-api/ks.yaml
   - ./convertx/ks.yaml
