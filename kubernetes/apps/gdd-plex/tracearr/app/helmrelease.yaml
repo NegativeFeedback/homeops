@@ -1,0 +1,90 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app tracearr
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  values:
+    controllers:
+      tracearr:
+        strategy: RollingUpdate
+        containers:
+          app:
+            image:
+              repository: ghcr.io/connorgallopo/tracearr
+              tag: 2.1.0
+            env:
+              TZ: America/Chicago
+              PORT: &port 3000
+              CORS_ORIGIN: "https://tracearr.app.gddnet.io"
+              TRUST_PROXY: "true"
+              REDIS_URL: "redis://dragonfly.database.svc.cluster.local:6379/7"
+              OIDC_PROVIDER_NAME: "Authentik"
+              OIDC_ISSUER_URL: "https://sso.${SECRET_DOMAIN}/application/o/tracearr/"
+            envFrom:
+              - secretRef:
+                  name: tracearr-secret
+              - secretRef:
+                  name: tracearr-maxmind
+              - secretRef:
+                  name: tracearr-authentik-oauth
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: *port
+                  initialDelaySeconds: 10
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
+            resources:
+              requests:
+                cpu: 10m
+                memory: 128Mi
+              limits:
+                memory: 512Mi
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile: { type: RuntimeDefault }
+    service:
+      app:
+        annotations:
+          pangolin-operator/site-ref: homeops
+          pangolin-operator/name: Tracearr
+          pangolin-operator/full-domain: tracearr.app.gddnet.io
+          pangolin-operator/port: http
+        ports:
+          http:
+            port: *port
+    persistence:
+      cache:
+        type: emptyDir
+        globalMounts:
+          - path: /app/data/image-cache
+      tmp:
+        type: emptyDir

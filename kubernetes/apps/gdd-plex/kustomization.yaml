@@ -22,4 +22,4 @@ resources:
   - ./tdarr/ks.yaml
   - ./fileflows/ks.yaml
 #  - ./unpackerr/ks.yaml
-#  - ./tracearr/ks.yaml
+  - ./tracearr/ks.yaml
