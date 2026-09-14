@@ -1,0 +1,106 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app zipline
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  values:
+    controllers:
+      zipline:
+        strategy: Recreate
+        containers:
+          app:
+            image:
+              repository: ghcr.io/diced/zipline
+              tag: 4.7.0
+            env:
+              TZ: America/Chicago
+              PORT: &port 3000
+              CORE_RETURN_HTTPS_URLS: "true"
+              CORE_DEFAULT_DOMAIN: zipline.app.gddnet.io
+              DATASOURCE_TYPE: s3
+              DATASOURCE_S3_BUCKET: zipline
+              DATASOURCE_S3_ENDPOINT: rook-ceph-rgw-ceph-objectstore.rook-ceph.svc.cluster.local
+              DATASOURCE_S3_PORT: "80"
+              DATASOURCE_S3_REGION: us-east-1
+              DATASOURCE_S3_FORCE_PATH_STYLE: "true"
+              DATASOURCE_S3_USE_SSL: "false"
+              INVITES_ENABLED: "false"
+              FEATURES_ROBOTS_TXT: "false"
+              FEATURES_USER_REGISTRATION: "false"
+              FEATURES_OAUTH_REGISTRATION: "true"
+              FEATURES_VERSION_CHECKING: "false"
+              OAUTH_LOGIN_ONLY: "true"
+              OAUTH_OIDC_AUTHORIZE_URL: "https://sso.${SECRET_DOMAIN}/application/o/authorize/"
+              OAUTH_OIDC_TOKEN_URL: "https://sso.${SECRET_DOMAIN}/application/o/token/"
+              OAUTH_OIDC_USERINFO_URL: "https://sso.${SECRET_DOMAIN}/application/o/userinfo/"
+              OAUTH_OIDC_REDIRECT_URI: "https://zipline.app.gddnet.io/api/auth/oauth/oidc"
+              FILES_ROUTE: /u
+              FILES_LENGTH: "6"
+              FILES_DEFAULT_FORMAT: date
+              FILES_DISABLED_EXTENSIONS: "ps1,pdf,bat,exe,sh,fish"
+              FILES_REMOVE_GPS_METADATA: "true"
+              URLS_ROUTE: /g
+              URLS_LENGTH: "6"
+              WEBSITE_TITLE: Zipline
+            envFrom:
+              - secretRef:
+                  name: zipline-secret
+              - secretRef:
+                  name: zipline-authentik-oauth
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: *port
+                  initialDelaySeconds: 10
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
+            resources:
+              requests:
+                cpu: 10m
+                memory: 128Mi
+              limits:
+                memory: 512Mi
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile: { type: RuntimeDefault }
+    service:
+      app:
+        annotations:
+          pangolin-operator/site-ref: homeops
+          pangolin-operator/name: Zipline
+          pangolin-operator/full-domain: zipline.app.gddnet.io
+          pangolin-operator/port: http
+        ports:
+          http:
+            port: *port
+    persistence:
+      tmp:
+        type: emptyDir
