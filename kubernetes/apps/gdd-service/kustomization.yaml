@@ -43,7 +43,7 @@ resources:
   - ./bentopdf/ks.yaml
 #  - ./zipline/ks.yaml
   - ./syncthing/ks.yaml
-#  - ./kms/ks.yaml
+  - ./kms/ks.yaml
 #  - ./ferdium/ks.yaml
 #  - ./epicgames/ks.yaml
 #  - ./cve-report/ks.yaml

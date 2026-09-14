@@ -1,0 +1,65 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app kms
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  values:
+    controllers:
+      kms:
+        strategy: Recreate
+        containers:
+          app:
+            image:
+              repository: docker.io/11notes/kms
+              tag: "1.0.3"
+            env:
+              TZ: America/Chicago
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
+            resources:
+              requests:
+                cpu: 10m
+                memory: 32Mi
+              limits:
+                memory: 128Mi
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile: { type: RuntimeDefault }
+    # No web UI / HTTP route: KMS is a raw TCP protocol (Windows/Office
+    # volume activation) with no authentication of its own. Reachability is
+    # via the LoadBalancer IP on the LAN only.
+    service:
+      app:
+        controller: kms
+        type: LoadBalancer
+        ports:
+          kms:
+            port: 1688
+            protocol: TCP
+    persistence:
+      data:
+        existingClaim: *app
+        globalMounts:
+          - path: /kms/var
+      tmp:
+        type: emptyDir
