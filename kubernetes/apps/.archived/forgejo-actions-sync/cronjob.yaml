@@ -1,0 +1,111 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: forgejo-actions-sync
+  namespace: gdd-service
+spec:
+  schedule: "0 3 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 65534  # nobody
+            seccompProfile:
+              type: RuntimeDefault
+          containers:
+            - name: sync
+              image: alpine:3.21
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 32Mi
+                limits:
+                  memory: 64Mi
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities:
+                  drop: ["ALL"]
+              env:
+                - name: FORGEJO_TOKEN
+                  valueFrom:
+                    secretKeyRef:
+                      name: forgejo-actions-sync-secret
+                      key: FORGEJO_TOKEN
+                - name: FORGEJO_URL
+                  value: "http://forgejo-http:3000"
+                - name: SOURCE_URL
+                  value: "https://data.forgejo.org"
+              command:
+                - sh
+                - -eu
+                - -c
+                - |
+                  apk add --no-cache curl > /dev/null 2>&1
+
+                  create_org() {
+                    ORG="$1"
+                    STATUS=$(curl -sf -o /dev/null -w "%{http_code}" \
+                      -H "Authorization: token $FORGEJO_TOKEN" \
+                      "$FORGEJO_URL/api/v1/orgs/$ORG" 2>/dev/null || echo "000")
+                    if [ "$STATUS" = "404" ]; then
+                      echo "Creating org: $ORG"
+                      curl -sf -X POST "$FORGEJO_URL/api/v1/orgs" \
+                        -H "Authorization: token $FORGEJO_TOKEN" \
+                        -H "Content-Type: application/json" \
+                        -d "{\"username\":\"$ORG\",\"visibility\":\"public\",\"repo_admin_change_team_access\":false}" \
+                        > /dev/null
+                    fi
+                  }
+
+                  sync_repo() {
+                    ORG="$1"
+                    REPO="$2"
+                    STATUS=$(curl -sf -o /dev/null -w "%{http_code}" \
+                      -H "Authorization: token $FORGEJO_TOKEN" \
+                      "$FORGEJO_URL/api/v1/repos/$ORG/$REPO" 2>/dev/null || echo "000")
+                    if [ "$STATUS" = "404" ]; then
+                      echo "Mirroring $ORG/$REPO from $SOURCE_URL"
+                      curl -sf -X POST "$FORGEJO_URL/api/v1/repos/migrate" \
+                        -H "Authorization: token $FORGEJO_TOKEN" \
+                        -H "Content-Type: application/json" \
+                        -d "{
+                          \"clone_addr\":\"$SOURCE_URL/$ORG/$REPO\",
+                          \"repo_name\":\"$REPO\",
+                          \"repo_owner\":\"$ORG\",
+                          \"mirror\":true,
+                          \"mirror_interval\":\"24h\",
+                          \"private\":false
+                        }" > /dev/null
+                      echo "  done"
+                    else
+                      echo "Syncing $ORG/$REPO"
+                      curl -sf -X POST \
+                        -H "Authorization: token $FORGEJO_TOKEN" \
+                        "$FORGEJO_URL/api/v1/repos/$ORG/$REPO/mirror-sync" \
+                        > /dev/null
+                    fi
+                  }
+
+                  # Ensure organisations exist
+                  create_org actions
+                  create_org docker
+
+                  # Actions used in CI workflows — add more here as needed
+                  sync_repo actions checkout
+                  sync_repo actions setup-go
+                  sync_repo actions cache
+                  sync_repo docker setup-qemu-action
+                  sync_repo docker setup-buildx-action
+                  sync_repo docker login-action
+                  sync_repo docker metadata-action
+                  sync_repo docker build-push-action
+
+                  echo "Sync complete"
