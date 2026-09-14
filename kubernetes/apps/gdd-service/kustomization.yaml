@@ -47,7 +47,6 @@ resources:
   - ./cve-report/ks.yaml
   - ./christmas-community/ks.yaml
   - ./actual/ks.yaml
-  - ./stash-fileflows-sync/ks.yaml
 
 patches:
   - patch: |-
