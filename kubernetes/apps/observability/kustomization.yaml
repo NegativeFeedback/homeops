@@ -11,7 +11,7 @@ resources:
   - ./grafana/ks.yaml
   - ./kromgo/ks.yaml
   - ./gatus/ks.yaml
-#  - ./siren/ks.yaml
+  - ./siren/ks.yaml
 patches:
   - patch: |-
       apiVersion: v1
