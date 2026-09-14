@@ -16,9 +16,6 @@ spec:
     cleanupOnFail: true
     remediation:
       retries: 3
-  dependsOn:
-    - name: cloudflare-tunnel
-      namespace: network
   values:
     controllers:
       main:
@@ -46,26 +43,14 @@ spec:
 
     service:
       main:
+        annotations:
+          pangolin-operator/site-ref: homeops
+          pangolin-operator/name: Sparky Fitness
+          pangolin-operator/full-domain: fitness.gddnet.io
+          pangolin-operator/port: http
+          pangolin-operator/auth-sso: "true"
+          pangolin-operator/auth-sso-roles: Admin
         ports:
           http:
             port: &port 80
-
-
-    route:
-      app:
-        annotations:
-          gethomepage.dev/enabled: "true"
-          gethomepage.dev/group: Service
-          gethomepage.dev/name: Sparky Fitness
-          gethomepage.dev/icon: sparkyfitness.svg
-        hostnames:
-          - "fitness.gddnet.io"
-        parentRefs:
-          - name: external
-            namespace: kube-system
-            sectionName: https
-        rules:
-          - backendRefs:
-              - identifier: main
-                port: *port
 
