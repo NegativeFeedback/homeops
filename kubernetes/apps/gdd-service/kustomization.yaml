@@ -44,11 +44,11 @@ resources:
   - ./zipline/ks.yaml
   - ./syncthing/ks.yaml
   - ./kms/ks.yaml
-#  - ./ferdium/ks.yaml
   - ./epicgames/ks.yaml
   - ./cve-report/ks.yaml
   - ./christmas-community/ks.yaml
   - ./actual/ks.yaml
+  - ./stash-fileflows-sync/ks.yaml
 
 patches:
   - patch: |-
