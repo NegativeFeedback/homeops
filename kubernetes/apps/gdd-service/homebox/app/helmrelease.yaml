@@ -16,9 +16,6 @@ spec:
     cleanupOnFail: true
     remediation:
       retries: 3
-  dependsOn:
-    - name: cloudflare-tunnel
-      namespace: network
   values:
     controllers:
       homebox:
@@ -92,31 +89,14 @@ spec:
     service:
       app:
         controller: *app
+        annotations:
+          pangolin-operator/site-ref: homeops
+          pangolin-operator/name: Homebox
+          pangolin-operator/full-domain: stuff.gddnet.io
+          pangolin-operator/port: http
         ports:
           http:
             port: *port
-    route:
-      app:
-        annotations:
-          gethomepage.dev/enabled: "true"
-          gethomepage.dev/description: inventory
-          gethomepage.dev/group: Service
-          gethomepage.dev/icon: homebox.svg
-          gethomepage.dev/name: Homebox
-          gethomepage.dev/app: *app
-          gatus.home-operations.com/enabled: "true"
-          gatus.home-operations.com/endpoint: |-
-            group: Service
-            conditions: ["[STATUS] == 200"]
-        hostnames: ["stuff.${SECRET_DOMAIN}"]
-        parentRefs:
-          - name: external
-            namespace: kube-system
-            sectionName: https
-        rules:
-          - backendRefs:
-              - identifier: app
-                port: *port
     persistence:
       config:
         enabled: true
