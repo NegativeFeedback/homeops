@@ -39,7 +39,7 @@ resources:
 #  - ./snapotter/ks.yaml
   - ./it-tools/ks.yaml
   - ./pangolin-api/ks.yaml
-#  - ./convertx/ks.yaml
+  - ./convertx/ks.yaml
   - ./bentopdf/ks.yaml
 #  - ./zipline/ks.yaml
 #  - ./syncthing/ks.yaml
