@@ -50,6 +50,20 @@ spec:
               - secretRef:
                   name: romm-authentik-oauth
             probes:
+              # DB migrations + startup.py routinely take 30-40s before gunicorn/nginx
+              # ever bind to ROMM_PORT. Without a startup probe, liveness/readiness fail
+              # 3x by ~t=30s and kubelet SIGTERMs the container mid-init; the init
+              # script's trap sees exited=1, skips starting the app entirely, and exits
+              # 0 -- a silent crash loop that never actually starts the web server.
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: *port
+                  periodSeconds: 5
+                  failureThreshold: 36 # ~3 min budget for migrations + startup tasks
               liveness: &probes
                 enabled: true
                 custom: true
