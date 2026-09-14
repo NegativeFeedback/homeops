@@ -8,7 +8,7 @@ components:
 resources:
   - ./calibre/ks.yaml
   - ./shelfmark/ks.yaml
-  - ./flaresolverr/ks.yaml
+#  - ./flaresolverr/ks.yaml
   - ./ntfy/ks.yaml
   - ./donetick/ks.yaml
   - ./tandoor/ks.yaml
