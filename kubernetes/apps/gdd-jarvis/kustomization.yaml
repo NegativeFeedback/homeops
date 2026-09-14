@@ -11,6 +11,7 @@ resources:
   - ./homeassistant/ks.yaml
   - ./esphome/ks.yaml
   - ./music-assistant/ks.yaml
+#  - ./evcc/ks.yaml
 
 patches:
   - patch: |-
