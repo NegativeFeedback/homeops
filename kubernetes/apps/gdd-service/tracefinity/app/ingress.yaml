@@ -5,6 +5,12 @@ metadata:
   name: tracefinity
   annotations:
     tailscale.com/proxy-group: ts-ingress
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: Tools
+    gethomepage.dev/name: Tracefinity
+    gethomepage.dev/icon: tracefinity.svg
+    gethomepage.dev/description: "Tailscale only | Background removal"
+    gethomepage.dev/siteMonitor: "http://tracefinity.gdd-service.svc:3000"
 spec:
   ingressClassName: tailscale
   rules:

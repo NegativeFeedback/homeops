@@ -4,11 +4,12 @@ metadata:
   name: ceph-managment
   annotations:
     gethomepage.dev/enabled: "true"
-    gethomepage.dev/name: Ceph
+    gethomepage.dev/name: Ceph (LAN)
     gethomepage.dev/icon: ceph.png
     gethomepage.dev/group: Infrastructure
     gethomepage.dev/app: ceph
-    gethomepage.dev/description: Rook ceph managment
+    gethomepage.dev/description: "LAN only | Rook Ceph management"
+    gethomepage.dev/siteMonitor: "https://rook.int.gddnet.io"
     hajimari.io/icon: simple-icons:ceph
 spec:
   hostnames:
@@ -36,7 +37,8 @@ metadata:
     gethomepage.dev/icon: s3.png
     gethomepage.dev/group: Infrastructure
     gethomepage.dev/app: ceph
-    gethomepage.dev/description: Rook ceph s3
+    gethomepage.dev/description: "LAN only | Rook Ceph s3 gateway"
+    gethomepage.dev/siteMonitor: "https://rgw.int.gddnet.io"
     hajimari.io/icon: simple-icons:ceph
 spec:
   hostnames:

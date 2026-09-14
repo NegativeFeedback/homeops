@@ -88,7 +88,7 @@ spec:
         hostnames: ["radarr.${SECRET_DOMAIN}"]
         annotations:
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/group: Media
+          gethomepage.dev/group: "Media Management"
           gethomepage.dev/name: Radarr
           gethomepage.dev/icon: radarr.svg
           gethomepage.dev/description: "🔑 SSO Proxy | Media downloader"

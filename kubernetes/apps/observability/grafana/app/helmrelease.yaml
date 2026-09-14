@@ -394,6 +394,13 @@ spec:
           gethomepage.dev/icon: sh-grafana.svg
           gethomepage.dev/name: Grafana
           gethomepage.dev/app: grafana
+          gethomepage.dev/siteMonitor: "https://grafana.gddnet.io"
+          # Templated: uncomment + fill HOMEPAGE_VAR_GRAFANA_USER/_PASS in
+          # gdd-service/homepage/app/externalsecret.yaml for a live widget.
+          # gethomepage.dev/widget.type: grafana
+          # gethomepage.dev/widget.url: "https://grafana.gddnet.io"
+          # gethomepage.dev/widget.username: "{{`{{HOMEPAGE_VAR_GRAFANA_USER}}`}}"
+          # gethomepage.dev/widget.password: "{{`{{HOMEPAGE_VAR_GRAFANA_PASS}}`}}"
         hostnames:
           - grafana.gddnet.io
         parentRefs:

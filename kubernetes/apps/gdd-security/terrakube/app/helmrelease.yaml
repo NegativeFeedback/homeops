@@ -116,6 +116,13 @@ spec:
         domain: "terra.gddnet.io"
         path: "/"
         pathType: "Prefix"
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Infrastructure
+          gethomepage.dev/name: Terrakube
+          gethomepage.dev/icon: terraform.svg
+          gethomepage.dev/description: "Terraform automation"
+          gethomepage.dev/siteMonitor: "https://terra.gddnet.io"
 
       api:
         enabled: true

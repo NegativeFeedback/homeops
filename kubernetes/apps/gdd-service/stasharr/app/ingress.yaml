@@ -5,6 +5,12 @@ metadata:
   name: stasharr
   annotations:
     tailscale.com/proxy-group: ts-ingress
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: "Media Management"
+    gethomepage.dev/name: Stasharr
+    gethomepage.dev/icon: stash.svg
+    gethomepage.dev/description: "Tailscale only | Stash companion"
+    gethomepage.dev/siteMonitor: "http://stasharr.gdd-service.svc:3000"
 spec:
   ingressClassName: tailscale
   rules:

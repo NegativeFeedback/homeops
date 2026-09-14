@@ -6,10 +6,16 @@ metadata:
   name: forgejo-route
   annotations:
     gethomepage.dev/enabled: "true"
-    gethomepage.dev/group: Service
+    gethomepage.dev/group: Infrastructure
     gethomepage.dev/name: Forgejo
     gethomepage.dev/icon: gitea.svg
     gethomepage.dev/description: "Self-hosted Git service"
+    gethomepage.dev/siteMonitor: "https://git.gddnet.io"
+    # Templated: uncomment + fill HOMEPAGE_VAR_FORGEJO_TOKEN in
+    # gdd-service/homepage/app/externalsecret.yaml for a live widget.
+    # gethomepage.dev/widget.type: gitea
+    # gethomepage.dev/widget.url: "https://git.gddnet.io"
+    # gethomepage.dev/widget.key: "{{`{{HOMEPAGE_VAR_FORGEJO_TOKEN}}`}}"
     gatus.home-operations.com/enabled: "true"
     gatus.home-operations.com/endpoint: |-
       group: Service

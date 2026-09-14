@@ -29,6 +29,13 @@ spec:
       route:
         main:
           enabled: true
+          annotations:
+            gethomepage.dev/enabled: "true"
+            gethomepage.dev/group: Observability
+            gethomepage.dev/name: Alertmanager
+            gethomepage.dev/icon: alertmanager.svg
+            gethomepage.dev/description: "LAN only | Alert routing"
+            gethomepage.dev/siteMonitor: "http://kube-prometheus-stack-alertmanager.observability.svc:9093"
           hostnames:
             - alertmanager.${SECRET_DOMAIN}
           parentRefs:
@@ -58,6 +65,14 @@ spec:
       route:
         main:
           enabled: true
+          annotations:
+            gethomepage.dev/enabled: "true"
+            gethomepage.dev/group: Observability
+            gethomepage.dev/name: Prometheus
+            gethomepage.dev/icon: prometheus.svg
+            gethomepage.dev/description: "LAN only | Metrics"
+            gethomepage.dev/widget.type: prometheus
+            gethomepage.dev/widget.url: "http://kube-prometheus-stack-prometheus.observability.svc:9090"
           hostnames:
             - prometheus.${SECRET_DOMAIN}
           parentRefs:

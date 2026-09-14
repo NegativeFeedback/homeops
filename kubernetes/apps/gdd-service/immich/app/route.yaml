@@ -6,10 +6,16 @@ metadata:
   name: immich-route
   annotations:
     gethomepage.dev/enabled: "true"
-    gethomepage.dev/group: Media
+    gethomepage.dev/group: Service
     gethomepage.dev/name: Immich
     gethomepage.dev/icon: immich.svg
     gethomepage.dev/description: "Photo & video backup"
+    gethomepage.dev/siteMonitor: "https://photos.gddnet.io"
+    # Templated: uncomment + fill HOMEPAGE_VAR_IMMICH_TOKEN in
+    # gdd-service/homepage/app/externalsecret.yaml for a live widget.
+    # gethomepage.dev/widget.type: immich
+    # gethomepage.dev/widget.url: "https://photos.gddnet.io"
+    # gethomepage.dev/widget.key: "{{`{{HOMEPAGE_VAR_IMMICH_TOKEN}}`}}"
     gatus.home-operations.com/enabled: "true"
     gatus.home-operations.com/endpoint: |-
       group: Media

@@ -4,6 +4,17 @@ kind: HTTPRoute
 metadata:
   name: authentik
   annotations:
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/name: Authentik
+    gethomepage.dev/icon: authentik.svg
+    gethomepage.dev/group: Security
+    gethomepage.dev/description: OIDC User Management
+    gethomepage.dev/siteMonitor: "https://sso.gddnet.io"
+    # Templated: uncomment + fill HOMEPAGE_VAR_AUTHENTIK_TOKEN in
+    # gdd-service/homepage/app/externalsecret.yaml for a live widget.
+    # gethomepage.dev/widget.type: authentik
+    # gethomepage.dev/widget.url: "https://sso.gddnet.io"
+    # gethomepage.dev/widget.key: "{{`{{HOMEPAGE_VAR_AUTHENTIK_TOKEN}}`}}"
     gatus.home-operations.com/enabled: "true"
     gatus.home-operations.com/endpoint: |-
       group: Security
@@ -35,10 +46,11 @@ metadata:
   name: proxy-rook
   annotations:
     gethomepage.dev/enabled: "true"
-    gethomepage.dev/name: Ceph
+    gethomepage.dev/name: Ceph (Web)
     gethomepage.dev/icon: ceph.png
     gethomepage.dev/group: Infrastructure
-    gethomepage.dev/description: Ceph
+    gethomepage.dev/description: "🔑 SSO Proxy | Rook Ceph management"
+    gethomepage.dev/siteMonitor: "https://rook.gddnet.io"
     hajimari.io/icon: simple-icons:ceph
 spec:
   hostnames:
@@ -65,7 +77,13 @@ metadata:
     gethomepage.dev/name: Paperless
     gethomepage.dev/icon: paperless.png
     gethomepage.dev/group: Service
-    gethomepage.dev/description: paperless
+    gethomepage.dev/description: "🔑 SSO Proxy | Document management"
+    gethomepage.dev/siteMonitor: "https://paperless.gddnet.io"
+    # Templated: uncomment + fill HOMEPAGE_VAR_PAPERLESS_TOKEN in
+    # gdd-service/homepage/app/externalsecret.yaml for a live widget.
+    # gethomepage.dev/widget.type: paperlessngx
+    # gethomepage.dev/widget.url: "http://paperless-app.gdd-service.svc:8000"
+    # gethomepage.dev/widget.key: "{{`{{HOMEPAGE_VAR_PAPERLESS_TOKEN}}`}}"
 
 spec:
   hostnames:

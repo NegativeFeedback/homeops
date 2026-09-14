@@ -74,10 +74,11 @@ spec:
         annotations:
           gethomepage.dev/enabled: "true"
           gethomepage.dev/description: Push Notifications
-          gethomepage.dev/group: Service
+          gethomepage.dev/group: Home
           gethomepage.dev/icon: sh-ntfy.svg
           gethomepage.dev/name: Ntfy
           gethomepage.dev/app: ntfy
+          gethomepage.dev/siteMonitor: "https://alerts.gddnet.io"
           gatus.home-operations.com/enabled: "true"
           gatus.home-operations.com/endpoint: |-
             group: Service

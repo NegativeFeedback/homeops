@@ -79,6 +79,7 @@ metadata:
     gethomepage.dev/group: Security
     gethomepage.dev/icon: mdi-safe-square
     gethomepage.dev/app: openbao
+    gethomepage.dev/siteMonitor: "https://vault.gddnet.io"
 
     gatus.home-operations.com/enabled: "true"
     gatus.home-operations.com/endpoint: |-

@@ -71,7 +71,7 @@ spec:
         hostnames: ["prowlarr.${SECRET_DOMAIN}"]
         annotations:
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/group: Media
+          gethomepage.dev/group: "Media Management"
           gethomepage.dev/name: Prowlarr
           gethomepage.dev/icon: prowlarr.svg
           gethomepage.dev/description: "🔑 SSO Proxy | Media downloader"

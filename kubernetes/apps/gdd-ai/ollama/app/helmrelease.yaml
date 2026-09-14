@@ -24,7 +24,12 @@ spec:
           app:
             image:
               repository: git.gddnet.io/negativefeedback/ollama-intel-arc
-              tag: latest
+              # Pinned to the digest cached on w9 — the registry is currently not
+              # resolving the mutable ':latest' tag, and Recreate strategy means a
+              # failed pull takes ollama fully down. Revisit when swapping to the
+              # Level-Zero/SYCL image for actual GPU offload (Vulkan build = CPU-only).
+              tag: latest@sha256:4cde6203455156007396454d92a91b392921d708a422023cdfc3bd7d552e5a8a
+              pullPolicy: IfNotPresent
             command: ["/bin/ollama", "serve"]
             env:
               TZ: America/Chicago

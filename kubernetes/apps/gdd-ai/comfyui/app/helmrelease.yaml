@@ -69,23 +69,24 @@ spec:
         ports:
           http:
             port: &port 8188
-#    route:
-#      app:
-#        hostnames: ["comfyui.${SECRET_DOMAIN}"]
-#        annotations:
-#          gethomepage.dev/enabled: "true"
-#          gethomepage.dev/group: AI
-#          gethomepage.dev/name: ComfyUI
-#          gethomepage.dev/icon: comfyui.svg
-#          gethomepage.dev/description: "AI image generation workflow"
-#        parentRefs:
-#          - name: external
-#            namespace: kube-system
-#            sectionName: https
-#        rules:
-#          - backendRefs:
-#              - identifier: app
-#                port: *port
+    route:
+      app:
+        hostnames: ["comfyui.${SECRET_DOMAIN}"]
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: AI
+          gethomepage.dev/name: ComfyUI
+          gethomepage.dev/icon: comfyui.svg
+          gethomepage.dev/description: "AI image generation workflow (only on sometimes)"
+          gethomepage.dev/siteMonitor: "https://comfyui.gddnet.io"
+        parentRefs:
+          - name: external
+            namespace: kube-system
+            sectionName: https
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *port
     persistence:
       models:
         type: persistentVolumeClaim

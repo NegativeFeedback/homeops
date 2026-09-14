@@ -88,6 +88,7 @@ spec:
           gethomepage.dev/name: Collabora
           gethomepage.dev/icon: collabora.svg
           gethomepage.dev/description: "Document editing for Nextcloud"
+          gethomepage.dev/siteMonitor: "https://collabora.gddnet.io"
           gatus.home-operations.com/enabled: "true"
           gatus.home-operations.com/endpoint: |-
             group: Service

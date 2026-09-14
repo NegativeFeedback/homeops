@@ -5,6 +5,12 @@ metadata:
   name: bambubuddy
   annotations:
     tailscale.com/proxy-group: ts-ingress
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: "3D Printing"
+    gethomepage.dev/name: BambuBuddy
+    gethomepage.dev/icon: bambu-lab.svg
+    gethomepage.dev/description: "Tailscale only | Bambu Lab companion"
+    gethomepage.dev/siteMonitor: "http://bambubuddy.gdd-service.svc:8000"
 spec:
   ingressClassName: tailscale
   rules:

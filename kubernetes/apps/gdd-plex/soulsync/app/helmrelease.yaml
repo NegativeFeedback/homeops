@@ -89,8 +89,9 @@ spec:
           gethomepage.dev/enabled: "true"
           gethomepage.dev/group: Media
           gethomepage.dev/name: Soulsync
-          gethomepage.dev/icon: mdi-music
+          gethomepage.dev/icon: soulseek.svg
           gethomepage.dev/description: "🔑 SSO Proxy | Music sync"
+          gethomepage.dev/siteMonitor: "https://soulsync.gddnet.io"
           gatus.home-operations.com/enabled: "true"
           gatus.home-operations.com/url: "http://soulsync.gdd-plex.svc"
           gatus.home-operations.com/endpoint: |-

@@ -5,6 +5,12 @@ metadata:
   name: musicseerr
   annotations:
     tailscale.com/proxy-group: ts-ingress
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: "Media Management"
+    gethomepage.dev/name: Musicseerr
+    gethomepage.dev/icon: musicbrainz.svg
+    gethomepage.dev/description: "Tailscale only | Music requester"
+    gethomepage.dev/siteMonitor: "http://musicseerr.gdd-plex.svc:8688"
 spec:
   ingressClassName: tailscale
   rules:

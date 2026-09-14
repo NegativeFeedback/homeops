@@ -43,11 +43,25 @@ spec:
       enabled: true
       ingress:
         host: mrtc.${SECRET_DOMAIN}
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Chat
+          gethomepage.dev/name: Matrix RTC
+          gethomepage.dev/icon: matrix.svg
+          gethomepage.dev/description: "Voice/video calls"
+          gethomepage.dev/siteMonitor: "https://mrtc.gddnet.io"
 
     elementWeb:
       enabled: true
       ingress:
         host: chat.${SECRET_DOMAIN}
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Chat
+          gethomepage.dev/name: Element
+          gethomepage.dev/icon: element.svg
+          gethomepage.dev/description: "Matrix web client"
+          gethomepage.dev/siteMonitor: "https://chat.gddnet.io"
 
     postgres:
       enabled: true # Will use my own CNPG instance
@@ -62,10 +76,24 @@ spec:
       ingress:
         host: madmin.${SECRET_DOMAIN}
         className: nginx-internal
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Chat
+          gethomepage.dev/name: Element Admin
+          gethomepage.dev/icon: element.svg
+          gethomepage.dev/description: "LAN only | Matrix admin console"
+          gethomepage.dev/siteMonitor: "https://madmin.gddnet.io"
 
     matrixAuthenticationService:
       ingress:
         host: mas.${SECRET_DOMAIN}
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Chat
+          gethomepage.dev/name: Matrix Auth
+          gethomepage.dev/icon: matrix.svg
+          gethomepage.dev/description: "Matrix authentication service"
+          gethomepage.dev/siteMonitor: "https://mas.gddnet.io"
       postgres:
         host: postgres-rw.database.svc.cluster.local
         port: 5432
@@ -83,6 +111,13 @@ spec:
     synapse:
       ingress:
         host: synapse.${SECRET_DOMAIN}
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Chat
+          gethomepage.dev/name: Synapse
+          gethomepage.dev/icon: matrix.svg
+          gethomepage.dev/description: "Matrix homeserver"
+          gethomepage.dev/siteMonitor: "https://synapse.gddnet.io"
       media:
         storage:
           existingClaim: synapse-media-pvc

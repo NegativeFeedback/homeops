@@ -66,6 +66,13 @@ spec:
     route:
       app:
         hostnames: ["tidarr.${SECRET_DOMAIN}"]
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Media
+          gethomepage.dev/name: Tidarr
+          gethomepage.dev/icon: tidal.svg
+          gethomepage.dev/description: "Tidal downloader"
+          gethomepage.dev/siteMonitor: "https://tidarr.gddnet.io"
         parentRefs:
           - name: external
             namespace: kube-system

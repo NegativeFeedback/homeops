@@ -5,6 +5,13 @@ metadata:
   name: spoolman
   annotations:
     tailscale.com/proxy-group: ts-ingress
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: "3D Printing"
+    gethomepage.dev/name: Spoolman
+    gethomepage.dev/icon: spoolman.png
+    gethomepage.dev/description: "Tailscale only | Filament inventory"
+    gethomepage.dev/widget.type: spoolman
+    gethomepage.dev/widget.url: "http://spoolman.gdd-service.svc:8000"
 spec:
   ingressClassName: tailscale
   rules:

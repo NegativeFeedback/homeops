@@ -80,10 +80,16 @@ spec:
         annotations:
           gethomepage.dev/enabled: "true"
           gethomepage.dev/description: Smart home and automations
-          gethomepage.dev/group: Automation
+          gethomepage.dev/group: Home
           gethomepage.dev/icon: sh-home-assistant.svg
           gethomepage.dev/name: Home Assistant
           gethomepage.dev/app: homeassistant
+          gethomepage.dev/siteMonitor: "https://jarvis.gddnet.io"
+          # Templated: uncomment + fill HOMEPAGE_VAR_HOMEASSISTANT_TOKEN in
+          # gdd-service/homepage/app/externalsecret.yaml for a live widget.
+          # gethomepage.dev/widget.type: homeassistant
+          # gethomepage.dev/widget.url: "https://jarvis.gddnet.io"
+          # gethomepage.dev/widget.key: "{{`{{HOMEPAGE_VAR_HOMEASSISTANT_TOKEN}}`}}"
           gatus.home-operations.com/enabled: "true"
           gatus.home-operations.com/endpoint: |-
             group: Home

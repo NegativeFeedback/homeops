@@ -5,6 +5,12 @@ metadata:
   name: whisparr
   annotations:
     tailscale.com/proxy-group: ts-ingress
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: "Media Management"
+    gethomepage.dev/name: Whisparr
+    gethomepage.dev/icon: whisparr.png
+    gethomepage.dev/description: "Tailscale only | Media downloader"
+    gethomepage.dev/siteMonitor: "http://whisparr.gdd-service.svc:6969"
 spec:
   ingressClassName: tailscale
   rules:

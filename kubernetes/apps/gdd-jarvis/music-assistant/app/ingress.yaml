@@ -5,6 +5,12 @@ metadata:
   name: music
   annotations:
     tailscale.com/proxy-group: ts-ingress
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: Home
+    gethomepage.dev/name: Music Assistant
+    gethomepage.dev/icon: music-assistant.svg
+    gethomepage.dev/description: "Tailscale only | Multi-room audio"
+    gethomepage.dev/siteMonitor: "http://music.gdd-jarvis.svc:8095"
 spec:
   ingressClassName: tailscale
   rules:

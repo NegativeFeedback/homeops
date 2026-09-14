@@ -5,6 +5,13 @@ metadata:
   name: fileflows
   annotations:
     tailscale.com/proxy-group: ts-ingress
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: "Media Management"
+    gethomepage.dev/name: FileFlows
+    gethomepage.dev/icon: fileflows.svg
+    gethomepage.dev/description: "Tailscale only | Media processing"
+    gethomepage.dev/widget.type: fileflows
+    gethomepage.dev/widget.url: "http://fileflows.gdd-plex.svc:5000"
 spec:
   ingressClassName: tailscale
   rules:

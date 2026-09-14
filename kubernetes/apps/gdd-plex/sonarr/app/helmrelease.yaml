@@ -87,7 +87,7 @@ spec:
         hostnames: ["sonarr.${SECRET_DOMAIN}"]
         annotations:
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/group: Media
+          gethomepage.dev/group: "Media Management"
           gethomepage.dev/name: Sonarr
           gethomepage.dev/icon: sonarr.svg
           gethomepage.dev/description: "🔑 SSO Proxy | Media downloader"

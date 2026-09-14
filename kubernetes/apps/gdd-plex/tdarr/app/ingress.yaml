@@ -5,6 +5,13 @@ metadata:
   name: tdarr
   annotations:
     tailscale.com/proxy-group: ts-ingress
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: "Media Management"
+    gethomepage.dev/name: Tdarr
+    gethomepage.dev/icon: tdarr.png
+    gethomepage.dev/description: "Tailscale only | Transcode automation"
+    gethomepage.dev/widget.type: tdarr
+    gethomepage.dev/widget.url: "http://tdarr.gdd-plex.svc:8265"
 spec:
   ingressClassName: tailscale
   rules:

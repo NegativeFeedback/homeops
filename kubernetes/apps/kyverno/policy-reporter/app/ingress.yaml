@@ -5,6 +5,12 @@ metadata:
   name: policy-reporter-ui
   annotations:
     tailscale.com/proxy-group: ts-ingress
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: Observability
+    gethomepage.dev/name: Policy Reporter
+    gethomepage.dev/icon: mdi-shield-check
+    gethomepage.dev/description: "Tailscale only | Kyverno policy reports"
+    gethomepage.dev/siteMonitor: "http://policy-reporter-ui.kyverno.svc:8080"
 spec:
   ingressClassName: tailscale
   rules:
