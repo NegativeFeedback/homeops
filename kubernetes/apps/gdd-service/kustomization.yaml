@@ -48,7 +48,7 @@ resources:
   - ./epicgames/ks.yaml
   - ./cve-report/ks.yaml
   - ./christmas-community/ks.yaml
-#  - ./actual/ks.yaml
+  - ./actual/ks.yaml
 
 patches:
   - patch: |-
