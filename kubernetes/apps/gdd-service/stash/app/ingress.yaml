@@ -5,6 +5,13 @@ metadata:
   name: stash
   annotations:
     tailscale.com/proxy-group: ts-ingress
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: "Media Management"
+    gethomepage.dev/name: Stash
+    gethomepage.dev/icon: stash.png
+    gethomepage.dev/description: "Tailscale only | Media organizer"
+    gethomepage.dev/widget.type: stash
+    gethomepage.dev/widget.url: "http://stash.gdd-service.svc:9999"
 spec:
   ingressClassName: tailscale
   rules:
