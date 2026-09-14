@@ -13,6 +13,7 @@
   dependencyDashboardTitle: "Renovate Dashboard 🤖",
   schedule: ["every weekend"],
   ignorePaths: ["**/*.sops.*"],
+  ignoreDeps: ["git.gddnet.io/negativefeedback/keepit"],
   flux: {
     managerFilePatterns: ["/(^|/)kubernetes/.+\\.ya?ml(?:\\.j2)?$/"],
   },

@@ -1,0 +1,53 @@
+# Archived 2026-09-14: scanservjs removed as an app.
+# Was a sidecar container in the paperless HelmRelease (kubernetes/apps/gdd-service/paperless/app/helmrelease.yaml),
+# not a standalone Flux Kustomization. This file is not referenced by any kustomization.yaml
+# and is kept for reference only if the app needs to be restored.
+
+# --- controllers.paperless.containers.scanservjs ---
+#          scanservjs:
+#            image:
+#              repository: ghcr.io/negativefeedback/scanservjs
+#              tag: sha-63ce849@sha256:5c5cb3f8551cc28d71efb896116f4c3bc072263d6d8978b2d1ef682ec38fef4f
+#            resources:
+#              requests:
+#                cpu: 10m
+#                memory: 64Mi
+#              limits:
+#                memory: 256Mi
+
+# --- service.scanservjs ---
+#      scanservjs:
+#        controller: paperless
+#        ports:
+#          http:
+#            port: 8090
+
+# --- persistence.consume.advancedMounts.paperless.scanservjs ---
+#      consume:
+#        advancedMounts:
+#          paperless:
+#            scanservjs:
+#              - path: /var/lib/scanservjs/output
+
+# --- persistence.scanservjs-config ---
+#      scanservjs-config:
+#        type: configMap
+#        name: scanservjs-config
+#        advancedMounts:
+#          paperless:
+#            scanservjs:
+#              - path: /etc/scanservjs/config.local.js
+#                subPath: config.local.js
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: scanservjs-config
+data:
+  config.local.js: |
+    module.exports = {
+      afterConfig(config) {
+        config.port = 8090;
+      }
+    };

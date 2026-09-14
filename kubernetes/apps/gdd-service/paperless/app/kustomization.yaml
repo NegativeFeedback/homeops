@@ -5,6 +5,6 @@ kind: Kustomization
 resources:
   - ./helmrelease.yaml
   - ./externalsecret.yaml
-  - ./scanservjs-config.yaml
+  - ./pre-consume-config.yaml
   - ./ingress.yaml
 #  - ./netpol.yaml
