@@ -1,0 +1,19 @@
+---
+apiVersion: pangolin.home-operations.com/v1alpha1
+kind: PublicResource
+metadata:
+  name: emqx-dashboard
+spec:
+  siteRef: homeops
+  name: EMQX Dashboard
+  protocol: http
+  fullDomain: emqx.app.gddnet.io
+  ssl: true
+  targets:
+    - hostname: emqx-dashboard.database.svc.cluster.local
+      port: 18083
+      method: http
+  auth:
+    ssoEnabled: true
+    ssoRoles:
+      - Admin
