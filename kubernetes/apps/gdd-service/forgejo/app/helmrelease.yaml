@@ -57,6 +57,11 @@ spec:
 
     replicaCount: 1
 
+    # RWO PVC on ceph-block: RollingUpdate can schedule the new pod onto a
+    # different node than the old one, deadlocking on volume attach.
+    strategy:
+      type: Recreate
+
     containerSecurityContext:
       allowPrivilegeEscalation: false
       capabilities:

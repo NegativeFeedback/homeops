@@ -23,6 +23,7 @@ spec:
   values:
     controllers:
       inventree:
+        strategy: Recreate
         annotations:
           reloader.stakater.com/auto: "true"
         containers:

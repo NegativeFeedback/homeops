@@ -19,7 +19,7 @@ spec:
   values:
     controllers:
       stasharr:
-        strategy: RollingUpdate
+        strategy: Recreate
         initContainers:
           init-appdata:
             # fsGroup only changes group ownership on mount; /var/lib/stasharr
