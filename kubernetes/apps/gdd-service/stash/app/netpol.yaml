@@ -30,6 +30,15 @@ spec:
         - ports:
             - port: "9999"
               protocol: TCP
+    # stash-fileflows-sync CronJob scans/generates/identifies via the API
+    - fromEndpoints:
+        - matchLabels:
+            k8s:app.kubernetes.io/name: stash-fileflows-sync
+            k8s:io.kubernetes.pod.namespace: gdd-service
+      toPorts:
+        - ports:
+            - port: "9999"
+              protocol: TCP
   egress:
     # DNS resolution via CoreDNS
     - toEndpoints:
