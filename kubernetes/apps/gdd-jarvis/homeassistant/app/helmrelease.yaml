@@ -127,3 +127,16 @@ spec:
                 subPath: tts
               - path: /tmp
                 subPath: tmp
+      # /config/.venv persisting on the same PVC as /config lets it drift
+      # out of sync with the image's HA core version across upgrades (core
+      # bumps its aiohttp requirement, the cached venv doesn't) -- e.g.
+      # core 2026.8.3 calling WebSocketResponse(decode_text=...), a param
+      # aiohttp added in 3.14, against a venv still on 3.13.5. Forcing a
+      # fresh venv every start keeps it matched to the image.
+      venv:
+        type: emptyDir
+        advancedMounts:
+          homeassistant:
+            app:
+              - path: /config/.venv
+                subPath: venv
