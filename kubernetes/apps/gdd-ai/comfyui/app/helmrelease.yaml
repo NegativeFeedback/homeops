@@ -6,6 +6,9 @@ metadata:
   name: comfyui
 spec:
   interval: 1h
+  # ~5.8GB image; a cold pull exceeds the default 5m Helm timeout and
+  # cleanupOnFail tears the pod down mid-pull, looping forever.
+  timeout: 15m
   chartRef:
     kind: OCIRepository
     name: app-template
