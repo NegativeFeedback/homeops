@@ -22,6 +22,7 @@ spec:
         kind: HelmRepository
         name: gitea-charts
   interval: 2h
+  timeout: 10m
   install:
     remediation:
       retries: -1
