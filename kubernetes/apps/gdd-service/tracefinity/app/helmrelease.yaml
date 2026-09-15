@@ -77,7 +77,11 @@ spec:
       securityContext:
         runAsUser: 0
         runAsGroup: 0
-        fsGroup: 0
+        # supervisord's managed processes (backend, frontend, nginx) actually
+        # run as uid/gid 1000 internally regardless of the pod-level root
+        # context, so volume group ownership needs to match -- fsGroup: 0
+        # left /tmp (and the u2net cache dir) unwritable to them.
+        fsGroup: 1000
     service:
       app:
         ports:
