@@ -35,6 +35,19 @@ spec:
     spegel:
       containerdSock: /run/containerd/containerd.sock
       containerdRegistryConfigPath: /etc/cri/conf.d/hosts
+    # talos-2wu-ocq has repeatedly failed pod-sandbox creation for new
+    # daemonset pods (apiserver/network flakiness under investigation) --
+    # excluding it so it doesn't repeatedly blow the timeout and wipe the
+    # other 10 already-healthy pods via cleanupOnFail. Remove once the
+    # node's underlying issue is fixed.
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+            - matchExpressions:
+                - key: kubernetes.io/hostname
+                  operator: NotIn
+                  values: ["talos-2wu-ocq"]
     service:
       registry:
         hostPort: 29999
