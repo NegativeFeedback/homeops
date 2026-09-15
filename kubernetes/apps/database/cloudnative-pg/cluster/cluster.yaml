@@ -54,6 +54,11 @@ spec:
         login: true
         passwordSecret:
           name: romm-db-secret
+      - name: gdd-service-linkwarden-user
+        ensure: present
+        login: true
+        passwordSecret:
+          name: linkwarden-db-secret
 
   monitoring:
     enablePodMonitor: true

@@ -1,0 +1,29 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: linkwarden
+  annotations:
+    tailscale.com/proxy-group: ts-ingress
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: Utilities
+    gethomepage.dev/name: Linkwarden
+    gethomepage.dev/icon: linkwarden.svg
+    gethomepage.dev/description: "Tailscale only | Bookmark manager with page archiving"
+    gethomepage.dev/siteMonitor: "http://linkwarden.gdd-service.svc:3000"
+spec:
+  ingressClassName: tailscale
+  rules:
+    - host: linkwarden.barn-walleye.ts.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: linkwarden
+                port:
+                  number: 3000
+  tls:
+    - hosts:
+        - linkwarden.barn-walleye.ts.net

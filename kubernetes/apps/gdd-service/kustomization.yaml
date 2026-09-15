@@ -48,6 +48,7 @@ resources:
   - ./christmas-community/ks.yaml
   - ./actual/ks.yaml
   - ./stash-fileflows-sync/ks.yaml
+  - ./linkwarden/ks.yaml
 
 patches:
   - patch: |-
