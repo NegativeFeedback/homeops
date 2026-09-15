@@ -44,13 +44,16 @@ spec:
             # deployment runs it as root with a writable rootfs rather than
             # the usual hardened profile. Revisit if bentopdf ships a
             # non-root-friendly image later.
+            # nginx-unprivileged's entrypoint chowns /var/cache/nginx/* to
+            # uid 101 on startup even when already root -- CAP_CHOWN must
+            # survive the drop-all or it fails with "Operation not permitted".
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: false
               runAsNonRoot: false
               runAsUser: 0
               runAsGroup: 0
-              capabilities: { drop: ["ALL"] }
+              capabilities: { drop: ["ALL"], add: ["CHOWN"] }
             resources:
               requests:
                 cpu: 10m
