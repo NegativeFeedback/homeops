@@ -104,6 +104,10 @@ sinks:
     out_of_order_action: accept
     remove_label_fields: true
     remove_timestamp: true
+    # host is a plain hostname string used as a Loki label, not a path -- no
+    # confinement risk, just needs the opt-out since the template has no
+    # literal prefix.
+    dangerously_allow_unconfined_template_resolution: true
     labels:
       hostname: '{{ host }}'
 
@@ -116,6 +120,9 @@ sinks:
     out_of_order_action: accept
     remove_label_fields: true
     remove_timestamp: true
+    # custom_app_name is a Loki label value, not a path -- no confinement
+    # risk, just needs the opt-out since the template has no literal prefix.
+    dangerously_allow_unconfined_template_resolution: true
     labels:
       app: '{{ custom_app_name }}'
       namespace: '{{ kubernetes.pod_namespace }}'
