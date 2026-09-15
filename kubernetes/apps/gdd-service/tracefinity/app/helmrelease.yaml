@@ -30,7 +30,9 @@ spec:
           # each time -- nginx runs as uid 1000 (supervisord's `user=
           # tracefinity`), not root, so it can't create it itself.
           init-nginx-tmp:
-            image: busybox:1.36
+            image:
+              repository: busybox
+              tag: "1.36"
             command: ["sh", "-c", "mkdir -p /tmp/nginx && chown -R 1000:1000 /tmp/nginx"]
             securityContext:
               runAsUser: 0

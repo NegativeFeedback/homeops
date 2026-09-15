@@ -43,7 +43,10 @@ spec:
                   httpGet:
                     path: /
                     port: *port
-                  initialDelaySeconds: 10
+                  # entrypoint does its own up-to-30s wait for postgres
+                  # before binding the port -- give it room before the
+                  # liveness probe starts killing the container
+                  initialDelaySeconds: 45
                   periodSeconds: 10
                   timeoutSeconds: 1
                   failureThreshold: 3

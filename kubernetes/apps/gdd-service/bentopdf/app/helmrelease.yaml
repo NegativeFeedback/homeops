@@ -47,13 +47,16 @@ spec:
             # nginx-unprivileged's entrypoint chowns /var/cache/nginx/* to
             # uid 101 on startup even when already root -- CAP_CHOWN must
             # survive the drop-all or it fails with "Operation not permitted".
+            # DAC_OVERRIDE is also required: without it, root can't bypass
+            # the image's uid-101-owned /etc/nginx/tmp permissions either,
+            # which fails opening nginx.pid with "Permission denied".
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: false
               runAsNonRoot: false
               runAsUser: 0
               runAsGroup: 0
-              capabilities: { drop: ["ALL"], add: ["CHOWN"] }
+              capabilities: { drop: ["ALL"], add: ["CHOWN", "DAC_OVERRIDE"] }
             resources:
               requests:
                 cpu: 10m
