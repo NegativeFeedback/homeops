@@ -1,0 +1,75 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: stash-fileflows-sync
+  namespace: gdd-service
+spec:
+  # Whisparr's own Stash notification (which used to scan+organize on import,
+  # racing FileFlows' mp4->mkv remux) has been disabled. This job is the
+  # replacement: it asks FileFlows which p-scenes files it has *finished*
+  # with (success or gave-up, both final) and only then has Stash scan,
+  # generate, and identify that directory - so Stash only ever sees the
+  # final file. See app/configmap.yaml for the full explanation.
+  schedule: "*/15 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      activeDeadlineSeconds: 1800
+      template:
+        spec:
+          restartPolicy: OnFailure
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            fsGroup: 1000
+            seccompProfile:
+              type: RuntimeDefault
+          containers:
+            - name: stash-fileflows-sync
+              image: public.ecr.aws/docker/library/python:3.14-slim
+              command: ["python3", "/scripts/sync.py"]
+              env:
+                - name: TZ
+                  value: America/Chicago
+                - name: STASH_URL
+                  value: http://stash.gdd-service.svc.cluster.local:9999/graphql
+                - name: FILEFLOWS_URL
+                  value: http://fileflows.gdd-plex.svc.cluster.local:5000
+                - name: LIBRARY_NAME
+                  value: p-scenes
+                - name: LIBRARY_PATH_PREFIX
+                  value: /mnt/p/video/scenes
+                - name: LOOKBACK_MINUTES
+                  value: "30"
+                - name: STASH_BOX_INDEX
+                  value: "0"
+              envFrom:
+                - secretRef:
+                    name: stash-fileflows-sync-secret
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 128Mi
+                limits:
+                  memory: 512Mi
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities:
+                  drop: ["ALL"]
+              volumeMounts:
+                - name: script
+                  mountPath: /scripts
+                  readOnly: true
+                - name: tmp
+                  mountPath: /tmp
+          volumes:
+            - name: script
+              configMap:
+                name: stash-fileflows-sync-script
+            - name: tmp
+              emptyDir: {}

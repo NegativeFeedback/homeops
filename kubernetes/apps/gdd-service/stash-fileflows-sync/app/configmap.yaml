@@ -1,0 +1,188 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: stash-fileflows-sync-script
+data:
+  sync.py: |
+    #!/usr/bin/env python3
+    """
+    Pipeline: Whisparr imports a file -> FileFlows remuxes it (mp4 -> mkv) in
+    place -> Stash scans/generates/identifies it. Whisparr's own "Stash"
+    notification used to fire on import, before FileFlows had touched the
+    file - Stash would organize the original, FileFlows would then delete it
+    and leave an orphaned duplicate behind. That notification has been
+    disabled (Whisparr Settings > Connect > Stash: onDownload/onUpgrade/
+    onRename all off).
+
+    This job is the replacement trigger, but correctly ordered: it asks
+    FileFlows which files it has *finished* with (successfully processed or
+    given up on - both are final states) and only then tells Stash about
+    them, scoped to just that file's directory. Stash therefore only ever
+    sees the final form of a file, once.
+    """
+
+    import json
+    import logging
+    import os
+    import posixpath
+    import sys
+    import time
+    import urllib.request
+    from datetime import datetime, timedelta, timezone
+
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
+    log = logging.getLogger(__name__)
+
+    STASH_URL = os.environ["STASH_URL"]
+    STASH_API_KEY = os.environ["STASH_API_KEY"]
+    FILEFLOWS_URL = os.environ["FILEFLOWS_URL"].rstrip("/")
+    LIBRARY_NAME = os.environ.get("LIBRARY_NAME", "p-scenes")
+    LIBRARY_PATH_PREFIX = os.environ.get("LIBRARY_PATH_PREFIX", "/mnt/p/video/scenes")
+    LOOKBACK_MINUTES = float(os.environ.get("LOOKBACK_MINUTES", "30"))
+    STASH_BOX_INDEX = int(os.environ.get("STASH_BOX_INDEX", "0"))
+    JOB_TIMEOUT_SECONDS = int(os.environ.get("JOB_TIMEOUT_SECONDS", "900"))
+
+    # FileFlows LibraryFile.Status: 1 = Processed, 2 = Unprocessed/Queued,
+    # 3 = Processing, 4 = ProcessingFailed. 1 and 4 are the two *final* states
+    # for a file - FileFlows won't touch it again either way, so it's safe
+    # for Stash to look at now.
+    SETTLED_STATUSES = (1, 4)
+
+
+    # ---------------------------------------------------------------------------
+    # FileFlows
+    # ---------------------------------------------------------------------------
+
+    def fileflows_get(path: str) -> list:
+        req = urllib.request.Request(f"{FILEFLOWS_URL}{path}")
+        with urllib.request.urlopen(req, timeout=60) as resp:
+            return json.loads(resp.read().decode())
+
+
+    def parse_ff_timestamp(value: str) -> datetime:
+        # FileFlows emits ISO8601 with variable fractional-second precision.
+        value = value.rstrip("Z")
+        if "." in value:
+            head, frac = value.split(".", 1)
+            frac = (frac + "000000")[:6]
+            value = f"{head}.{frac}"
+        return datetime.fromisoformat(value).replace(tzinfo=timezone.utc)
+
+
+    def find_settled_directories(cutoff: datetime) -> set[str]:
+        directories: set[str] = set()
+        for status in SETTLED_STATUSES:
+            records = fileflows_get(f"/api/library-file?status={status}")
+            for rec in records:
+                if rec.get("LibraryName") != LIBRARY_NAME:
+                    continue
+                ended = rec.get("ProcessingEnded")
+                if not ended:
+                    continue
+                ended_at = parse_ff_timestamp(ended)
+                if ended_at < cutoff:
+                    # Results are newest-first per status; nothing further back matters.
+                    break
+                output_path = rec.get("OutputPath") or ""
+                if output_path:
+                    directory = posixpath.dirname(output_path)
+                else:
+                    relative_path = rec.get("RelativePath") or ""
+                    if not relative_path:
+                        continue
+                    directory = posixpath.dirname(posixpath.join(LIBRARY_PATH_PREFIX, relative_path))
+                directories.add(directory)
+        return directories
+
+
+    # ---------------------------------------------------------------------------
+    # Stash
+    # ---------------------------------------------------------------------------
+
+    def stash_gql(query: str, variables: dict | None = None) -> dict:
+        body = json.dumps({"query": query, "variables": variables or {}}).encode()
+        req = urllib.request.Request(
+            STASH_URL,
+            data=body,
+            headers={"Content-Type": "application/json", "ApiKey": STASH_API_KEY},
+        )
+        with urllib.request.urlopen(req, timeout=60) as resp:
+            payload = json.loads(resp.read().decode())
+        if payload.get("errors"):
+            raise RuntimeError(f"Stash GraphQL error: {payload['errors']}")
+        return payload["data"]
+
+
+    def wait_for_jobs_idle(timeout: int) -> None:
+        deadline = time.monotonic() + timeout
+        while time.monotonic() < deadline:
+            data = stash_gql("query { jobQueue { id status } }")
+            if not data["jobQueue"]:
+                return
+            time.sleep(5)
+        raise TimeoutError("Timed out waiting for Stash job queue to go idle")
+
+
+    def sync_directory(directory: str) -> None:
+        log.info("Scanning: %s", directory)
+        stash_gql("mutation($paths: [String!]) { metadataScan(input: { paths: $paths }) }", {"paths": [directory]})
+        wait_for_jobs_idle(JOB_TIMEOUT_SECONDS)
+
+        log.info("Generating covers/previews/sprites/phashes: %s", directory)
+        stash_gql(
+            """
+            mutation($paths: [String!]) {
+              metadataGenerate(input: {
+                paths: $paths, covers: true, previews: true,
+                imagePreviews: true, sprites: true, phashes: true
+              })
+            }
+            """,
+            {"paths": [directory]},
+        )
+        wait_for_jobs_idle(JOB_TIMEOUT_SECONDS)
+
+        log.info("Identifying/organizing: %s", directory)
+        stash_gql(
+            """
+            mutation($paths: [String!], $boxIndex: Int!) {
+              metadataIdentify(input: {
+                paths: $paths
+                sources: [{
+                  source: { stash_box_index: $boxIndex }
+                  options: {
+                    setOrganized: true
+                    setCoverImage: true
+                    includeMalePerformers: true
+                    skipMultipleMatches: false
+                  }
+                }]
+              })
+            }
+            """,
+            {"paths": [directory], "boxIndex": STASH_BOX_INDEX},
+        )
+        wait_for_jobs_idle(JOB_TIMEOUT_SECONDS)
+
+
+    def main() -> None:
+        cutoff = datetime.now(timezone.utc) - timedelta(minutes=LOOKBACK_MINUTES)
+        directories = find_settled_directories(cutoff)
+        log.info("Found %d director%s FileFlows finished with since %s", len(directories), "y" if len(directories) == 1 else "ies", cutoff.isoformat())
+
+        for directory in sorted(directories):
+            try:
+                sync_directory(directory)
+            except Exception:
+                log.exception("Failed syncing %s", directory)
+
+        log.info("Done.")
+
+
+    if __name__ == "__main__":
+        try:
+            main()
+        except Exception:
+            log.exception("stash-fileflows-sync failed")
+            sys.exit(1)
