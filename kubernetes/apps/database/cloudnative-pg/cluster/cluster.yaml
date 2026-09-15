@@ -59,6 +59,11 @@ spec:
         login: true
         passwordSecret:
           name: linkwarden-db-secret
+      - name: gdd-service-snapotter-user
+        ensure: present
+        login: true
+        passwordSecret:
+          name: snapotter-db-secret
 
   monitoring:
     enablePodMonitor: true

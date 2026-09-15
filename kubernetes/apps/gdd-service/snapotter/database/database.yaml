@@ -36,6 +36,11 @@ spec:
     template:
       engineVersion: v2
       data:
+        # username/password keys are required by the CNPG Cluster's
+        # managed.roles passwordSecret reference (see cluster.yaml) --
+        # without them the role never gets created/synced.
+        username: gdd-service-snapotter-user
+        password: "{{ .password | toString }}"
         DATABASE_URL: "postgresql://gdd-service-snapotter-user:{{ .password | toString }}@postgres-rw.database.svc.cluster.local:5432/gdd-service-snapotter"
   dataFrom:
     - sourceRef:
