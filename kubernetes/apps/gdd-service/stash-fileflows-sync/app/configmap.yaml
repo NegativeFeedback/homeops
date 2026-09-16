@@ -39,7 +39,7 @@ data:
     FILEFLOWS_URL = os.environ["FILEFLOWS_URL"].rstrip("/")
     LIBRARY_NAME = os.environ.get("LIBRARY_NAME", "p-scenes")
     LIBRARY_PATH_PREFIX = os.environ.get("LIBRARY_PATH_PREFIX", "/mnt/p/video/scenes")
-    LOOKBACK_MINUTES = float(os.environ.get("LOOKBACK_MINUTES", "30"))
+    LOOKBACK_MINUTES = float(os.environ.get("LOOKBACK_MINUTES", "240"))
     STASH_BOX_INDEX = int(os.environ.get("STASH_BOX_INDEX", "0"))
     JOB_TIMEOUT_SECONDS = int(os.environ.get("JOB_TIMEOUT_SECONDS", "900"))
 
@@ -70,8 +70,12 @@ data:
         return datetime.fromisoformat(value).replace(tzinfo=timezone.utc)
 
 
-    def find_settled_directories(cutoff: datetime) -> set[str]:
-        directories: set[str] = set()
+    def find_settled_directories(cutoff: datetime) -> dict[str, str]:
+        """Returns {directory: a final file path in it} for files FileFlows has
+        settled since cutoff. The file path lets the caller check idempotency
+        (has this exact file already been synced?) without relying on Stash's
+        unreliable path-substring matching."""
+        directories: dict[str, str] = {}
         for status in SETTLED_STATUSES:
             records = fileflows_get(f"/api/library-file?status={status}")
             for rec in records:
@@ -85,14 +89,13 @@ data:
                     # Results are newest-first per status; nothing further back matters.
                     break
                 output_path = rec.get("OutputPath") or ""
-                if output_path:
-                    directory = posixpath.dirname(output_path)
-                else:
+                if not output_path:
                     relative_path = rec.get("RelativePath") or ""
                     if not relative_path:
                         continue
-                    directory = posixpath.dirname(posixpath.join(LIBRARY_PATH_PREFIX, relative_path))
-                directories.add(directory)
+                    output_path = posixpath.join(LIBRARY_PATH_PREFIX, relative_path)
+                directory = posixpath.dirname(output_path)
+                directories[directory] = output_path
         return directories
 
 
@@ -112,6 +115,17 @@ data:
         if payload.get("errors"):
             raise RuntimeError(f"Stash GraphQL error: {payload['errors']}")
         return payload["data"]
+
+
+    def is_already_organized(path: str) -> bool:
+        """Exact-path lookup (Stash's INCLUDES path filter is unreliable on
+        paths with brackets/special characters - EQUALS is exact and safe)."""
+        data = stash_gql(
+            "query($p: String!) { findScenes(scene_filter: { path: { value: $p, modifier: EQUALS } }) { scenes { organized } } }",
+            {"p": path},
+        )
+        scenes = data["findScenes"]["scenes"]
+        return bool(scenes) and all(s["organized"] for s in scenes)
 
 
     def wait_for_jobs_idle(timeout: int) -> None:
@@ -171,8 +185,11 @@ data:
         directories = find_settled_directories(cutoff)
         log.info("Found %d director%s FileFlows finished with since %s", len(directories), "y" if len(directories) == 1 else "ies", cutoff.isoformat())
 
-        for directory in sorted(directories):
+        for directory, final_path in sorted(directories.items()):
             try:
+                if is_already_organized(final_path):
+                    log.info("Already synced, skipping: %s", directory)
+                    continue
                 sync_directory(directory)
             except Exception:
                 log.exception("Failed syncing %s", directory)

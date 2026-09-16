@@ -47,7 +47,13 @@ spec:
                 - name: LIBRARY_PATH_PREFIX
                   value: /mnt/p/video/scenes
                 - name: LOOKBACK_MINUTES
-                  value: "30"
+                  # FileFlows only rescans its library folder every 3h (ScanInterval),
+                  # on top of however long a transcode itself takes - a 30m window
+                  # silently missed files that took longer than that to even get
+                  # noticed. Wide enough to safely cover worst-case discovery + a
+                  # long 4K transcode; safe to run repeatedly since already-organized
+                  # directories are skipped (see is_already_organized in the script).
+                  value: "240"
                 - name: STASH_BOX_INDEX
                   value: "0"
               envFrom:
