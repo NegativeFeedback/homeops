@@ -54,6 +54,8 @@ spec:
             envFrom:
               - secretRef:
                   name: homebox-secret
+              - secretRef:
+                  name: homebox-pepper-secret
             probes:
               liveness: &probes
                 enabled: true

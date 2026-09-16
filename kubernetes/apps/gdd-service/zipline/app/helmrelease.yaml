@@ -55,6 +55,21 @@ spec:
               URLS_ROUTE: /g
               URLS_LENGTH: "6"
               WEBSITE_TITLE: Zipline
+              # zipline-bucket (from the ObjectBucketClaim) lives in this
+              # same namespace, unlike the other zipline-secret fields --
+              # the kubernetes-secret-store ClusterSecretStore is hardcoded
+              # to remoteNamespace: database, so ESO can never see it there.
+              # Reference it directly instead of routing through ESO.
+              DATASOURCE_S3_ACCESS_KEY_ID:
+                valueFrom:
+                  secretKeyRef:
+                    name: zipline-bucket
+                    key: AWS_ACCESS_KEY_ID
+              DATASOURCE_S3_SECRET_ACCESS_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: zipline-bucket
+                    key: AWS_SECRET_ACCESS_KEY
             envFrom:
               - secretRef:
                   name: zipline-secret

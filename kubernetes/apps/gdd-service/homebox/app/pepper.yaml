@@ -1,0 +1,33 @@
+---
+apiVersion: generators.external-secrets.io/v1alpha1
+kind: Password
+metadata:
+  name: homebox-pepper
+  namespace: gdd-service
+spec:
+  length: 64
+  digits: 10
+  symbols: 0
+  noUpper: false
+  allowRepeat: true
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: homebox-pepper-secret
+  namespace: gdd-service
+spec:
+  refreshInterval: "0" # generate once; rotating invalidates all issued API keys
+  target:
+    name: homebox-pepper-secret
+    creationPolicy: Owner
+    template:
+      engineVersion: v2
+      data:
+        HBOX_AUTH_API_KEY_PEPPER: "{{ .password | toString }}"
+  dataFrom:
+    - sourceRef:
+        generatorRef:
+          apiVersion: generators.external-secrets.io/v1alpha1
+          kind: Password
+          name: homebox-pepper
