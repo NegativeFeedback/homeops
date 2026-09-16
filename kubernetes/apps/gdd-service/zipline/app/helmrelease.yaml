@@ -32,7 +32,9 @@ spec:
               CORE_DEFAULT_DOMAIN: zipline.app.gddnet.io
               DATASOURCE_TYPE: s3
               DATASOURCE_S3_BUCKET: zipline
-              DATASOURCE_S3_ENDPOINT: rook-ceph-rgw-ceph-objectstore.rook-ceph.svc.cluster.local
+              # zipline's S3 client (smithy) requires a full URL with scheme,
+              # not a bare hostname, or it throws ERR_INVALID_URL on startup.
+              DATASOURCE_S3_ENDPOINT: http://rook-ceph-rgw-ceph-objectstore.rook-ceph.svc.cluster.local
               DATASOURCE_S3_PORT: "80"
               DATASOURCE_S3_REGION: us-east-1
               DATASOURCE_S3_FORCE_PATH_STYLE: "true"
