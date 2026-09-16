@@ -13,3 +13,7 @@ metrics-listen-http: "[::]:9090"
 auth-file: /data/user.db
 auth-default-access: "deny-all"
 enable-login: true
+####
+web-push-public-key: "BGRGPXGqKfsLauSXWrCMe2FrOiM5iFEnuYt0ydSjGh34MyOEW7ztrJYIh1B-ZsyE1Fj__xqQ4y7t__MZ6NcIXAA"
+web-push-file: "/data/webpush.db"
+web-push-email-address: "zach@goldendogdev.net"
