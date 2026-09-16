@@ -121,3 +121,10 @@ spec:
     persistence:
       tmp:
         type: emptyDir
+      # zipline still mkdir's a local staging dir at startup even with
+      # DATASOURCE_TYPE=s3 for final storage -- readOnlyRootFilesystem
+      # means it needs somewhere writable to put it.
+      uploads:
+        type: emptyDir
+        globalMounts:
+          - path: /zipline/uploads
