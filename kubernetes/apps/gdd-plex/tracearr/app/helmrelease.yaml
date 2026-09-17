@@ -38,6 +38,7 @@ spec:
                   name: tracearr-secret
               - secretRef:
                   name: tracearr-maxmind
+                  optional: true # geo-IP tagging only; app should run without it
               - secretRef:
                   name: tracearr-authentik-oauth
             probes:
