@@ -69,6 +69,11 @@ spec:
         login: true
         passwordSecret:
           name: zipline-db-secret
+      - name: gdd-plex-tracearr-user
+        ensure: present
+        login: true
+        passwordSecret:
+          name: tracearr-db-secret
 
   monitoring:
     enablePodMonitor: true
