@@ -80,7 +80,7 @@ spec:
           pangolin-operator/auth-sso: "true"
           pangolin-operator/auth-sso-roles: Admin
           pangolin-operator/icon: https://cdn.jsdelivr.net/gh/selfhst/icons/png/radarr.png
-          pangolin-operator/resource-policy-id: "267"
+          pangolin-operator/resource-policy: thick-louisiana-waterthrush
           pangolin-operator/target-healthcheck-enabled: "true"
           pangolin-operator/target-healthcheck-path: /ping
         ports:
