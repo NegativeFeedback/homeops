@@ -2,18 +2,18 @@
 apiVersion: pangolin.home-operations.com/v1alpha1
 kind: PublicResource
 metadata:
-  name: emqx-dashboard
+  name: rook-dashboard
 spec:
   siteRef: homeops
-  name: EMQX Dashboard
+  name: Ceph (Web)
   protocol: http
-  fullDomain: emqx.app.gddnet.io
+  fullDomain: rook.app.gddnet.io
   ssl: true
-  icon: https://cdn.jsdelivr.net/gh/selfhst/icons/png/emqx.png
+  icon: https://cdn.jsdelivr.net/gh/selfhst/icons/png/ceph.png
   resourcePolicyNiceId: thick-louisiana-waterthrush
   targets:
-    - hostname: emqx-dashboard.database.svc.cluster.local
-      port: 18083
+    - hostname: rook-ceph-mgr-dashboard.rook-ceph.svc.cluster.local
+      port: 7000
       method: http
   auth:
     ssoEnabled: true
