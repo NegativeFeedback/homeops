@@ -1,0 +1,15 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/pangolin.home-operations.com/privateresource_v1alpha1.json
+apiVersion: pangolin.home-operations.com/v1alpha1
+kind: PrivateResource
+metadata:
+  name: actual
+spec:
+  siteRef: homeops
+  name: Actual Budget
+  mode: http
+  destination: actual.gdd-service.svc.cluster.local
+  destinationPort: 5006
+  scheme: http
+  fullDomain: actual.app.gddnet.io
+  ssl: true
