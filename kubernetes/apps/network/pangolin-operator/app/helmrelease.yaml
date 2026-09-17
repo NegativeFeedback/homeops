@@ -10,8 +10,8 @@ spec:
     mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
     operation: copy
   ref:
-    tag: 0.1.4
-  url: oci://ghcr.io/home-operations/charts/pangolin-operator
+    tag: 0.0.0-dev.11fbb04
+  url: oci://ghcr.io/negativefeedback/charts/pangolin-operator
 ---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
 apiVersion: helm.toolkit.fluxcd.io/v2
@@ -33,6 +33,8 @@ spec:
     remediation:
       retries: 3
   values:
+    image:
+      tag: main-11fbb04
     pangolin:
       existingSecret: pangolin-operator-credentials
     resources:
