@@ -16,9 +16,6 @@ spec:
     cleanupOnFail: true
     remediation:
       retries: 3
-  dependsOn:
-    - name: cloudflare-tunnel
-      namespace: network
   values:
     controllers:
       tidarr:
@@ -35,7 +32,7 @@ spec:
               ENABLE_BEETS: true
               REPLAY_GAIN: true
               OIDC_ISSUER: https://sso.gddnet.io/application/o/tidarr/
-              OIDC_REDIRECT_URI: https://tidarr.${SECRET_DOMAIN}/api/auth/oidc/callback
+              OIDC_REDIRECT_URI: https://tidarr.app.${SECRET_DOMAIN}/api/auth/oidc/callback
               PORT: &port 8484
               PUID: 1000
               PGID: 1000
@@ -56,6 +53,13 @@ spec:
 
     service:
       app:
+        annotations:
+          pangolin-operator/site-ref: homeops
+          pangolin-operator/name: Tidarr
+          pangolin-operator/full-domain: tidarr.app.gddnet.io
+          pangolin-operator/port: http
+          pangolin-operator/icon: https://cdn.jsdelivr.net/gh/selfhst/icons/png/tidarr.png
+          pangolin-operator/resource-policy: thick-louisiana-waterthrush
         ports:
           http:
             port: *port
@@ -63,24 +67,6 @@ spec:
       app:
         endpoints:
           - port: http
-    route:
-      app:
-        hostnames: ["tidarr.${SECRET_DOMAIN}"]
-        annotations:
-          gethomepage.dev/enabled: "true"
-          gethomepage.dev/group: Media
-          gethomepage.dev/name: Tidarr
-          gethomepage.dev/icon: tidal.svg
-          gethomepage.dev/description: "Tidal downloader"
-          gethomepage.dev/siteMonitor: "https://tidarr.gddnet.io"
-        parentRefs:
-          - name: external
-            namespace: kube-system
-            sectionName: https
-        rules:
-          - backendRefs:
-              - identifier: app
-                port: *port
     persistence:
       config:
         type: persistentVolumeClaim

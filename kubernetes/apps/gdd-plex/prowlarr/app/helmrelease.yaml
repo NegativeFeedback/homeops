@@ -63,46 +63,20 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
     service:
       app:
+        annotations:
+          pangolin-operator/site-ref: homeops
+          pangolin-operator/name: Prowlarr
+          pangolin-operator/full-domain: prowlarr.app.gddnet.io
+          pangolin-operator/port: http
+          pangolin-operator/auth-sso: "true"
+          pangolin-operator/auth-sso-roles: Admin
+          pangolin-operator/icon: https://cdn.jsdelivr.net/gh/selfhst/icons/png/prowlarr.png
+          pangolin-operator/resource-policy: thick-louisiana-waterthrush
+          pangolin-operator/target-healthcheck-enabled: "true"
+          pangolin-operator/target-healthcheck-path: /ping
         ports:
           http:
             port: *port
-    route:
-      app:
-        hostnames: ["prowlarr.${SECRET_DOMAIN}"]
-        annotations:
-          gethomepage.dev/enabled: "true"
-          gethomepage.dev/group: "Media Management"
-          gethomepage.dev/name: Prowlarr
-          gethomepage.dev/icon: prowlarr.svg
-          gethomepage.dev/description: "🔑 SSO Proxy | Media downloader"
-          gethomepage.dev/widget.type: prowlarr
-          gethomepage.dev/widget.url: "http://prowlarr.gdd-plex.svc"
-          gethomepage.dev/widget.key: "{{ \"{{HOMEPAGE_VAR_prowlarr_API_KEY}}\" }}"
-          gatus.home-operations.com/enabled: "true"
-          gatus.home-operations.com/endpoint: |-
-            group: Media
-            depends-on:
-              - connectivity_cftunnel
-              - security_authentik
-            url: "http://prowlarr.gdd-plex.svc"
-            conditions: ["[STATUS] == 200"]
-            alerts:
-              - type: ntfy
-              - type: discord
-              - type: github
-        parentRefs:
-          - name: external
-            namespace: kube-system
-            sectionName: https
-        rules:
-          - backendRefs:
-              - name: authentik-server
-                namespace: gdd-security
-                port: 80
-            matches:
-              - path:
-                  type: PathPrefix
-                  value: /
 
     persistence:
       config:

@@ -66,6 +66,8 @@ spec:
           pangolin-operator/port: http
           pangolin-operator/auth-sso: "true"
           pangolin-operator/auth-sso-roles: Admin
+          pangolin-operator/icon: https://cdn.jsdelivr.net/gh/selfhst/icons/png/zigbee2mqtt.png
+          pangolin-operator/resource-policy: thick-louisiana-waterthrush
 
           # --- Identity / core (reference, inactive) ---
           # pangolin-operator/enabled: "true"              # pause the resource without deleting it

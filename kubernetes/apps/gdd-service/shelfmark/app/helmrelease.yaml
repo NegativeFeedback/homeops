@@ -16,9 +16,6 @@ spec:
     cleanupOnFail: true
     remediation:
       retries: 3
-  dependsOn:
-    - name: cloudflare-tunnel
-      namespace: network
   values:
     controllers:
       shelfmark:
@@ -80,32 +77,18 @@ spec:
     service:
       app:
         controller: shelfmark
+        annotations:
+          pangolin-operator/site-ref: homeops
+          pangolin-operator/name: Shelfmark
+          pangolin-operator/full-domain: shelfmark.app.gddnet.io
+          pangolin-operator/port: http
+          pangolin-operator/icon: https://cdn.jsdelivr.net/gh/selfhst/icons/png/shelfmark.png
+          pangolin-operator/resource-policy: thick-louisiana-waterthrush
+          pangolin-operator/target-healthcheck-enabled: "true"
+          pangolin-operator/target-healthcheck-path: /api/health
         ports:
           http:
             port: *port
-    route:
-      app:
-        annotations:
-          gethomepage.dev/enabled: "true"
-          gethomepage.dev/description: book Management
-          gethomepage.dev/group: Service
-          gethomepage.dev/icon: mdi-book-plus
-          gethomepage.dev/name: Shelfmark
-          gethomepage.dev/app: *app
-          gethomepage.dev/siteMonitor: "https://bookrequest.gddnet.io"
-          gatus.home-operations.com/enabled: "true"
-          gatus.home-operations.com/endpoint: |-
-            group: Service
-            conditions: ["[STATUS] == 200"]
-        hostnames: ["bookrequest.${SECRET_DOMAIN}"]
-        parentRefs:
-          - name: external
-            namespace: kube-system
-            sectionName: https
-        rules:
-          - backendRefs:
-              - identifier: app
-                port: *port
     persistence:
       config:
         enabled: true

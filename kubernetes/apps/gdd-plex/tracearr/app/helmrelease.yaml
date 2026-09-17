@@ -79,6 +79,10 @@ spec:
           pangolin-operator/name: Tracearr
           pangolin-operator/full-domain: tracearr.app.gddnet.io
           pangolin-operator/port: http
+          pangolin-operator/icon: https://cdn.jsdelivr.net/gh/selfhst/icons/png/tracearr.png
+          pangolin-operator/resource-policy: thick-louisiana-waterthrush
+          pangolin-operator/target-healthcheck-enabled: "true"
+          pangolin-operator/target-healthcheck-path: /health
         ports:
           http:
             port: *port

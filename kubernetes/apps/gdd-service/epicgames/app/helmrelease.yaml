@@ -69,6 +69,8 @@ spec:
           pangolin-operator/port: http
           pangolin-operator/auth-sso: "true"
           pangolin-operator/auth-sso-roles: Admin
+          pangolin-operator/icon: https://cdn.jsdelivr.net/gh/selfhst/icons/png/epic-games.png
+          pangolin-operator/resource-policy: thick-louisiana-waterthrush
         ports:
           http:
             port: &port 3000

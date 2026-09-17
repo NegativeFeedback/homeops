@@ -115,6 +115,10 @@ spec:
           pangolin-operator/name: Zipline
           pangolin-operator/full-domain: zipline.app.gddnet.io
           pangolin-operator/port: http
+          pangolin-operator/icon: https://cdn.jsdelivr.net/gh/selfhst/icons/png/zipline.png
+          pangolin-operator/resource-policy: thick-louisiana-waterthrush
+          pangolin-operator/target-healthcheck-enabled: "true"
+          pangolin-operator/target-healthcheck-path: /
         ports:
           http:
             port: *port

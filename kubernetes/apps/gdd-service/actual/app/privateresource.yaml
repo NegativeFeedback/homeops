@@ -13,3 +13,4 @@ spec:
   scheme: http
   fullDomain: actual.app.gddnet.io
   ssl: true
+  icon: https://cdn.jsdelivr.net/gh/selfhst/icons/png/actual-budget.png

@@ -69,6 +69,9 @@ spec:
           pangolin-operator/port: http
           pangolin-operator/auth-sso: "true"
           pangolin-operator/auth-sso-roles: Admin
+          pangolin-operator/resource-policy: thick-louisiana-waterthrush
+          pangolin-operator/target-healthcheck-enabled: "true"
+          pangolin-operator/target-healthcheck-path: /livez
         ports:
           http:
             port: *port

@@ -79,6 +79,10 @@ spec:
           pangolin-operator/port: http
           pangolin-operator/auth-sso: "true"
           pangolin-operator/auth-sso-roles: Admin
+          pangolin-operator/icon: https://cdn.jsdelivr.net/gh/selfhst/icons/png/bentopdf.png
+          pangolin-operator/resource-policy: thick-louisiana-waterthrush
+          pangolin-operator/target-healthcheck-enabled: "true"
+          pangolin-operator/target-healthcheck-path: /
         ports:
           http:
             port: *port

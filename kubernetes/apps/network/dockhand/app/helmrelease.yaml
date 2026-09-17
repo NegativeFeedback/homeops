@@ -70,6 +70,9 @@ spec:
           pangolin-operator/auth-sso: "true"
           pangolin-operator/auth-sso-roles: Admin
           pangolin-operator/rules: '[{"action":"ACCEPT","match":"path","value":"api/hawser/connect","priority":10}]'
+          pangolin-operator/icon: https://cdn.jsdelivr.net/gh/selfhst/icons/png/dockhand.png
+          pangolin-operator/target-healthcheck-enabled: "true"
+          pangolin-operator/target-healthcheck-path: /
         ports:
           http:
             port: *port

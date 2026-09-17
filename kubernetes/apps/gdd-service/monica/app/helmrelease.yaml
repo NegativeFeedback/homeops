@@ -16,9 +16,6 @@ spec:
     cleanupOnFail: true
     remediation:
       retries: 3
-  dependsOn:
-    - name: cloudflare-tunnel
-      namespace: network
   values:
     controllers:
       monica:
@@ -41,6 +38,15 @@ spec:
 
     service:
       app:
+        annotations:
+          pangolin-operator/site-ref: homeops
+          pangolin-operator/name: Monica
+          pangolin-operator/full-domain: monica.app.gddnet.io
+          pangolin-operator/port: http
+          pangolin-operator/auth-sso: "true"
+          pangolin-operator/auth-sso-roles: Admin
+          pangolin-operator/icon: https://cdn.jsdelivr.net/gh/selfhst/icons/png/monica.png
+          pangolin-operator/resource-policy: thick-louisiana-waterthrush
         ports:
           http:
             port: &port 80
@@ -48,25 +54,6 @@ spec:
       app:
         endpoints:
           - port: http
-
-    route:
-      app:
-        annotations:
-          gethomepage.dev/enabled: "true"
-          gethomepage.dev/group: Service
-          gethomepage.dev/name: Monica
-          gethomepage.dev/icon: monica.png
-          gethomepage.dev/siteMonitor: "https://monica.gddnet.io"
-        hostnames:
-          - "monica.gddnet.io"
-        parentRefs:
-          - name: internal
-            namespace: kube-system
-            sectionName: https
-        rules:
-          - backendRefs:
-              - identifier: app
-                port: *port
 
     persistence:
       config:
