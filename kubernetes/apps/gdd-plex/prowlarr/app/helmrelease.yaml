@@ -74,6 +74,17 @@ spec:
           pangolin-operator/resource-policy: thick-louisiana-waterthrush
           pangolin-operator/target-healthcheck-enabled: "true"
           pangolin-operator/target-healthcheck-path: /ping
+          # newt silently never starts monitoring a target whose healthcheck
+          # scheme/mode/interval/etc are left null -- must set them explicitly.
+          pangolin-operator/target-healthcheck-scheme: http
+          pangolin-operator/target-healthcheck-mode: http
+          pangolin-operator/target-healthcheck-interval: "5"
+          pangolin-operator/target-healthcheck-unhealthy-interval: "30"
+          pangolin-operator/target-healthcheck-timeout: "5"
+          pangolin-operator/target-healthcheck-follow-redirects: "true"
+          pangolin-operator/target-healthcheck-method: GET
+          pangolin-operator/target-healthcheck-healthy-threshold: "1"
+          pangolin-operator/target-healthcheck-unhealthy-threshold: "1"
         ports:
           http:
             port: *port
