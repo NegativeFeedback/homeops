@@ -63,6 +63,18 @@ spec:
               limits:
                 memory: 1000Mi
     defaultPodOptions:
+      # gddnet-w4 has repeatedly hung on pod lifecycle ops (stuck
+      # terminating, stuck ContainerCreating with zero progress) for this
+      # and other apps -- excluding it until the node's underlying issue
+      # is fixed. Remove once that's resolved.
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: NotIn
+                    values: ["gddnet-w4"]
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
