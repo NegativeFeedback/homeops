@@ -69,3 +69,15 @@ spec:
         - ports:
             - port: "8080"
               protocol: TCP
+    # Whisparr Bridge plugin pushes the matched StashDB scene back to Whisparr
+    # on every Scene.Update.Post - this egress rule was missing entirely, so
+    # every single push has been silently timing out (confirmed: continuous
+    # TimeoutError in stash logs for 10+ days, ~every 2min).
+    - toEndpoints:
+        - matchLabels:
+            k8s:app.kubernetes.io/name: whisparr
+            k8s:io.kubernetes.pod.namespace: gdd-service
+      toPorts:
+        - ports:
+            - port: "6969"
+              protocol: TCP
