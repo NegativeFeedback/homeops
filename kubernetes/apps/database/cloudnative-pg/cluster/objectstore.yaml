@@ -2,21 +2,19 @@
 apiVersion: barmancloud.cnpg.io/v1
 kind: ObjectStore
 metadata:
-  name: garage-store
+  name: b2-store
+  namespace: database
 spec:
   configuration:
-    destinationPath: s3://postgres/
-    endpointURL: http://garage.garage.svc:3900
+    destinationPath: s3://omni-talos-gdd/database/postgres
+    endpointURL: https://s3.us-west-000.backblazeb2.com
     s3Credentials:
       accessKeyId:
-        name: garage
+        name: postgres-b2
         key: ACCESS_KEY_ID
       secretAccessKey:
-        name: garage
+        name: postgres-b2
         key: ACCESS_SECRET_KEY
-      region:
-        name: garage
-        key: REGION
     wal:
       compression: zstd
     data:

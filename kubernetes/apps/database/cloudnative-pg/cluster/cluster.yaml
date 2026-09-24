@@ -12,15 +12,15 @@ spec:
   primaryUpdateMethod: switchover
   primaryUpdateStrategy: unsupervised
   storage:
-    size: 20Gi
+    size: 30Gi
     storageClass: ceph-block
   enableSuperuserAccess: true
 
-#  plugins:
-#    - name: &plugin barman-cloud.cloudnative-pg.io
-#      isWALArchiver: true
-#      parameters:
-#        barmanObjectName: &store garage-store
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: b2-store
 
   managed:
     roles:
