@@ -30,10 +30,6 @@ spec:
             env:
               TZ: America/Chicago
               GOVEE_TEMPERATURE_SCALE: F
-              # Bridges the Govee lamp at 10.0.50.174 to Home Assistant via
-              # MQTT. GOVEE_LAN_SCAN targets it with unicast discovery/control
-              # packets instead of relying on multicast, which doesn't cross
-              # from the pod network into vlan50.
               GOVEE_LAN_SCAN: "10.0.50.174"
               GOVEE_MQTT_HOST: emqx-listeners.database.svc.cluster.local
               GOVEE_MQTT_PORT: "1883"
@@ -65,6 +61,15 @@ spec:
               limits:
                 memory: 256Mi
     defaultPodOptions:
+      annotations:
+        k8s.v1.cni.cncf.io/networks: |
+          [{
+            "name": "multus-vlan50",
+            "namespace": "network",
+            "ips": ["10.0.50.210/24"]
+          }]
+      nodeSelector:
+        kubernetes.io/hostname: gddnet-w9
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
