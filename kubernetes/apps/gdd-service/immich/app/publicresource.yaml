@@ -1,0 +1,17 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/pangolin.home-operations.com/publicresource_v1alpha1.json
+apiVersion: pangolin.home-operations.com/v1alpha1
+kind: PublicResource
+metadata:
+  name: immich
+spec:
+  siteRef: homeops
+  name: Immich
+  protocol: http
+  fullDomain: photos.app.gddnet.io
+  ssl: true
+  icon: https://cdn.jsdelivr.net/gh/selfhst/icons/png/immich.png
+  targets:
+    - hostname: immich-server.gdd-service.svc.cluster.local
+      port: 2283
+      method: http
