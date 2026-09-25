@@ -12,6 +12,7 @@ resources:
   - ./esphome/ks.yaml
   - ./music-assistant/ks.yaml
   - ./evcc/ks.yaml
+  - ./govee2mqtt/ks.yaml
 
 patches:
   - patch: |-
