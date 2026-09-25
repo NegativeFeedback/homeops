@@ -1,0 +1,21 @@
+---
+# The dragonfly-operator manages its own NetworkPolicy that only allows same-namespace
+# access. This supplemental policy allows cross-namespace cluster traffic to port 6379.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: dragonfly-allow-cluster
+spec:
+  podSelector:
+    matchLabels:
+      app: dragonfly
+      app.kubernetes.io/name: dragonfly
+      app.kubernetes.io/part-of: dragonfly
+  ingress:
+    - from:
+        - namespaceSelector: {}
+      ports:
+        - port: 6379
+          protocol: TCP
+  policyTypes:
+    - Ingress
