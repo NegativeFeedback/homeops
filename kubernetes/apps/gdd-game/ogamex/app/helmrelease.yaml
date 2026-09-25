@@ -113,15 +113,17 @@ spec:
                   failureThreshold: 3
               readiness: *nginxProbes
             # Stock nginx:alpine (not the -unprivileged variant) always starts its master
-            # process as root; it only needs SETUID/SETGID back to drop the worker processes
-            # to the "nginx" user afterwards.
+            # process as root: it needs CHOWN to fix up ownership of /var/cache/nginx/* on
+            # startup (fails with "chown() ... Operation not permitted" without it, even as
+            # uid 0, once capabilities are dropped) and SETUID/SETGID to drop the worker
+            # processes to the "nginx" user afterwards.
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: false
               runAsNonRoot: false
               runAsUser: 0
               runAsGroup: 0
-              capabilities: { drop: ["ALL"], add: ["SETUID", "SETGID"] }
+              capabilities: { drop: ["ALL"], add: ["CHOWN", "SETUID", "SETGID"] }
             resources:
               requests:
                 cpu: 10m
