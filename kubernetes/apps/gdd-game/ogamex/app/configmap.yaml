@@ -4,7 +4,11 @@ kind: ConfigMap
 metadata:
   name: ogamex-nginx
 data:
-  app.conf: |
+  # Named default.conf so this replaces (not sits beside) the stock nginx:alpine default.conf,
+  # which listens on port 80 -- with drop:["ALL"]+add:["SETUID","SETGID"] only (no
+  # NET_BIND_SERVICE) the unprivileged worker can't bind that privileged port and nginx refuses
+  # to start entirely if that file is still present alongside ours.
+  default.conf: |
     server {
         listen 8080;
         index index.php index.html;
