@@ -1,0 +1,250 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app ogamex
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  values:
+    controllers:
+      ogamex:
+        strategy: Recreate
+        annotations:
+          reloader.stakater.com/auto: "true"
+        # nginx serves /var/www/public straight off disk (static assets, gzip_static) but the
+        # image only ships that directory baked into the "app" (php-fpm) container's filesystem
+        # -- copy it into a shared emptyDir once at pod start rather than standing up an RWX
+        # volume just to share one directory between two containers in the same pod.
+        initContainers:
+          copy-assets:
+            image:
+              repository: ghcr.io/negativefeedback/ogamex
+              tag: 7c420ba
+            command: ["sh", "-c", "cp -a /var/www/public/. /shared/"]
+        containers:
+          app:
+            image:
+              repository: ghcr.io/negativefeedback/ogamex
+              tag: 7c420ba
+            env: &env
+              TZ: America/Chicago
+              CONTAINER_ROLE: app
+              APP_NAME: OGameX
+              APP_ENV: production
+              APP_DEBUG: "false"
+              APP_LOG_LEVEL: error
+              APP_URL: "https://ogamex.${SECRET_DOMAIN}"
+              DB_CONNECTION: mysql
+              DB_HOST: ogamex-db.gdd-game.svc.cluster.local
+              DB_PORT: "3306"
+              DB_DATABASE: ogamex
+              DB_USERNAME: ogamex
+              CACHE_STORE: database
+              QUEUE_CONNECTION: database
+              SESSION_DRIVER: database
+              SESSION_LIFETIME: "720"
+              MAIL_MAILER: log
+              BROADCAST_CONNECTION: reverb
+              REVERB_HOST: "ogamex-ws.${SECRET_DOMAIN}"
+              REVERB_PORT: "443"
+              REVERB_SCHEME: https
+              REVERB_SERVER_HOST: "0.0.0.0"
+              REVERB_SERVER_PORT: "8090"
+            envFrom: &envFrom
+              - secretRef:
+                  name: ogamex-secret
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: &fpmPort 9000
+                  initialDelaySeconds: 20
+                  periodSeconds: 15
+                  timeoutSeconds: 5
+                  failureThreshold: 6
+              readiness: *probes
+            # Composer install and the Rust FFI build happen at image-build time (not in
+            # entrypoint-k8s.sh, unlike upstream's dev-oriented entrypoint), and /var/www/storage
+            # + bootstrap/cache are already chowned to www-data (uid/gid 33) in the image -- so
+            # unlike upstream's docker-compose setup this container never needs to run as root.
+            securityContext: &appSecurityContext
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: false
+              runAsNonRoot: true
+              runAsUser: 33
+              runAsGroup: 33
+              capabilities: { drop: ["ALL"] }
+            resources:
+              requests:
+                cpu: 100m
+                memory: 256Mi
+              limits:
+                memory: 1Gi
+
+          nginx:
+            image:
+              repository: nginx
+              tag: alpine
+            env:
+              TZ: America/Chicago
+            probes:
+              liveness: &nginxProbes
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: &httpPort 8080
+                  initialDelaySeconds: 5
+                  periodSeconds: 10
+                  timeoutSeconds: 3
+                  failureThreshold: 3
+              readiness: *nginxProbes
+            # Stock nginx:alpine (not the -unprivileged variant) always starts its master
+            # process as root; it only needs SETUID/SETGID back to drop the worker processes
+            # to the "nginx" user afterwards.
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: false
+              runAsNonRoot: false
+              runAsUser: 0
+              runAsGroup: 0
+              capabilities: { drop: ["ALL"], add: ["SETUID", "SETGID"] }
+            resources:
+              requests:
+                cpu: 10m
+                memory: 32Mi
+              limits:
+                memory: 128Mi
+
+          scheduler:
+            image:
+              repository: ghcr.io/negativefeedback/ogamex
+              tag: 7c420ba
+            env:
+              <<: *env
+              CONTAINER_ROLE: scheduler
+            envFrom: *envFrom
+            securityContext: *appSecurityContext
+            resources:
+              requests:
+                cpu: 10m
+                memory: 128Mi
+              limits:
+                memory: 512Mi
+
+          queue:
+            image:
+              repository: ghcr.io/negativefeedback/ogamex
+              tag: 7c420ba
+            env:
+              <<: *env
+              CONTAINER_ROLE: queue
+            envFrom: *envFrom
+            securityContext: *appSecurityContext
+            resources:
+              requests:
+                cpu: 20m
+                memory: 128Mi
+              limits:
+                memory: 512Mi
+
+          reverb:
+            image:
+              repository: ghcr.io/negativefeedback/ogamex
+              tag: 7c420ba
+            env:
+              <<: *env
+              CONTAINER_ROLE: reverb
+            envFrom: *envFrom
+            probes:
+              liveness: &reverbProbes
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: &reverbPort 8090
+                  initialDelaySeconds: 15
+                  periodSeconds: 15
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness: *reverbProbes
+            securityContext: *appSecurityContext
+            resources:
+              requests:
+                cpu: 20m
+                memory: 128Mi
+              limits:
+                memory: 512Mi
+
+    defaultPodOptions:
+      securityContext:
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile: { type: RuntimeDefault }
+
+    service:
+      app:
+        controller: ogamex
+        ports:
+          http:
+            port: *httpPort
+          ws:
+            port: *reverbPort
+
+    route:
+      app:
+        hostnames: ["ogamex.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: internal
+            namespace: kube-system
+            sectionName: https
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Games
+          gethomepage.dev/name: OGameX
+          gethomepage.dev/description: "LAN only | Browser-based space strategy MMO"
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *httpPort
+      reverb:
+        hostnames: ["ogamex-ws.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: internal
+            namespace: kube-system
+            sectionName: https
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *reverbPort
+
+    persistence:
+      shared:
+        type: emptyDir
+        advancedMounts:
+          ogamex:
+            copy-assets:
+              - path: /shared
+            nginx:
+              - path: /var/www/public
+      nginx-config:
+        type: configMap
+        name: ogamex-nginx
+        advancedMounts:
+          ogamex:
+            nginx:
+              - path: /etc/nginx/conf.d/app.conf
+                subPath: app.conf
+                readOnly: true
