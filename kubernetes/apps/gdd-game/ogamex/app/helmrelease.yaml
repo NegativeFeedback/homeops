@@ -44,7 +44,11 @@ spec:
               APP_ENV: production
               APP_DEBUG: "false"
               APP_LOG_LEVEL: error
-              APP_URL: "https://ogamex.${SECRET_DOMAIN}"
+              # Public entry point is now the pangolin route (ogamex.app.${SECRET_DOMAIN});
+              # the internal Gateway route (ogamex.${SECRET_DOMAIN}) still works as a LAN-direct
+              # path that bypasses pangolin/Authentik, but Laravel needs one canonical APP_URL
+              # for absolute links generated outside a request (queue jobs, scheduler).
+              APP_URL: "https://ogamex.app.${SECRET_DOMAIN}"
               DB_CONNECTION: mysql
               DB_HOST: ogamex-db.gdd-game.svc.cluster.local
               DB_PORT: "3306"
@@ -199,6 +203,26 @@ spec:
     service:
       app:
         controller: ogamex
+        annotations:
+          pangolin-operator/site-ref: homeops
+          pangolin-operator/name: OGameX
+          pangolin-operator/full-domain: ogamex.app.gddnet.io
+          pangolin-operator/port: http
+          pangolin-operator/auth-sso: "true"
+          pangolin-operator/auth-sso-roles: Admin
+          pangolin-operator/target-healthcheck-enabled: "true"
+          pangolin-operator/target-healthcheck-path: /
+          # newt silently never starts monitoring a target whose healthcheck
+          # scheme/mode/interval/etc are left null -- must set them explicitly.
+          pangolin-operator/target-healthcheck-scheme: http
+          pangolin-operator/target-healthcheck-mode: http
+          pangolin-operator/target-healthcheck-interval: "5"
+          pangolin-operator/target-healthcheck-unhealthy-interval: "30"
+          pangolin-operator/target-healthcheck-timeout: "5"
+          pangolin-operator/target-healthcheck-follow-redirects: "true"
+          pangolin-operator/target-healthcheck-method: GET
+          pangolin-operator/target-healthcheck-healthy-threshold: "1"
+          pangolin-operator/target-healthcheck-unhealthy-threshold: "1"
         ports:
           http:
             port: *httpPort
