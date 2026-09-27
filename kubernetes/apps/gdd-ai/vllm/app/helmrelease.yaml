@@ -103,6 +103,8 @@ spec:
                   --max-model-len 32768 \
                   --trust-remote-code \
                   --enforce-eager
+                  --enable-auto-tool-choice \
+                  --tool-call-parser
             env:
               TZ: America/Chicago
               VLLM_WORKER_MULTIPROC_METHOD: spawn
