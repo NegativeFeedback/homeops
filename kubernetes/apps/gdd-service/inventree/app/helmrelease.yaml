@@ -31,7 +31,7 @@ spec:
           server:
             image:
               repository: inventree/inventree
-              tag: 1.5.1@sha256:a8818fe8083deea297c2ef84e578bb8dad98d9dca7ac56da3076ca4f84221da2
+              tag: 1.5.6@sha256:b61e6a7534bf82e70b72d8de53d0983ecda1343554e090baf70246944da65588
             env: &env
               TZ: America/Chicago
               INVENTREE_DB_ENGINE: postgresql
@@ -96,7 +96,7 @@ spec:
           worker:
             image:
               repository: inventree/inventree
-              tag: 1.5.1@sha256:a8818fe8083deea297c2ef84e578bb8dad98d9dca7ac56da3076ca4f84221da2
+              tag: 1.5.6@sha256:b61e6a7534bf82e70b72d8de53d0983ecda1343554e090baf70246944da65588
             args: [invoke, worker]
             env: *env
             envFrom: *envFrom
