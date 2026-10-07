@@ -1,0 +1,69 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/ocirepository-source-v1.json
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: netbird-operator
+spec:
+  interval: 5m
+  layerSelector:
+    mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
+    operation: copy
+  ref:
+    tag: "0.8.0"
+  url: oci://ghcr.io/netbirdio/helm-charts/netbird-operator
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: netbird-operator
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: netbird-operator
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  values:
+    # Self-hosted NetBird management server. Omit this entirely to use
+    # NetBird Cloud (app.netbird.io) instead.
+    managementURL: https://access.gddnet.io
+
+    cluster:
+      # Used to generate Network/NetworkResource names inside NetBird --
+      # matches this cluster's identity across the other tunnel systems
+      # (Pangolin's NewtSite is also named "homeops").
+      name: homeops
+      dns: svc.cluster.local
+
+    netbirdAPI:
+      keyFromSecret:
+        name: netbird-mgmt-api-key
+        key: NB_API_KEY
+
+    webhook:
+      # cert-manager is already deployed cluster-wide; let it provision
+      # the webhook's serving certificate instead of static TLS values.
+      enableCertManager: true
+
+    # Lets NetBird create its own Gateway/HTTPRoute/TCPRoute objects
+    # (GatewayClass controllerName: gateway.netbird.io/controller) to
+    # expose cluster services through NetBird peers. This is a distinct
+    # controller from Cilium's own Gateway API implementation, so the
+    # two coexist without conflict.
+    gatewayAPI:
+      enabled: true
+
+    operator:
+      resources:
+        requests:
+          cpu: 10m
+          memory: 64Mi
+        limits:
+          memory: 256Mi

@@ -12,6 +12,7 @@ resources:
   - ./envoy-gateway/ks.yaml
   - ./k8s-gateway/ks.yaml
   - ./multus/ks.yaml
+  - ./netbird-operator/ks.yaml
   - ./pangolin-operator/ks.yaml
   - ./pangolin-newtsite/ks.yaml
   - ./tailscale-operator/ks.yaml
