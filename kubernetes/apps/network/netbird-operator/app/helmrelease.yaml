@@ -31,14 +31,9 @@ spec:
     remediation:
       retries: 3
   values:
-    # Self-hosted NetBird management server. Omit this entirely to use
-    # NetBird Cloud (app.netbird.io) instead.
     managementURL: https://access.gddnet.io
 
     cluster:
-      # Used to generate Network/NetworkResource names inside NetBird --
-      # matches this cluster's identity across the other tunnel systems
-      # (Pangolin's NewtSite is also named "homeops").
       name: homeops
       dns: svc.cluster.local
 
@@ -48,15 +43,8 @@ spec:
         key: NB_API_KEY
 
     webhook:
-      # cert-manager is already deployed cluster-wide; let it provision
-      # the webhook's serving certificate instead of static TLS values.
-      enableCertManager: true
 
-    # Lets NetBird create its own Gateway/HTTPRoute/TCPRoute objects
-    # (GatewayClass controllerName: gateway.netbird.io/controller) to
-    # expose cluster services through NetBird peers. This is a distinct
-    # controller from Cilium's own Gateway API implementation, so the
-    # two coexist without conflict.
+      enableCertManager: true
     gatewayAPI:
       enabled: true
 
@@ -64,6 +52,6 @@ spec:
       resources:
         requests:
           cpu: 10m
-          memory: 64Mi
+          memory: 128Mi
         limits:
-          memory: 256Mi
+          memory: 512Mi
