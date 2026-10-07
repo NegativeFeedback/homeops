@@ -1,0 +1,187 @@
+---
+apiVersion: netbird.io/v1alpha1
+kind: Group
+metadata:
+  name: k8s-admins
+spec:
+  name: k8s-admins
+---
+apiVersion: netbird.io/v1alpha1
+kind: Group
+metadata:
+  name: k8s-editors
+spec:
+  name: k8s-editors
+---
+apiVersion: netbird.io/v1alpha1
+kind: Group
+metadata:
+  name: k8s-viewers
+spec:
+  name: k8s-viewers
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: netbird-k8s-admins
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+  - kind: Group
+    name: k8s-admins
+    apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: netbird-k8s-editors
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: edit
+subjects:
+  - kind: Group
+    name: k8s-editors
+    apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: netbird-k8s-viewers
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: view
+subjects:
+  - kind: Group
+    name: k8s-viewers
+    apiGroup: rbac.authorization.k8s.io
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: clusterproxy-k8s-admin
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: clusterproxy-k8s-admin
+rules:
+  - apiGroups: [""]
+    resources: ["users", "groups"]
+    verbs: ["impersonate"]
+  - apiGroups: ["authentication.k8s.io"]
+    resources: ["userextras/*", "uids"]
+    verbs: ["impersonate"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: clusterproxy-k8s-admin
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: clusterproxy-k8s-admin
+subjects:
+  - kind: ServiceAccount
+    name: clusterproxy-k8s-admin
+    namespace: network
+---
+apiVersion: netbird.io/v1alpha1
+kind: ClusterProxy
+metadata:
+  name: k8s-admin
+spec:
+  clusterName: homeops-admin
+  apiServer: https://kubernetes.default.svc.cluster.local/
+  serviceAccountName: clusterproxy-k8s-admin
+  groups:
+    - name: k8s-admins
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: clusterproxy-k8s-edit
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: clusterproxy-k8s-edit
+rules:
+  - apiGroups: [""]
+    resources: ["users", "groups"]
+    verbs: ["impersonate"]
+  - apiGroups: ["authentication.k8s.io"]
+    resources: ["userextras/*", "uids"]
+    verbs: ["impersonate"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: clusterproxy-k8s-edit
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: clusterproxy-k8s-edit
+subjects:
+  - kind: ServiceAccount
+    name: clusterproxy-k8s-edit
+    namespace: network
+---
+apiVersion: netbird.io/v1alpha1
+kind: ClusterProxy
+metadata:
+  name: k8s-edit
+spec:
+  clusterName: homeops-edit
+  apiServer: https://kubernetes.default.svc.cluster.local/
+  serviceAccountName: clusterproxy-k8s-edit
+  groups:
+    - name: k8s-editors
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: clusterproxy-k8s-view
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: clusterproxy-k8s-view
+rules:
+  - apiGroups: [""]
+    resources: ["users", "groups"]
+    verbs: ["impersonate"]
+  - apiGroups: ["authentication.k8s.io"]
+    resources: ["userextras/*", "uids"]
+    verbs: ["impersonate"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: clusterproxy-k8s-view
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: clusterproxy-k8s-view
+subjects:
+  - kind: ServiceAccount
+    name: clusterproxy-k8s-view
+    namespace: network
+---
+apiVersion: netbird.io/v1alpha1
+kind: ClusterProxy
+metadata:
+  name: k8s-view
+spec:
+  clusterName: homeops-view
+  apiServer: https://kubernetes.default.svc.cluster.local/
+  serviceAccountName: clusterproxy-k8s-view
+  groups:
+    - name: k8s-viewers
