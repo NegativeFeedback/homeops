@@ -1,0 +1,10 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/netbird.io/networkrouter_v1alpha1.json
+apiVersion: netbird.io/v1alpha1
+kind: NetworkRouter
+metadata:
+  name: homeops
+spec:
+  # peers resolve exposed NetworkResources as <svc>.<ns>.homeops.internal
+  dnsZoneRef:
+    name: homeops.internal
