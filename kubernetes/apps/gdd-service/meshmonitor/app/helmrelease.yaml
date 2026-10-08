@@ -29,7 +29,9 @@ spec:
               NODE_ENV: development
               TZ: America/New_York
               MESHTASTIC_NODE_IP: "10.0.50.211"
-              ALLOWED_ORIGINS: "meshmonitor.gddnet.io:3001"
+              # Must be the exact browser Origin header: scheme + host, no
+              # port (443 is implied for https and isn't included).
+              ALLOWED_ORIGINS: "https://meshmonitor.gddnet.io"
               COOKIE_SECURE: true
             probes:
               liveness: &probes
