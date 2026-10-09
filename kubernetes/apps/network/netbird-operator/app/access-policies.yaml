@@ -1,0 +1,94 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/netbird.io/group_v1alpha1.json
+apiVersion: netbird.io/v1alpha1
+kind: Group
+metadata:
+  name: tier-users
+spec:
+  name: tier-users
+---
+apiVersion: netbird.io/v1alpha1
+kind: Group
+metadata:
+  name: tier-family
+spec:
+  name: tier-family
+---
+apiVersion: netbird.io/v1alpha1
+kind: Group
+metadata:
+  name: tier-admin
+spec:
+  name: tier-admin
+---
+apiVersion: netbird.io/v1alpha1
+kind: Group
+metadata:
+  name: net-servers
+spec:
+  name: net-servers
+---
+apiVersion: netbird.io/v1alpha1
+kind: Group
+metadata:
+  name: net-k8s
+spec:
+  name: net-k8s
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/netbird.io/nbpolicy_v1.json
+apiVersion: netbird.io/v1
+kind: NBPolicy
+metadata:
+  name: admin-all
+spec:
+  name: admin-all
+  description: Administrators reach every tier and both networks
+  sourceGroups:
+    - access_admin
+  destinationGroups:
+    - tier-users
+    - tier-family
+    - tier-admin
+    - net-servers
+    - net-k8s
+  bidirectional: false
+---
+apiVersion: netbird.io/v1
+kind: NBPolicy
+metadata:
+  name: admin-k8s-api
+spec:
+  name: admin-k8s-api
+  description: Administrators use the cluster-admin kube API proxy
+  sourceGroups:
+    - access_admin
+  destinationGroups:
+    - k8s-admins
+  bidirectional: false
+---
+apiVersion: netbird.io/v1
+kind: NBPolicy
+metadata:
+  name: family-apps
+spec:
+  name: family-apps
+  description: Family reaches household and general apps
+  sourceGroups:
+    - access_family
+  destinationGroups:
+    - tier-users
+    - tier-family
+  bidirectional: false
+---
+apiVersion: netbird.io/v1
+kind: NBPolicy
+metadata:
+  name: users-apps
+spec:
+  name: users-apps
+  description: Standard users reach general apps only
+  sourceGroups:
+    - access_users
+  destinationGroups:
+    - tier-users
+  bidirectional: false

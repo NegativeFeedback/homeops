@@ -7,3 +7,4 @@ resources:
   - ./secret.sops.yaml
   - ./k8s-api-proxy.yaml
   - ./network-router.yaml
+  - ./access-policies.yaml
