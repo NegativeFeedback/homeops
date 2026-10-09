@@ -1,4 +1,10 @@
 ---
+# People (access_* groups, synced from authentik via SCIM) are granted access to tiers of
+# resources (tier-* / net-* groups). Policies only connect these groups, so adding a person
+# or exposing a service never needs a policy edit. Policies are one-way (bidirectional: false).
+# NOTE: the operator creates a NetBird rule per protocol only for ports listed here; an NBPolicy
+# with no protocols/ports reports Ready but creates nothing. Datastore/infra ports are withheld
+# from family/users; to expose an app on a new port, add it to the lists.
 # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/netbird.io/group_v1alpha1.json
 apiVersion: netbird.io/v1alpha1
 kind: Group
@@ -52,6 +58,104 @@ spec:
     - net-servers
     - net-k8s
   bidirectional: false
+  protocols:
+    - tcp
+    - udp
+  ports:
+    - 22
+    - 80
+    - 443
+    - 445
+    - 1349
+    - 1688
+    - 1883
+    - 2021
+    - 2283
+    - 3000
+    - 3001
+    - 3003
+    - 3100
+    - 3306
+    - 3389
+    - 4370
+    - 4404
+    - 5000
+    - 5006
+    - 5055
+    - 5369
+    - 5432
+    - 5556
+    - 5558
+    - 5656
+    - 5800
+    - 6000
+    - 6010
+    - 6020
+    - 6052
+    - 6379
+    - 6443
+    - 6789
+    - 6969
+    - 7070
+    - 7575
+    - 7745
+    - 7880
+    - 7946
+    - 8000
+    - 8006
+    - 8008
+    - 8009
+    - 8010
+    - 8075
+    - 8080
+    - 8081
+    - 8083
+    - 8084
+    - 8090
+    - 8095
+    - 8096
+    - 8123
+    - 8188
+    - 8191
+    - 8200
+    - 8201
+    - 8265
+    - 8384
+    - 8405
+    - 8443
+    - 8484
+    - 8686
+    - 8688
+    - 8787
+    - 8788
+    - 8883
+    - 8887
+    - 8888
+    - 9001
+    - 9080
+    - 9090
+    - 9093
+    - 9095
+    - 9100
+    - 9150
+    - 9187
+    - 9300
+    - 9980
+    - 9999
+    - 11211
+    - 11434
+    - 12321
+    - 16379
+    - 18083
+    - 21027
+    - 22000
+    - 24454
+    - 25565
+    - 25575
+    - 30000
+    - 30881
+    - 30882
+    - 50429
 ---
 apiVersion: netbird.io/v1
 kind: NBPolicy
@@ -65,6 +169,11 @@ spec:
   destinationGroups:
     - k8s-admins
   bidirectional: false
+  protocols:
+    - tcp
+  ports:
+    - 443
+    - 6443
 ---
 apiVersion: netbird.io/v1
 kind: NBPolicy
@@ -72,13 +181,85 @@ metadata:
   name: family-apps
 spec:
   name: family-apps
-  description: Family reaches household and general apps
+  description: Family reaches household and general apps (no datastore ports)
   sourceGroups:
     - access_family
   destinationGroups:
     - tier-users
     - tier-family
   bidirectional: false
+  protocols:
+    - tcp
+    - udp
+  ports:
+    - 80
+    - 443
+    - 1349
+    - 1688
+    - 2021
+    - 2283
+    - 3000
+    - 3001
+    - 3003
+    - 4404
+    - 5000
+    - 5006
+    - 5055
+    - 5369
+    - 5556
+    - 5558
+    - 5656
+    - 5800
+    - 6000
+    - 6010
+    - 6020
+    - 6052
+    - 6789
+    - 6969
+    - 7070
+    - 7575
+    - 7745
+    - 7880
+    - 8000
+    - 8008
+    - 8009
+    - 8010
+    - 8075
+    - 8080
+    - 8081
+    - 8083
+    - 8084
+    - 8090
+    - 8095
+    - 8096
+    - 8123
+    - 8188
+    - 8191
+    - 8384
+    - 8405
+    - 8443
+    - 8484
+    - 8686
+    - 8688
+    - 8787
+    - 8788
+    - 8887
+    - 8888
+    - 9001
+    - 9080
+    - 9150
+    - 9980
+    - 9999
+    - 11434
+    - 12321
+    - 21027
+    - 22000
+    - 24454
+    - 25565
+    - 25575
+    - 30000
+    - 30881
+    - 30882
 ---
 apiVersion: netbird.io/v1
 kind: NBPolicy
@@ -86,9 +267,81 @@ metadata:
   name: users-apps
 spec:
   name: users-apps
-  description: Standard users reach general apps only
+  description: Standard users reach general apps only (no datastore ports)
   sourceGroups:
     - access_users
   destinationGroups:
     - tier-users
   bidirectional: false
+  protocols:
+    - tcp
+    - udp
+  ports:
+    - 80
+    - 443
+    - 1349
+    - 1688
+    - 2021
+    - 2283
+    - 3000
+    - 3001
+    - 3003
+    - 4404
+    - 5000
+    - 5006
+    - 5055
+    - 5369
+    - 5556
+    - 5558
+    - 5656
+    - 5800
+    - 6000
+    - 6010
+    - 6020
+    - 6052
+    - 6789
+    - 6969
+    - 7070
+    - 7575
+    - 7745
+    - 7880
+    - 8000
+    - 8008
+    - 8009
+    - 8010
+    - 8075
+    - 8080
+    - 8081
+    - 8083
+    - 8084
+    - 8090
+    - 8095
+    - 8096
+    - 8123
+    - 8188
+    - 8191
+    - 8384
+    - 8405
+    - 8443
+    - 8484
+    - 8686
+    - 8688
+    - 8787
+    - 8788
+    - 8887
+    - 8888
+    - 9001
+    - 9080
+    - 9150
+    - 9980
+    - 9999
+    - 11434
+    - 12321
+    - 21027
+    - 22000
+    - 24454
+    - 25565
+    - 25575
+    - 30000
+    - 30881
+    - 30882
