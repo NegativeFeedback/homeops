@@ -19,20 +19,4 @@ spec:
   serviceRef:
     name: meshmonitor
   groups:
-    - name: meshmonitor-peers
-# Reachable at meshmonitor.gdd-service.homeops.internal on the ports
-# defined on the Service (web:3001, virtualnode:4404, mqtt:1883,
-# tiles:8080).
-#
-# KNOWN GAP: the groups field above is NOT actually being honored right
-# now. The live resource is stuck on the "All" NetBird group and an
-# explicit "meshmonitor Access" policy, both created directly via the
-# NetBird API, neither of which exists anywhere in this repo. The
-# operator's reconciler is failing with "resource ... is in use by proxy
-# ..." -- an orphaned reverse-proxy-service reference left behind by an
-# abandoned HTTPRoute experiment (see git history) that's blocking any
-# further updates to this resource's groups. If this ever gets rebuilt
-# from git alone, access will need to be re-granted manually again until
-# that orphaned proxy reference is cleaned up on NetBird's side (no REST
-# endpoint for it found so far -- it's managed via the operator's
-# internal ReverseProxyServices client, not public API).
+    - name: tier-admin
