@@ -16,6 +16,9 @@ spec:
     cleanupOnFail: true
     remediation:
       retries: 3
+  dependsOn:
+    - name: cloudflare-tunnel
+      namespace: network
   values:
     controllers:
       meeplestats:
@@ -148,28 +151,35 @@ spec:
     service:
       app:
         controller: *app
-        annotations:
-          pangolin-operator/site-ref: homeops
-          pangolin-operator/name: MeepleStats
-          pangolin-operator/full-domain: gamemanager.gddnet.io
-          pangolin-operator/port: http
-          pangolin-operator/icon: https://cdn.jsdelivr.net/gh/selfhst/icons/png/meeplestats.png
-          pangolin-operator/resource-policy: thick-louisiana-waterthrush
         ports:
           http:
             port: *webPort
       api:
         controller: *app
-        annotations:
-          pangolin-operator/site-ref: homeops
-          pangolin-operator/name: MeepleStats API
-          pangolin-operator/full-domain: gamemanager-api.gddnet.io
-          pangolin-operator/port: http
-          pangolin-operator/icon: https://cdn.jsdelivr.net/gh/selfhst/icons/png/meeplestats.png
-          pangolin-operator/resource-policy: thick-louisiana-waterthrush
         ports:
           http:
             port: *apiPort
+    route:
+      app:
+        hostnames: ["gamemanager.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: external
+            namespace: kube-system
+            sectionName: https
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *webPort
+      api:
+        hostnames: ["gamemanager-api.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: external
+            namespace: kube-system
+            sectionName: https
+        rules:
+          - backendRefs:
+              - identifier: api
+                port: *apiPort
     persistence:
       data:
         existingClaim: *app
