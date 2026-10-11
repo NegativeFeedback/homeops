@@ -50,7 +50,6 @@ resources:
   - ./stash-fileflows-sync/ks.yaml
   - ./linkwarden/ks.yaml
   - ./meshmonitor/ks.yaml
-  - ./meeplestats/ks.yaml
 
 patches:
   - patch: |-
