@@ -1,0 +1,14 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/netbird.io/networkresource_v1alpha1.json
+apiVersion: netbird.io/v1alpha1
+kind: NetworkResource
+metadata:
+  name: zwave2mqtt
+spec:
+  networkRouterRef:
+    name: homeops
+    namespace: network
+  serviceRef:
+    name: zwave2mqtt
+  groups:
+    - name: tier-admin

@@ -6,3 +6,4 @@ resources:
   - ./ocirepo.yaml
   - ./externalsecret.yaml
   - ./helmrelease.yaml
+  - ./netbird.yaml
