@@ -1,0 +1,106 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+# Shared BuildKit daemon for Forgejo Actions. Workflows build with `buildctl --addr
+# tcp://buildkitd.gdd-service.svc:1234` instead of running dind in every job pod: persistent
+# layer cache, multi-arch (arm64 via QEMU), and no per-job 780Mi runner image + dind pull.
+# The chart (app-template-v5 OCIRepository) is the one defined by the forgejo-runner kustomization.
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: buildkitd
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: app-template-v5
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  values:
+    controllers:
+      buildkitd:
+        type: statefulset
+        replicas: 1
+        annotations:
+          reloader.stakater.com/auto: "true"
+        initContainers:
+          # Registers qemu-user binfmt handlers on the node so buildkitd can run arm64 layers.
+          binfmt:
+            image:
+              repository: tonistiigi/binfmt
+              tag: qemu-v9.2.2
+            args: ["--install", "arm64"]
+            securityContext:
+              privileged: true
+        containers:
+          app:
+            image:
+              repository: moby/buildkit
+              tag: v0.23.2
+            args:
+              - --addr
+              - tcp://0.0.0.0:1234
+              - --config
+              - /etc/buildkit/buildkitd.toml
+            probes:
+              liveness: &probe
+                enabled: true
+                custom: true
+                spec:
+                  exec:
+                    command: ["buildctl", "--addr", "tcp://127.0.0.1:1234", "debug", "workers"]
+                  initialDelaySeconds: 5
+                  periodSeconds: 30
+                  timeoutSeconds: 10
+              readiness: *probe
+            securityContext:
+              privileged: true
+            resources:
+              requests:
+                cpu: "1"
+                memory: 2Gi
+                ephemeral-storage: 20Gi
+              limits:
+                memory: 16Gi
+
+    configMaps:
+      config:
+        suffix: config
+        data:
+          buildkitd.toml: |-
+            [worker.oci]
+              # prune to ~80GB, below the 100Gi emptyDir sizeLimit
+              gc = true
+              [[worker.oci.gcpolicy]]
+                keepBytes = 80000000000
+                all = true
+            # In-cluster registry is plain HTTP (see Ghostwriter's docker.yml).
+            [registry."forgejo-http:3000"]
+              http = true
+              insecure = true
+
+    service:
+      app:
+        controller: buildkitd
+        ports:
+          http:
+            port: 1234
+
+    persistence:
+      config:
+        type: configMap
+        identifier: config
+        globalMounts:
+          - path: /etc/buildkit
+            readOnly: true
+      cache:
+        # Disposable cache: lost on any pod restart, which is fine. sizeLimit must stay above
+        # the GC keepBytes below or kubelet evicts the pod instead of buildkit pruning.
+        type: emptyDir
+        sizeLimit: 100Gi
+        globalMounts:
+          - path: /var/lib/buildkit

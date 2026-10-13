@@ -97,6 +97,30 @@ spec:
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
+  name: forgejo-buildkit
+  namespace: gdd-service
+spec:
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: buildkitd
+  dependsOn:
+    - name: forgejo-runner
+  interval: 1h
+  path: ./kubernetes/apps/gdd-service/forgejo/buildkit
+  prune: true
+  retryInterval: 2m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: gdd-service
+  timeout: 10m
+  wait: true
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/kustomization-kustomize-v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
   name: forgejo-renovate
   namespace: gdd-service
 spec:
