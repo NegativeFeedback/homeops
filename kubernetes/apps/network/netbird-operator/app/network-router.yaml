@@ -5,6 +5,18 @@ kind: NetworkRouter
 metadata:
   name: homeops
 spec:
+  # operator v0.8.0 defaults to netbird 0.72.4. 0.80 refuses the setup-key login
+  # when NB_DISABLE_UPDATE_SETTINGS=true (the operator sets it) because the login
+  # request carries NB_MANAGEMENT_URL, which counts as a settings override.
+  image: ghcr.io/netbirdio/netbird:0.80.0@sha256:4976692ea44bb93871743d0b742b4a8f97f6425bfc458ca2d78e28fdb8bdf4ad
+  workloadOverride:
+    podTemplate:
+      spec:
+        containers:
+          - name: netbird
+            env:
+              - name: NB_DISABLE_UPDATE_SETTINGS
+                value: "false"
   # peers resolve exposed NetworkResources as <svc>.<ns>.homeops.internal
   dnsZoneRef:
     name: homeops.internal
