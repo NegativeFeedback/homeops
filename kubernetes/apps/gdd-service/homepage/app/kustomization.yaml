@@ -7,4 +7,5 @@ resources:
   - ./helmrelease.yaml
   - ./rbac.yaml
   - ./configmap.yaml
+  - ./netbird.yaml
 #  - ./netpol.yaml

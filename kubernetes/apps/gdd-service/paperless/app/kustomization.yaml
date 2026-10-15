@@ -7,4 +7,5 @@ resources:
   - ./externalsecret.yaml
   - ./pre-consume-config.yaml
   - ./ingress.yaml
+  - ./netbird.yaml
 #  - ./netpol.yaml

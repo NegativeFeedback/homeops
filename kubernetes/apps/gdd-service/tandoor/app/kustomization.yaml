@@ -10,5 +10,6 @@ configMapGenerator:
   - name: tandoor-configmap
     files:
       - ./config/nginx-config
+  - ./netbird.yaml
 generatorOptions:
   disableNameSuffixHash: true

@@ -10,3 +10,4 @@ resources:
   - ./gluetun-auth.yaml
   - ./netpol.yaml
   - ./volsync-db.yaml
+  - ./netbird.yaml

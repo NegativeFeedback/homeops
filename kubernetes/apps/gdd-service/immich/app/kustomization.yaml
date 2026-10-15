@@ -8,3 +8,4 @@ resources:
   - ./helmrelease.yaml
   - ./route.yaml
   - ./publicresource.yaml
+  - ./netbird.yaml

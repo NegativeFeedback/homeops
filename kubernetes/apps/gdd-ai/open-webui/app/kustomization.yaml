@@ -7,3 +7,4 @@ resources:
   - ./secret.yaml
   - ./ingress.yaml
   - ./netpol.yaml
+  - ./netbird.yaml

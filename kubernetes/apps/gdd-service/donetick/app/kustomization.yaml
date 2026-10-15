@@ -7,4 +7,5 @@ resources:
   - ./externalsecret.yaml
   - ./selfhosted.yaml
   - ./volsync.yaml
+  - ./netbird.yaml
 #  - ./netpol.yaml

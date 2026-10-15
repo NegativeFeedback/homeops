@@ -6,3 +6,4 @@ resources:
   - ./helmrelease.yaml
   - ./ingress.yaml
   - ./netpol.yaml
+  - ./netbird.yaml

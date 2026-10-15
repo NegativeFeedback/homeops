@@ -7,3 +7,4 @@ resources:
   - ./ingress.yaml
   - ./netpol.yaml
   - ./volsync.yaml
+  - ./netbird.yaml

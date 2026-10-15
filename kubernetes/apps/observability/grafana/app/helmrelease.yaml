@@ -158,6 +158,7 @@ spec:
           - { name: Alertmanager, orgId: 1 }
           - { name: Loki, orgId: 1 }
           - { name: Prometheus, orgId: 1 }
+          - { name: Prometheus-VPS, orgId: 1 }
         datasources:
           - name: Prometheus
             type: prometheus
@@ -168,6 +169,16 @@ spec:
               prometheusType: Prometheus
               timeInterval: 1m
             isDefault: true
+          # Prometheus on the VPS, reached over NetBird via the Grafana pod sidecar.
+          # TODO: replace host with the VPS peer's NetBird DNS name or 100.x IP.
+          - name: Prometheus-VPS
+            type: prometheus
+            uid: prometheus-vps
+            access: proxy
+            url: http://vps-prometheus.netbird.cloud:9090
+            jsonData:
+              prometheusType: Prometheus
+              timeInterval: 1m
           - name: Loki
             type: loki
             uid: loki

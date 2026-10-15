@@ -6,3 +6,4 @@ resources:
   - ./helmrelease.yaml
   - ./route.yaml
   - ./pangolin.yaml
+  - ./netbird.yaml

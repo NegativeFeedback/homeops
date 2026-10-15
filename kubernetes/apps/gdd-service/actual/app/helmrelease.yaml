@@ -67,11 +67,6 @@ spec:
         seccompProfile: { type: RuntimeDefault }
     service:
       app:
-        # Exposed as a Pangolin PrivateResource (VPN-tunnel only, see
-        # privateresource.yaml) instead of a public web resource -- the
-        # public autodiscover annotations were dropped so this Service no
-        # longer gets a PublicResource, which was gating /openid/callback
-        # behind Pangolin's own auth wall and breaking the OIDC flow.
         ports:
           http:
             port: *port

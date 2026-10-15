@@ -1,0 +1,28 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/netbird.io/networkresource_v1alpha1.json
+apiVersion: netbird.io/v1alpha1
+kind: NetworkResource
+metadata:
+  name: forgejo-http
+spec:
+  networkRouterRef:
+    name: homeops
+    namespace: network
+  serviceRef:
+    name: forgejo-http
+  groups:
+    - name: tier-admin
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/netbird.io/networkresource_v1alpha1.json
+apiVersion: netbird.io/v1alpha1
+kind: NetworkResource
+metadata:
+  name: forgejo-ssh
+spec:
+  networkRouterRef:
+    name: homeops
+    namespace: network
+  serviceRef:
+    name: forgejo-ssh
+  groups:
+    - name: tier-admin
