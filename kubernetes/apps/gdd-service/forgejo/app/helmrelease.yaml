@@ -159,9 +159,12 @@ spec:
     service:
       http:
         type: ClusterIP
+        # chart default is headless (None); NetBird NetworkResources need a real ClusterIP
+        clusterIP: ""
         port: 3000
       ssh:
         type: ClusterIP
+        clusterIP: ""
         port: 22
 
     ingress:

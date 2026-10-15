@@ -5,11 +5,11 @@ kind: Kustomization
 resources:
   - ./externalsecret.yaml
   - ./helmrelease.yaml
+  - ./netbird.yaml
 #  - ./netpol.yaml
 configMapGenerator:
   - name: tandoor-configmap
     files:
       - ./config/nginx-config
-  - ./netbird.yaml
 generatorOptions:
   disableNameSuffixHash: true
