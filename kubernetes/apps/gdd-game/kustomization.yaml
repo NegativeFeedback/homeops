@@ -10,6 +10,7 @@ resources:
   - ./junimoserver/ks.yaml
   - ./ogamex-db/ks.yaml
   - ./ogamex/ks.yaml
+  - ./itrack/ks.yaml
 
 patches:
   - patch: |-
