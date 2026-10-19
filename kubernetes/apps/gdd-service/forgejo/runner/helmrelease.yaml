@@ -72,6 +72,17 @@ spec:
             initContainers:
               - name: dind
                 image: docker:29-dind
+                # The pod has no global IPv6 route, but dockerd (Go) still tries AAAA addresses
+                # first and fails pulls from docker.io with "network is unreachable". Disable IPv6
+                # in the pod's network namespace first, as buildkitd does (privileged, so the
+                # sysctl works). Containers dockerd starts get their own namespace: unaffected.
+                command:
+                  - sh
+                  - -ec
+                  - |
+                    sysctl -w net.ipv6.conf.all.disable_ipv6=1 net.ipv6.conf.default.disable_ipv6=1 || true
+                    exec dockerd-entrypoint.sh "$@"
+                  - dind
                 args:
                   - --insecure-registry=forgejo-http:3000
                 securityContext:
@@ -134,6 +145,17 @@ spec:
             initContainers:
               - name: dind
                 image: docker:29-dind
+                # The pod has no global IPv6 route, but dockerd (Go) still tries AAAA addresses
+                # first and fails pulls from docker.io with "network is unreachable". Disable IPv6
+                # in the pod's network namespace first, as buildkitd does (privileged, so the
+                # sysctl works). Containers dockerd starts get their own namespace: unaffected.
+                command:
+                  - sh
+                  - -ec
+                  - |
+                    sysctl -w net.ipv6.conf.all.disable_ipv6=1 net.ipv6.conf.default.disable_ipv6=1 || true
+                    exec dockerd-entrypoint.sh "$@"
+                  - dind
                 args:
                   - --insecure-registry=forgejo-http:3000
                 securityContext:
