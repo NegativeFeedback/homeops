@@ -24,7 +24,7 @@ spec:
           app:
             image:
               repository: docker.io/evcc/evcc
-              tag: 0.314.2
+              tag: 0.316.2
             env:
               TZ: America/Chicago
             probes:
