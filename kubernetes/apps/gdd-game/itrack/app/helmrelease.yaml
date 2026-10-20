@@ -24,7 +24,7 @@ spec:
           itrack:
             image:
               repository: git.gddnet.io/negativefeedback/itrack
-              tag: latest
+              tag: 28ab8bd
             env:
               PORT: "8090"
               GAME_DIR: "/data/game"
