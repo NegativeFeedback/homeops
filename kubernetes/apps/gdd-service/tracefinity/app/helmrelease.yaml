@@ -41,7 +41,7 @@ spec:
           app:
             image:
               repository: ghcr.io/tracefinity/tracefinity
-              tag: 0.8.0@sha256:d042f96a66c0209e3198b294d98017d80e52711670f522105c468ea121b4de28
+              tag: 0.9.4@sha256:98095252f1456ec3005dd5749e91fb6d34abdb012ec6619fec4db004f1dd2921
             env:
               TZ: America/Chicago
               # Local CPU tracing; prefer BiRefNet Lite, fall back to IS-Net
