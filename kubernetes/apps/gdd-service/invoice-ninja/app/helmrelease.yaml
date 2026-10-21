@@ -1,0 +1,166 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app invoice-ninja
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  values:
+    controllers:
+      invoice-ninja:
+        annotations:
+          secret.reloader.stakater.com/reload: "auto"
+        strategy: Recreate
+        containers:
+          # php-fpm + supervisor (queue worker, scheduler). The image's init.sh
+          # must start as root: it chowns storage/public, then drops to www-data.
+          app:
+            image:
+              repository: invoiceninja/invoiceninja-debian
+              tag: 5.13.49
+            env:
+              TZ: America/Chicago
+              APP_URL: https://invoice.gddnet.io
+              APP_ENV: production
+              APP_DEBUG: "false"
+              REQUIRE_HTTPS: "true"
+              TRUSTED_PROXIES: "*"
+              PDF_GENERATOR: snappdf
+              IS_DOCKER: "true"
+              SCOUT_DRIVER: "null"
+              FILESYSTEM_DISK: debian_docker
+              # No redis deployed: file cache/sessions, DB-backed queue.
+              CACHE_DRIVER: file
+              SESSION_DRIVER: file
+              QUEUE_CONNECTION: database
+              DB_CONNECTION: mysql
+              DB_HOST: invoice-ninja-db.gdd-service.svc.cluster.local
+              DB_PORT: "3306"
+              DB_DATABASE: ninja
+              DB_USERNAME: ninja
+              MAIL_MAILER: smtp
+              MAIL_HOST: smtp-relay.network.svc.cluster.local
+              MAIL_PORT: "25"
+              MAIL_ENCRYPTION: "null"
+              MAIL_FROM_ADDRESS: noreply@gddnet.io
+              MAIL_FROM_NAME: Golden Dog Dev
+            envFrom:
+              - secretRef:
+                  name: invoice-ninja-secret
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: false
+              capabilities:
+                drop: ["ALL"]
+                add: ["CHOWN", "DAC_OVERRIDE", "FOWNER", "SETUID", "SETGID"]
+            resources:
+              requests:
+                cpu: 50m
+                memory: 256Mi
+              limits:
+                memory: 1Gi
+          nginx:
+            image:
+              repository: nginxinc/nginx-unprivileged
+              tag: 1.31.4-alpine
+            probes:
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: &port 8080
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  # first boot runs migrations + seeding
+                  failureThreshold: 60
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: *port
+                  periodSeconds: 20
+                  timeoutSeconds: 5
+                  failureThreshold: 3
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: *port
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 3
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              runAsNonRoot: true
+              runAsUser: 101
+              runAsGroup: 101
+              capabilities: { drop: ["ALL"] }
+            resources:
+              requests:
+                cpu: 10m
+                memory: 32Mi
+              limits:
+                memory: 128Mi
+    defaultPodOptions:
+      securityContext:
+        seccompProfile: { type: RuntimeDefault }
+    service:
+      app:
+        controller: *app
+        ports:
+          http:
+            port: 80
+            targetPort: *port
+    persistence:
+      storage:
+        enabled: true
+        existingClaim: *app
+        advancedMounts:
+          invoice-ninja:
+            app:
+              - path: /var/www/html/storage
+            nginx:
+              - path: /var/www/html/storage
+                readOnly: true
+      # php image copies public assets here on boot; nginx serves them
+      public:
+        type: emptyDir
+        advancedMounts:
+          invoice-ninja:
+            app:
+              - path: /var/www/html/public
+            nginx:
+              - path: /var/www/html/public
+                readOnly: true
+      nginx-conf:
+        type: configMap
+        name: invoice-ninja-nginx
+        advancedMounts:
+          invoice-ninja:
+            nginx:
+              - path: /etc/nginx/conf.d/default.conf
+                subPath: default.conf
+                readOnly: true
+      tmp:
+        type: emptyDir
+        advancedMounts:
+          invoice-ninja:
+            nginx:
+              - path: /tmp

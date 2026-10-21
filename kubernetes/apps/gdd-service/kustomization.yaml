@@ -38,6 +38,8 @@ resources:
   - ./snapotter/ks.yaml
   - ./it-tools/ks.yaml
   - ./pangolin-api/ks.yaml
+  - ./invoice-ninja-db/ks.yaml
+  - ./invoice-ninja/ks.yaml
   - ./convertx/ks.yaml
   - ./bentopdf/ks.yaml
   - ./zipline/ks.yaml
