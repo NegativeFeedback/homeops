@@ -107,7 +107,9 @@ spec:
               STATE_DIR: /state
               PROVIDER: pia
               PANEL_TITLE: Molebridge
-              PANEL_PUBLIC_HOSTS: molebridge.int.gddnet.io
+              # The NetBird proxy rewrites Host to the Service ClusterIP:port and only sets
+              # X-Forwarded-Host to the real name, so both must be listed.
+              PANEL_PUBLIC_HOSTS: molebridge.int.gddnet.io,10.107.131.246:8080
             probes:
               liveness: &probes
                 enabled: true
