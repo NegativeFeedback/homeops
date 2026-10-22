@@ -75,7 +75,6 @@ spec:
                   secretKeyRef:
                     name: molebridge-secret
                     key: NB_SETUP_KEY
-                    optional: true
             probes:
               liveness:
                 enabled: false
