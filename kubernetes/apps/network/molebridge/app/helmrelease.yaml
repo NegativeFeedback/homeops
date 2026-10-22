@@ -1,0 +1,211 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app molebridge
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  values:
+    controllers:
+      molebridge:
+        replicas: 1
+        strategy: Recreate
+        annotations:
+          reloader.stakater.com/auto: "true"
+        initContainers:
+          init:
+            image:
+              repository: docker.io/library/busybox
+              tag: 1.37.0
+            command:
+              - /bin/sh
+              - -c
+              - |
+                set -eu
+                sysctl -w net.ipv4.ip_forward=1
+                sysctl -w net.ipv4.icmp_errors_use_inbound_ifaddr=1
+                sysctl -w net.ipv6.conf.all.forwarding=1 || true
+                sysctl -w net.ipv6.conf.all.disable_ipv6=0 || true
+                sysctl -w net.ipv6.conf.default.disable_ipv6=0 || true
+                for d in /state/panel /state/applier; do
+                  chown 1000:1000 "$d"
+                  chmod 0700 "$d"
+                done
+            securityContext:
+              privileged: true
+              runAsUser: 0
+        containers:
+          exit:
+            image:
+              repository: ghcr.io/irashack/molebridge
+              tag: v0.9.3@sha256:2fcbaf807e03858d09eafdb3ad57f1c4022769ea7970a408e7ea8f647c4a30e9
+            args: ["exit"]
+            env:
+              TZ: America/Chicago
+              TUNNEL_BACKEND: native
+              EXIT_KIND: overlay
+              PROVIDER: pia
+              EXIT_IF: pia
+              EXIT_TABLE: "51821"
+              OVERLAY_IF: wt0
+              OVERLAY_CIDR: 100.64.0.0/10
+              STATE_DIR: /state
+              NB_INTERFACE_NAME: wt0
+              NB_HOSTNAME: molebridge-exit
+              NB_MANAGEMENT_URL: https://access.gddnet.io
+              NB_LOG_LEVEL: info
+              NB_DISABLE_DNS: "true"
+              NB_DISABLE_USERSPACE_ROUTING: "true"
+              NB_EXTRA_IFACE_BLACKLIST: pia
+              PIA_SECRETS_DIR: /secrets/pia
+              PIA_PORT_FORWARD: "off"
+              NB_SETUP_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: molebridge-secret
+                    key: NB_SETUP_KEY
+                    optional: true
+            probes:
+              liveness:
+                enabled: false
+              readiness:
+                enabled: false
+              startup:
+                enabled: false
+            securityContext:
+              runAsUser: 0
+              runAsGroup: 0
+              runAsNonRoot: false
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop: ["ALL"]
+                add: ["NET_ADMIN", "NET_RAW", "DAC_OVERRIDE"]
+            resources:
+              requests:
+                cpu: 25m
+                memory: 128Mi
+              limits:
+                memory: 512Mi
+          switchyard:
+            image:
+              repository: ghcr.io/irashack/molebridge
+              tag: v0.9.3@sha256:2fcbaf807e03858d09eafdb3ad57f1c4022769ea7970a408e7ea8f647c4a30e9
+            args: ["panel"]
+            env:
+              TZ: America/Chicago
+              STATE_DIR: /state
+              PROVIDER: pia
+              PANEL_TITLE: Molebridge
+              PANEL_PUBLIC_HOSTS: molebridge.int.gddnet.io
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /healthz
+                    port: &port 8080
+                  initialDelaySeconds: 20
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 3
+              readiness: *probes
+            securityContext:
+              runAsUser: 1000
+              runAsGroup: 1000
+              runAsNonRoot: true
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop: ["ALL"]
+            resources:
+              requests:
+                cpu: 10m
+                memory: 32Mi
+              limits:
+                memory: 128Mi
+    defaultPodOptions:
+      securityContext:
+        seccompProfile: { type: RuntimeDefault }
+    service:
+      app:
+        controller: molebridge
+        ports:
+          http:
+            port: *port
+    persistence:
+      run:
+        type: emptyDir
+        medium: Memory
+        sizeLimit: 4Mi
+        advancedMounts:
+          molebridge:
+            exit:
+              - path: /run
+      nblog:
+        type: emptyDir
+        medium: Memory
+        sizeLimit: 16Mi
+        advancedMounts:
+          molebridge:
+            exit:
+              - path: /var/log/netbird
+      state-panel:
+        type: emptyDir
+        advancedMounts:
+          molebridge:
+            init:
+              - path: /state/panel
+            exit:
+              - path: /state/panel
+                readOnly: true
+            switchyard:
+              - path: /state/panel
+      state-applier:
+        type: emptyDir
+        advancedMounts:
+          molebridge:
+            init:
+              - path: /state/applier
+            exit:
+              - path: /state/applier
+            switchyard:
+              - path: /state/applier
+                readOnly: true
+      netbird-data:
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
+        size: 1Gi
+        storageClass: ceph-block
+        advancedMounts:
+          molebridge:
+            exit:
+              - path: /var/lib/netbird
+      tunnel:
+        type: secret
+        name: molebridge-secret
+        defaultMode: 0600
+        advancedMounts:
+          molebridge:
+            exit:
+              - path: /config/wg_confs/pia.conf
+                subPath: pia.conf
+                readOnly: true
+              - path: /secrets/pia/username
+                subPath: username
+                readOnly: true
+              - path: /secrets/pia/password
+                subPath: password
+                readOnly: true
