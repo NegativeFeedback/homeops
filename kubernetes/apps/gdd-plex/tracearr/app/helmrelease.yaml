@@ -24,7 +24,7 @@ spec:
           app:
             image:
               repository: ghcr.io/connorgallopo/tracearr
-              tag: 2.6.2
+              tag: 3.1.1
             env:
               TZ: America/Chicago
               PORT: &port 3000
