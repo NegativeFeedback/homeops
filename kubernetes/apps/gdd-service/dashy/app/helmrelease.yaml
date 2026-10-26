@@ -29,7 +29,7 @@ spec:
           app:
             image:
               repository: lissy93/dashy
-              tag: "4.8.7"
+              tag: "4.9.0"
             env:
               NODE_ENV: production
               TZ: America/Chicago
