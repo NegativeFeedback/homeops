@@ -32,7 +32,7 @@ spec:
           app:
             image:
               repository: moby/buildkit
-              tag: v0.23.2
+              tag: v0.34.1
             # The pod has no global IPv6 route, but Go still races AAAA addresses first and
             # intermittently fails registry pulls with "network is unreachable" under parallel
             # builds. Disabling IPv6 makes Go skip v6 entirely (privileged, so sysctl works).
