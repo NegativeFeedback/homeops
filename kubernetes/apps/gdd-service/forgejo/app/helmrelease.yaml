@@ -129,7 +129,7 @@ spec:
           ACCOUNT_LINKING: login
         cache:
           ADAPTER: redis
-          HOST: "redis+cluster://dragonfly.database.svc.cluster.local:6379/3?pool_size=100&idle_timeout=180s"
+          HOST: "redis://dragonfly.database.svc.cluster.local:6379/3?pool_size=100&idle_timeout=180s"
         session:
           PROVIDER: redis
           PROVIDER_CONFIG: "network=tcp,addr=dragonfly.database.svc.cluster.local:6379,db=4,pool_size=100,idle_timeout=180"
