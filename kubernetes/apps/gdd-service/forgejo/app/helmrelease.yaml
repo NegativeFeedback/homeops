@@ -1,11 +1,17 @@
 ---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/source.toolkit.fluxcd.io/ocirepository_v1.json
 apiVersion: source.toolkit.fluxcd.io/v1
-kind: HelmRepository
+kind: OCIRepository
 metadata:
-  name: gitea-charts
+  name: forgejo
 spec:
-  interval: 2h
-  url: https://dl.gitea.com/charts/
+  interval: 5m
+  layerSelector:
+    mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
+    operation: copy
+  ref:
+    tag: 17.3.1
+  url: oci://code.forgejo.org/forgejo-helm/forgejo
 ---
 # yaml-language-server: $schema=https://kubernetes-schemas.18b.haus/helm.toolkit.fluxcd.io/helmrelease_v2.json
 apiVersion: helm.toolkit.fluxcd.io/v2
@@ -13,14 +19,9 @@ kind: HelmRelease
 metadata:
   name: forgejo
 spec:
-  chart:
-    spec:
-      # renovate: registryUrl=https://dl.gitea.com/charts/ chart=gitea
-      chart: gitea
-      version: 12.6.0
-      sourceRef:
-        kind: HelmRepository
-        name: gitea-charts
+  chartRef:
+    kind: OCIRepository
+    name: forgejo
   interval: 2h
   timeout: 10m
   install:
@@ -53,7 +54,7 @@ spec:
     image:
       registry: codeberg.org
       repository: forgejo/forgejo
-      tag: 16.0.3
+      tag: 17.0.0
       rootless: true
 
     replicaCount: 1
@@ -153,8 +154,6 @@ spec:
           groupClaimName: groups
           adminGroup: service-authentik-admin
           iconUrl: "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/main/png/authentik.png"
-
-      existingSecret: forgejo-secret
 
     service:
       http:
