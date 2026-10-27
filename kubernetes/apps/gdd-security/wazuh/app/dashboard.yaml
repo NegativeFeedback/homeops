@@ -39,6 +39,16 @@ spec:
       containers:
         - name: dashboard
           image: docker.io/wazuh/wazuh-dashboard:4.14.1
+          # The image seeds its keystore from these (default kibanaserver/kibanaserver)
+          # and the keystore overrides opensearch.username/password in the config file.
+          env:
+            - name: DASHBOARD_USERNAME
+              value: kibanaserver
+            - name: DASHBOARD_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: wazuh-secret
+                  key: DASHBOARD_PASSWORD
           ports:
             - name: http
               containerPort: 5601
