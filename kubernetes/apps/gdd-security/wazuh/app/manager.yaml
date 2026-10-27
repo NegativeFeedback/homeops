@@ -187,14 +187,14 @@ data:
       </rule>
       <rule id="100101" level="8">
         <if_sid>100100</if_sid>
-        <field name="action">^login_failed$</field>
+        <action>^login_failed$</action>
         <description>Authentik: failed login for $(context.username)</description>
         <mitre><id>T1110</id></mitre>
         <group>authentication_failed,authentik,</group>
       </rule>
       <rule id="100102" level="7">
         <if_sid>100100</if_sid>
-        <field name="action">^(suspicious_request|policy_exception|configuration_error|impersonation_started)$</field>
+        <action>^(suspicious_request|policy_exception|configuration_error|impersonation_started)$</action>
         <description>Authentik: $(action)</description>
         <group>authentik,</group>
       </rule>
