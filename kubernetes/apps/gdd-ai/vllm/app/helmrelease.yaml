@@ -6,7 +6,7 @@ metadata:
   name: vllm
 spec:
   interval: 1h
-  # First boot downloads ~28GB then loads + online-quantizes the 14B model, which
+  # First boot downloads ~72GB then loads + online-quantizes the 35B MoE model, which
   # far exceeds the default 5m Helm timeout. Without this, Flux declares the install
   # failed mid-download, uninstalls (killing the pod + PVC), and loops forever.
   timeout: 90m
@@ -51,21 +51,21 @@ spec:
           download:
             image:
               repository: intel/llm-scaler-vllm
-              tag: 0.14.0-b8.2
+              tag: 0.26.0-b2
             command:
               - /bin/bash
               - -c
             args:
               - |
                 set -e
-                BF16_DIR=/models/Qwen3-14B-abliterated
+                BF16_DIR=/models/CyberStrike-OffSec-35B-abliterated
                 if [ -f "${BF16_DIR}/config.json" ]; then
                   echo "Model already downloaded."; exit 0
                 fi
                 python3 -m pip install -q hf-transfer huggingface_hub
                 # `huggingface-cli` is deprecated/no-op in newer hub; use `hf`.
                 HF_HUB_ENABLE_HF_TRANSFER=1 hf download \
-                  huihui-ai/Qwen3-14B-abliterated \
+                  huihui-ai/Huihui-CyberStrike-OffSec-35B-abliterated \
                   --local-dir ${BF16_DIR}
             env:
               # Gated repo — token comes from a manually-created secret (NOT in git,
@@ -86,15 +86,15 @@ spec:
           app:
             image:
               repository: intel/llm-scaler-vllm
-              tag: 0.14.0-b8.2
+              tag: 0.26.0-b2
             command:
               - /bin/bash
               - -c
             args:
               - |
                 source /opt/intel/oneapi/setvars.sh --force
-                exec vllm serve /models/Qwen3-14B-abliterated \
-                  --served-model-name Qwen3-14B-abliterated \
+                exec vllm serve /models/CyberStrike-OffSec-35B-abliterated \
+                  --served-model-name CyberStrike-OffSec-35B \
                   --quantization sym_int4 \
                   --dtype float16 \
                   --host 0.0.0.0 \
@@ -104,7 +104,7 @@ spec:
                   --trust-remote-code \
                   --enforce-eager \
                   --enable-auto-tool-choice \
-                  --tool-call-parser hermes
+                  --tool-call-parser qwen3_coder
             env:
               TZ: America/Chicago
               VLLM_WORKER_MULTIPROC_METHOD: spawn
@@ -154,8 +154,8 @@ spec:
                 memory: 8Gi
                 gpu.intel.com/xe: "1"
               limits:
-                # 14B fp16 stages at ~28GB during load; headroom above that.
-                memory: 40Gi
+                # 35B BF16 (~72GB) stages during load + online INT4 quant; verify node RAM.
+                memory: 90Gi
                 gpu.intel.com/xe: "1"
     defaultPodOptions:
       securityContext:
