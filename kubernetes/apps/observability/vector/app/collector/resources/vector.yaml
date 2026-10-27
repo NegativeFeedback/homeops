@@ -1,0 +1,110 @@
+---
+# Pull-based security sources -> Wazuh. Kept out of the aggregator on purpose:
+# the aggregator runs 2 replicas and every replica would poll (duplicate events).
+# This one runs a single replica and dedupes in memory, so a restart replays at
+# most one page of already-seen events.
+#
+# $${VAR} is escaped for Flux substitution; Vector expands it from the pod env.
+data_dir: /vector-data-dir
+
+sources:
+  authentik_source:
+    type: http_client
+    endpoint: https://sso.gddnet.io/api/v3/events/events/?ordering=-created&page_size=100
+    scrape_interval_secs: 60
+    scrape_timeout_secs: 30
+    auth:
+      strategy: bearer
+      token: "$${AUTHENTIK_API_TOKEN}"
+    decoding:
+      codec: json
+
+  netbird_source:
+    type: http_client
+    endpoint: https://access.gddnet.io/api/events/audit
+    scrape_interval_secs: 60
+    scrape_timeout_secs: 30
+    headers:
+      Authorization: ["Token $${NETBIRD_API_TOKEN}"]
+    decoding:
+      codec: json
+
+  # Account audit log (free-plan friendly). Logpush/HTTP-request logs need
+  # Enterprise plus a public receiver, so they are not wired here.
+  cloudflare_source:
+    type: http_client
+    endpoint: https://api.cloudflare.com/client/v4/accounts/$${CF_ACCOUNT_ID}/logs/audit?limit=100&direction=desc
+    scrape_interval_secs: 120
+    scrape_timeout_secs: 30
+    auth:
+      strategy: bearer
+      token: "$${CF_API_TOKEN}"
+    decoding:
+      codec: json
+
+transforms:
+  # API responses wrap the events: assigning an array to the root fans it out
+  # into one event per element.
+  authentik_split:
+    type: remap
+    inputs: ["authentik_source"]
+    source: |
+      . = array!(.results)
+
+  authentik_tag:
+    type: remap
+    inputs: ["authentik_split"]
+    source: |
+      .wz_source = "authentik"
+
+  netbird_tag:
+    type: remap
+    inputs: ["netbird_source"]
+    source: |
+      .wz_source = "netbird"
+
+  cloudflare_split:
+    type: remap
+    inputs: ["cloudflare_source"]
+    source: |
+      . = array!(.result)
+
+  cloudflare_tag:
+    type: remap
+    inputs: ["cloudflare_split"]
+    source: |
+      .wz_source = "cloudflare"
+
+  authentik_dedupe:
+    type: dedupe
+    inputs: ["authentik_tag"]
+    fields:
+      match: ["pk"]
+    cache:
+      num_events: 5000
+
+  netbird_dedupe:
+    type: dedupe
+    inputs: ["netbird_tag"]
+    fields:
+      match: ["id"]
+    cache:
+      num_events: 5000
+
+  cloudflare_dedupe:
+    type: dedupe
+    inputs: ["cloudflare_tag"]
+    fields:
+      match: ["id"]
+    cache:
+      num_events: 5000
+
+sinks:
+  wazuh:
+    inputs: ["authentik_dedupe", "netbird_dedupe", "cloudflare_dedupe"]
+    type: socket
+    mode: tcp
+    address: wazuh-manager.gdd-security.svc.cluster.local:514
+    encoding: { codec: json }
+    framing:
+      method: newline_delimited

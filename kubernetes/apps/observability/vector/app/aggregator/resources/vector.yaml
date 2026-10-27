@@ -29,11 +29,41 @@ sources:
 #    address: 0.0.0.0:6020
 #    mode: tcp
 
+  # Talos machine logging (json_lines) -- point machine.logging.destinations at
+  # tcp://10.0.32.50:6030 and the kernel log at talos.logging.kernel=tcp://10.0.32.50:6030
+  talos_source:
+    type: socket
+    mode: tcp
+    address: 0.0.0.0:6030
+    framing:
+      method: newline_delimited
+    decoding:
+      codec: json
+
 #
 # Transforms
 #
 
 transforms:
+  talos_wazuh_remap:
+    type: remap
+    inputs: ["talos_source"]
+    source: |
+      .wz_source = "talos"
+      .host = .host || .["talos-service"] || "talos"
+
+  # Only the namespaces that carry auth/network/policy signal; the rest stays Loki-only.
+  kubernetes_wazuh_filter:
+    type: filter
+    inputs: ["kubernetes_remap"]
+    condition: 'includes(["gdd-security", "network", "kyverno", "kube-system", "flux-system", "cert-manager", "external-secrets"], .kubernetes.pod_namespace)'
+
+  kubernetes_wazuh_remap:
+    type: remap
+    inputs: ["kubernetes_wazuh_filter"]
+    source: |
+      .wz_source = "kubernetes"
+
   kubernetes_remap:
     type: remap
     inputs: ["kubernetes_source"]
@@ -96,6 +126,21 @@ transforms:
 #
 
 sinks:
+  # Wazuh manager syslog listener (gdd-security). Events are JSON lines tagged
+  # with wz_source; rules live in wazuh/app/manager.yaml (local_rules.xml).
+  wazuh:
+    inputs: ["talos_wazuh_remap", "kubernetes_wazuh_remap"]
+    type: socket
+    mode: tcp
+    address: wazuh-manager.gdd-security.svc.cluster.local:514
+    encoding: { codec: json }
+    framing:
+      method: newline_delimited
+    buffer:
+      type: disk
+      max_size: 268435488
+      when_full: drop_newest
+
   journald:
     inputs: ["journald_source"]
     type: loki

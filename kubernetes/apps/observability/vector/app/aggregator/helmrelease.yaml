@@ -63,6 +63,8 @@ spec:
             port: 6010
           vyos:
             port: 6020
+          talos:
+            port: 6030
     persistence:
       config:
         type: configMap
