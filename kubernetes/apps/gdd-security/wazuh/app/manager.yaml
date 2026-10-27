@@ -172,6 +172,24 @@ data:
         <location>/var/ossec/logs/active-responses.log</location>
       </localfile>
     </ossec_config>
+  local_decoder.xml: |
+    <!-- UniFi Network "Activity Logging" SIEM export (CEF over syslog), e.g.
+         CEF:0|Ubiquiti|UniFi Network|9.0.114|544|Admin Accessed UniFi Network|1|UNIFIcategory=System msg=...
+         The syslog predecoder takes "CEF" as the program name, so the CEF: prefix may be gone. -->
+    <!-- syslog header present: predecoder yields program_name=CEF and message "0|Ubiquiti|..." -->
+    <decoder name="unifi-cef">
+      <program_name>CEF</program_name>
+      <prematch type="pcre2">^0\|Ubiquiti\|</prematch>
+    </decoder>
+    <!-- no program name (e.g. bare CEF line) -->
+    <decoder name="unifi-cef">
+      <prematch type="pcre2">CEF:0\|Ubiquiti\|</prematch>
+    </decoder>
+    <decoder name="unifi-cef-fields">
+      <parent>unifi-cef</parent>
+      <regex type="pcre2">(?:CEF:)?0\|Ubiquiti\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|(\d+)\|(.*)$</regex>
+      <order>unifi_app,unifi_version,unifi_event_id,unifi_event_name,unifi_severity,unifi_ext</order>
+    </decoder>
   local_rules.xml: |
     <!-- Events pushed by Vector (kubernetes/apps/observability/vector) as JSON over
          syslog/tcp. Vector stamps each one with wz_source; the stock `json` decoder
@@ -261,6 +279,52 @@ data:
         <field name="message" type="pcre2">(?i)\b(forbidden|unauthori[sz]ed|permission denied|authentication failed|invalid (token|credentials))\b</field>
         <description>Kubernetes log: auth failure in $(kubernetes.pod_namespace)/$(custom_app_name)</description>
         <group>kubernetes,authentication_failed,</group>
+      </rule>
+
+      <!-- UniFi Network activity log (CEF). IDs 100200-100299. -->
+      <rule id="100200" level="3">
+        <decoded_as>unifi-cef</decoded_as>
+        <description>UniFi: $(unifi_event_name)</description>
+        <group>unifi,</group>
+      </rule>
+      <rule id="100201" level="8">
+        <if_sid>100200</if_sid>
+        <field name="unifi_event_name" type="pcre2">(?i)(fail|denied|invalid|incorrect|locked)</field>
+        <description>UniFi: authentication problem - $(unifi_event_name)</description>
+        <mitre><id>T1110</id></mitre>
+        <group>unifi,authentication_failed,</group>
+      </rule>
+      <rule id="100202" level="5">
+        <if_sid>100200</if_sid>
+        <field name="unifi_event_name" type="pcre2">(?i)admin.*(access|log)</field>
+        <description>UniFi: admin login - $(unifi_event_name)</description>
+        <group>unifi,authentication_success,</group>
+      </rule>
+      <rule id="100203" level="9">
+        <if_sid>100200</if_sid>
+        <field name="unifi_event_name" type="pcre2">(?i)(threat|intrusion|malware|ips|ids|honeypot|blocked)</field>
+        <description>UniFi: security detection - $(unifi_event_name)</description>
+        <group>unifi,ids,</group>
+      </rule>
+      <rule id="100204" level="6">
+        <if_sid>100200</if_sid>
+        <field name="unifi_event_name" type="pcre2">(?i)(adopt|forget|delet|reset|firmware|provision|restart|reboot)</field>
+        <description>UniFi: device change - $(unifi_event_name)</description>
+        <group>unifi,</group>
+      </rule>
+      <rule id="100205" level="7">
+        <if_sid>100200</if_sid>
+        <field name="unifi_event_name" type="pcre2">(?i)(setting|firewall|rule|vpn|port forward|network|wlan|ssid).*(chang|updat|creat|delet|modif|add|remov)</field>
+        <description>UniFi: configuration change - $(unifi_event_name)</description>
+        <group>unifi,policy_changed,</group>
+      </rule>
+      <!-- Wazuh's stock syslog rule 2501 grabs "login failed" first; re-raise it for UniFi -->
+      <rule id="100206" level="8">
+        <if_sid>2501</if_sid>
+        <decoded_as>unifi-cef</decoded_as>
+        <description>UniFi: authentication failure - $(unifi_event_name)</description>
+        <mitre><id>T1110</id></mitre>
+        <group>unifi,authentication_failed,</group>
       </rule>
     </group>
 ---
@@ -416,6 +480,7 @@ spec:
             # copied over /var/ossec by the image's init on every start
             - { name: config, mountPath: /wazuh-config-mount/etc/ossec.conf, subPath: ossec.conf, readOnly: true }
             - { name: config, mountPath: /wazuh-config-mount/etc/rules/local_rules.xml, subPath: local_rules.xml, readOnly: true }
+            - { name: config, mountPath: /wazuh-config-mount/etc/decoders/local_decoder.xml, subPath: local_decoder.xml, readOnly: true }
             - { name: credentials, mountPath: /wazuh-config-mount/etc/authd.pass, subPath: authd.pass, readOnly: true }
             # file-by-file: mounting a directory would hide the system CA bundle in /etc/ssl
             - { name: certs, mountPath: /etc/ssl/root-ca.pem, subPath: root-ca.pem, readOnly: true }
