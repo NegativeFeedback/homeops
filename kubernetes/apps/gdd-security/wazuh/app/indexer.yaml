@@ -9,19 +9,19 @@ data:
   opensearch.yml: |
     network.host: 0.0.0.0
     node.name: wazuh-indexer-0
-    cluster.name: wazuh
+    cluster.name: wazuh-cluster
     discovery.type: single-node
     # Talos nodes do not raise vm.max_map_count; skip mmap instead of patching the host.
     node.store.allow_mmap: false
     path.data: /var/lib/wazuh-indexer
     path.logs: /var/log/wazuh-indexer
     plugins.security.ssl.http.enabled: true
-    plugins.security.ssl.http.pemcert_filepath: /usr/share/wazuh-indexer/certs/indexer.pem
-    plugins.security.ssl.http.pemkey_filepath: /usr/share/wazuh-indexer/certs/indexer-key.pem
-    plugins.security.ssl.http.pemtrustedcas_filepath: /usr/share/wazuh-indexer/certs/root-ca.pem
-    plugins.security.ssl.transport.pemcert_filepath: /usr/share/wazuh-indexer/certs/indexer.pem
-    plugins.security.ssl.transport.pemkey_filepath: /usr/share/wazuh-indexer/certs/indexer-key.pem
-    plugins.security.ssl.transport.pemtrustedcas_filepath: /usr/share/wazuh-indexer/certs/root-ca.pem
+    plugins.security.ssl.http.pemcert_filepath: /usr/share/wazuh-indexer/config/certs/indexer.pem
+    plugins.security.ssl.http.pemkey_filepath: /usr/share/wazuh-indexer/config/certs/indexer-key.pem
+    plugins.security.ssl.http.pemtrustedcas_filepath: /usr/share/wazuh-indexer/config/certs/root-ca.pem
+    plugins.security.ssl.transport.pemcert_filepath: /usr/share/wazuh-indexer/config/certs/indexer.pem
+    plugins.security.ssl.transport.pemkey_filepath: /usr/share/wazuh-indexer/config/certs/indexer-key.pem
+    plugins.security.ssl.transport.pemtrustedcas_filepath: /usr/share/wazuh-indexer/config/certs/root-ca.pem
     plugins.security.ssl.transport.enforce_hostname_verification: false
     plugins.security.ssl.transport.resolve_hostname: false
     plugins.security.authcz.admin_dn:
@@ -205,22 +205,22 @@ spec:
             - name: data
               mountPath: /var/lib/wazuh-indexer
             - name: certs
-              mountPath: /usr/share/wazuh-indexer/certs
+              mountPath: /usr/share/wazuh-indexer/config/certs
               readOnly: true
             - name: config
-              mountPath: /usr/share/wazuh-indexer/opensearch.yml
+              mountPath: /usr/share/wazuh-indexer/config/opensearch.yml
               subPath: opensearch.yml
               readOnly: true
             - name: config
-              mountPath: /usr/share/wazuh-indexer/opensearch-security/config.yml
+              mountPath: /usr/share/wazuh-indexer/config/opensearch-security/config.yml
               subPath: config.yml
               readOnly: true
             - name: config
-              mountPath: /usr/share/wazuh-indexer/opensearch-security/roles_mapping.yml
+              mountPath: /usr/share/wazuh-indexer/config/opensearch-security/roles_mapping.yml
               subPath: roles_mapping.yml
               readOnly: true
             - name: security
-              mountPath: /usr/share/wazuh-indexer/opensearch-security/internal_users.yml
+              mountPath: /usr/share/wazuh-indexer/config/opensearch-security/internal_users.yml
               subPath: internal_users.yml
               readOnly: true
       volumes:
