@@ -194,7 +194,7 @@ data:
       </rule>
       <rule id="100102" level="7">
         <if_sid>100100</if_sid>
-        <action>^(suspicious_request|policy_exception|configuration_error|impersonation_started)$</action>
+        <action type="pcre2">^(suspicious_request|policy_exception|configuration_error|impersonation_started)$</action>
         <description>Authentik: $(action)</description>
         <group>authentik,</group>
       </rule>
@@ -215,7 +215,7 @@ data:
       </rule>
       <rule id="100111" level="7">
         <if_sid>100110</if_sid>
-        <field name="activity_code">^(setupkey\.|user\.(delete|role\.update|invite)|policy\.|group\.|route\.|dns\.|account\.setting)</field>
+        <field name="activity_code" type="pcre2">^(setupkey\.|user\.(delete|role\.update|invite)|policy\.|group\.|route\.|dns\.|account\.setting)</field>
         <description>NetBird: access-control change ($(activity_code))</description>
         <group>netbird,policy_changed,</group>
       </rule>
@@ -229,8 +229,8 @@ data:
       </rule>
       <rule id="100121" level="6">
         <if_sid>100120</if_sid>
-        <field name="action.type">^(create|delete|update)$</field>
-        <field name="resource.type">dns|tunnel|access|token|firewall|waf|ruleset</field>
+        <field name="action.type" type="pcre2">^(create|delete|update)$</field>
+        <field name="resource.type" type="pcre2">dns|tunnel|access|token|firewall|waf|ruleset</field>
         <description>Cloudflare: $(action.type) on $(resource.type) by $(actor.email)</description>
         <group>cloudflare,policy_changed,</group>
       </rule>
@@ -244,7 +244,7 @@ data:
       </rule>
       <rule id="100131" level="5">
         <if_sid>100130</if_sid>
-        <field name="talos-level">^(error|warning|ERROR|WARNING)$</field>
+        <field name="talos-level" type="pcre2">^(error|warning|ERROR|WARNING)$</field>
         <description>Talos $(talos-service) $(talos-level)</description>
         <group>talos,</group>
       </rule>
