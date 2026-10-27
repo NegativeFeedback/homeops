@@ -50,7 +50,9 @@ transforms:
     inputs: ["talos_source"]
     source: |
       .wz_source = "talos"
-      .host = .host || .["talos-service"] || "talos"
+      if !exists(.host) {
+        .host = get(., ["talos-service"]) ?? "talos"
+      }
 
   # Only the namespaces that carry auth/network/policy signal; the rest stays Loki-only.
   kubernetes_wazuh_filter:
