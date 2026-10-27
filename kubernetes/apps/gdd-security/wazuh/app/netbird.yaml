@@ -1,0 +1,17 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/netbird.io/networkresource_v1alpha1.json
+# Exposes the dashboard on the NetBird network (wazuh-dashboard.gdd-security.homeops.internal).
+# The reverse-proxy service wazuh.access.gddnet.io is created in the NetBird UI
+# and targets this resource. Authentik OIDC is configured by hand (see secret.sops.yaml).
+apiVersion: netbird.io/v1alpha1
+kind: NetworkResource
+metadata:
+  name: wazuh-dashboard
+spec:
+  networkRouterRef:
+    name: homeops
+    namespace: network
+  serviceRef:
+    name: wazuh-dashboard
+  groups:
+    - name: tier-admin

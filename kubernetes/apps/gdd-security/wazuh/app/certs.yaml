@@ -1,0 +1,102 @@
+---
+# Private PKI for Wazuh's internal TLS (indexer REST/transport, filebeat and
+# securityadmin client certs). Nothing outside the namespace trusts this CA.
+# DNs are what plugins.security.authcz.{admin_dn,nodes_dn} match in indexer.yaml:
+#   CN=<commonName>,OU=wazuh,O=wazuh
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: wazuh-selfsigned
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: wazuh-ca
+spec:
+  isCA: true
+  commonName: wazuh-ca
+  secretName: wazuh-ca-tls
+  duration: 87600h
+  privateKey:
+    algorithm: RSA
+    size: 2048
+    encoding: PKCS8
+  issuerRef:
+    name: wazuh-selfsigned
+    kind: Issuer
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: wazuh-ca
+spec:
+  ca:
+    secretName: wazuh-ca-tls
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: wazuh-indexer
+spec:
+  secretName: wazuh-indexer-tls
+  commonName: wazuh-indexer
+  subject:
+    organizations: [wazuh]
+    organizationalUnits: [wazuh]
+  dnsNames:
+    - wazuh-indexer
+    - wazuh-indexer.gdd-security
+    - wazuh-indexer.gdd-security.svc
+    - wazuh-indexer.gdd-security.svc.cluster.local
+    - wazuh-indexer-0.wazuh-indexer-headless
+    - wazuh-indexer-0.wazuh-indexer-headless.gdd-security.svc
+    - localhost
+  ipAddresses: ["127.0.0.1"]
+  usages: [server auth, client auth]
+  privateKey:
+    algorithm: RSA
+    size: 2048
+    encoding: PKCS8
+  issuerRef:
+    name: wazuh-ca
+    kind: Issuer
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: wazuh-admin
+spec:
+  secretName: wazuh-admin-tls
+  commonName: wazuh-admin
+  subject:
+    organizations: [wazuh]
+    organizationalUnits: [wazuh]
+  usages: [client auth]
+  privateKey:
+    algorithm: RSA
+    size: 2048
+    encoding: PKCS8
+  issuerRef:
+    name: wazuh-ca
+    kind: Issuer
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: wazuh-filebeat
+spec:
+  secretName: wazuh-filebeat-tls
+  commonName: wazuh-manager
+  subject:
+    organizations: [wazuh]
+    organizationalUnits: [wazuh]
+  usages: [client auth]
+  privateKey:
+    algorithm: RSA
+    size: 2048
+    encoding: PKCS8
+  issuerRef:
+    name: wazuh-ca
+    kind: Issuer

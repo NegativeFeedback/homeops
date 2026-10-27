@@ -1,0 +1,261 @@
+---
+# Single-node indexer. Scale-out means dropping discovery.type, adding
+# cluster.initial_cluster_manager_nodes + discovery.seed_hosts and replicas > 1.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: wazuh-indexer-config
+data:
+  opensearch.yml: |
+    network.host: 0.0.0.0
+    node.name: wazuh-indexer-0
+    cluster.name: wazuh
+    discovery.type: single-node
+    # Talos nodes do not raise vm.max_map_count; skip mmap instead of patching the host.
+    node.store.allow_mmap: false
+    path.data: /var/lib/wazuh-indexer
+    path.logs: /var/log/wazuh-indexer
+    plugins.security.ssl.http.enabled: true
+    plugins.security.ssl.http.pemcert_filepath: /usr/share/wazuh-indexer/certs/indexer.pem
+    plugins.security.ssl.http.pemkey_filepath: /usr/share/wazuh-indexer/certs/indexer-key.pem
+    plugins.security.ssl.http.pemtrustedcas_filepath: /usr/share/wazuh-indexer/certs/root-ca.pem
+    plugins.security.ssl.transport.pemcert_filepath: /usr/share/wazuh-indexer/certs/indexer.pem
+    plugins.security.ssl.transport.pemkey_filepath: /usr/share/wazuh-indexer/certs/indexer-key.pem
+    plugins.security.ssl.transport.pemtrustedcas_filepath: /usr/share/wazuh-indexer/certs/root-ca.pem
+    plugins.security.ssl.transport.enforce_hostname_verification: false
+    plugins.security.ssl.transport.resolve_hostname: false
+    plugins.security.authcz.admin_dn:
+      - "CN=wazuh-admin,OU=wazuh,O=wazuh"
+    plugins.security.nodes_dn:
+      - "CN=wazuh-indexer,OU=wazuh,O=wazuh"
+    plugins.security.check_snapshot_restore_write_privileges: true
+    plugins.security.enable_snapshot_restore_privilege: true
+    plugins.security.restapi.roles_enabled:
+      - all_access
+      - security_rest_api_access
+    plugins.security.system_indices.enabled: true
+    plugins.security.system_indices.indices:
+      - .opendistro-alerting-config
+      - .opendistro-alerting-alert*
+      - .opendistro-anomaly-results*
+      - .opendistro-anomaly-detector*
+      - .opendistro-anomaly-checkpoints
+      - .opendistro-anomaly-detection-state
+      - .opendistro-reports-*
+      - .opensearch-notifications-*
+      - .opensearch-notebooks
+      - .opensearch-observability
+      - .opendistro-asynchronous-search-response*
+      - .replication-metadata-store
+    compatibility.override_main_response_version: true
+  config.yml: |
+    ---
+    _meta:
+      type: config
+      config_version: 2
+    config:
+      dynamic:
+        http:
+          anonymous_auth_enabled: false
+          xff:
+            enabled: false
+        authc:
+          # order 0: dashboard server user, filebeat and API clients (basic)
+          basic_internal_auth_domain:
+            description: Authenticate via HTTP Basic against the internal users database
+            http_enabled: true
+            transport_enabled: true
+            order: 0
+            http_authenticator:
+              type: basic
+              challenge: false
+            authentication_backend:
+              type: intern
+          # order 1: Authentik bearer tokens handed over by the dashboard
+          openid_auth_domain:
+            description: Authentik OIDC
+            http_enabled: true
+            transport_enabled: true
+            order: 1
+            http_authenticator:
+              type: openid
+              challenge: false
+              config:
+                subject_key: preferred_username
+                roles_key: groups
+                openid_connect_url: https://sso.${SECRET_DOMAIN}/application/o/wazuh/.well-known/openid-configuration
+            authentication_backend:
+              type: noop
+  roles_mapping.yml: |
+    ---
+    _meta:
+      type: rolesmapping
+      config_version: 2
+    all_access:
+      reserved: false
+      hidden: false
+      backend_roles:
+        - admin
+        # Authentik groups carried in the `groups` claim
+        - authentik Admins
+        - wazuh-admins
+      description: Wazuh admins
+    kibana_server:
+      reserved: true
+      users:
+        - kibanaserver
+    kibana_user:
+      reserved: false
+      backend_roles:
+        - kibanauser
+        - authentik Admins
+        - wazuh-admins
+      description: Dashboard access
+    own_index:
+      reserved: false
+      users:
+        - "*"
+      description: Allow full access to an index named like the username
+    readall:
+      reserved: false
+      backend_roles:
+        - readall
+    manage_snapshots:
+      reserved: true
+      backend_roles:
+        - snapshotrestore
+    security_rest_api_access:
+      reserved: true
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wazuh-indexer
+spec:
+  selector:
+    app.kubernetes.io/name: wazuh-indexer
+  ports:
+    - name: https
+      port: 9200
+      targetPort: 9200
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wazuh-indexer-headless
+spec:
+  clusterIP: None
+  selector:
+    app.kubernetes.io/name: wazuh-indexer
+  ports:
+    - name: transport
+      port: 9300
+      targetPort: 9300
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: wazuh-indexer
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  serviceName: wazuh-indexer-headless
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: wazuh-indexer
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: wazuh-indexer
+    spec:
+      securityContext:
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+      containers:
+        - name: indexer
+          image: docker.io/wazuh/wazuh-indexer:4.14.1
+          env:
+            - name: OPENSEARCH_JAVA_OPTS
+              value: -Xms1g -Xmx1g
+            - name: NODE_NAME
+              value: wazuh-indexer-0
+          ports:
+            - name: https
+              containerPort: 9200
+            - name: transport
+              containerPort: 9300
+          readinessProbe:
+            tcpSocket:
+              port: 9200
+            initialDelaySeconds: 30
+            periodSeconds: 15
+          startupProbe:
+            tcpSocket:
+              port: 9200
+            periodSeconds: 10
+            failureThreshold: 60
+          resources:
+            requests:
+              cpu: 500m
+              memory: 2Gi
+            limits:
+              memory: 3Gi
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/wazuh-indexer
+            - name: certs
+              mountPath: /usr/share/wazuh-indexer/certs
+              readOnly: true
+            - name: config
+              mountPath: /usr/share/wazuh-indexer/opensearch.yml
+              subPath: opensearch.yml
+              readOnly: true
+            - name: config
+              mountPath: /usr/share/wazuh-indexer/opensearch-security/config.yml
+              subPath: config.yml
+              readOnly: true
+            - name: config
+              mountPath: /usr/share/wazuh-indexer/opensearch-security/roles_mapping.yml
+              subPath: roles_mapping.yml
+              readOnly: true
+            - name: security
+              mountPath: /usr/share/wazuh-indexer/opensearch-security/internal_users.yml
+              subPath: internal_users.yml
+              readOnly: true
+      volumes:
+        - name: config
+          configMap:
+            name: wazuh-indexer-config
+        - name: security
+          secret:
+            secretName: wazuh-secret
+        - name: certs
+          projected:
+            defaultMode: 0440
+            sources:
+              - secret:
+                  name: wazuh-indexer-tls
+                  items:
+                    - key: ca.crt
+                      path: root-ca.pem
+                    - key: tls.crt
+                      path: indexer.pem
+                    - key: tls.key
+                      path: indexer-key.pem
+              - secret:
+                  name: wazuh-admin-tls
+                  items:
+                    - key: tls.crt
+                      path: admin.pem
+                    - key: tls.key
+                      path: admin-key.pem
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: [ReadWriteOnce]
+        storageClassName: ceph-block
+        resources:
+          requests:
+            storage: 50Gi

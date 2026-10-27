@@ -1,0 +1,455 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: wazuh-manager-config
+data:
+  ossec.conf: |
+    <ossec_config>
+      <global>
+        <jsonout_output>yes</jsonout_output>
+        <alerts_log>yes</alerts_log>
+        <logall>no</logall>
+        <logall_json>no</logall_json>
+        <email_notification>no</email_notification>
+        <agents_disconnection_time>10m</agents_disconnection_time>
+        <agents_disconnection_alert_time>0</agents_disconnection_alert_time>
+        <update_check>yes</update_check>
+      </global>
+
+      <alerts>
+        <log_alert_level>3</log_alert_level>
+        <email_alert_level>12</email_alert_level>
+      </alerts>
+
+      <logging>
+        <log_format>plain</log_format>
+      </logging>
+
+      <!-- Wazuh agents -->
+      <remote>
+        <connection>secure</connection>
+        <port>1514</port>
+        <protocol>tcp</protocol>
+        <queue_size>131072</queue_size>
+      </remote>
+
+      <!-- Agentless sources: Vector (cluster), UniFi, Unraid, anything with a syslog sender.
+           allowed-ips is the only ACL here; the LB is LAN-only. -->
+      <remote>
+        <connection>syslog</connection>
+        <port>514</port>
+        <protocol>tcp</protocol>
+        <allowed-ips>10.0.0.0/8</allowed-ips>
+        <allowed-ips>172.16.0.0/12</allowed-ips>
+        <allowed-ips>192.168.0.0/16</allowed-ips>
+      </remote>
+      <remote>
+        <connection>syslog</connection>
+        <port>514</port>
+        <protocol>udp</protocol>
+        <allowed-ips>10.0.0.0/8</allowed-ips>
+        <allowed-ips>172.16.0.0/12</allowed-ips>
+        <allowed-ips>192.168.0.0/16</allowed-ips>
+      </remote>
+
+      <auth>
+        <disabled>no</disabled>
+        <port>1515</port>
+        <use_source_ip>no</use_source_ip>
+        <force>
+          <enabled>yes</enabled>
+          <key_mismatch>yes</key_mismatch>
+          <disconnected_time enabled="yes">1h</disconnected_time>
+          <after_registration_time>1h</after_registration_time>
+        </force>
+        <purge>yes</purge>
+        <use_password>yes</use_password>
+        <ciphers>HIGH:!ADH:!EXP:!MD5:!RC4:!3DES:!CAMELLIA:@STRENGTH</ciphers>
+        <ssl_verify_host>no</ssl_verify_host>
+        <ssl_manager_cert>etc/sslmanager.cert</ssl_manager_cert>
+        <ssl_manager_key>etc/sslmanager.key</ssl_manager_key>
+        <ssl_auto_negotiate>no</ssl_auto_negotiate>
+      </auth>
+
+      <cluster>
+        <name>wazuh</name>
+        <node_name>node01</node_name>
+        <node_type>master</node_type>
+        <key>00000000000000000000000000000000</key>
+        <port>1516</port>
+        <bind_addr>0.0.0.0</bind_addr>
+        <nodes>
+          <node>wazuh-manager-0</node>
+        </nodes>
+        <hidden>no</hidden>
+        <disabled>yes</disabled>
+      </cluster>
+
+      <!-- Vulnerability detection reads/writes the indexer directly (4.8+) -->
+      <vulnerability-detection>
+        <enabled>yes</enabled>
+        <index-status>yes</index-status>
+        <feed-update-interval>60m</feed-update-interval>
+      </vulnerability-detection>
+
+      <indexer>
+        <enabled>yes</enabled>
+        <hosts>
+          <host>https://wazuh-indexer:9200</host>
+        </hosts>
+        <ssl>
+          <certificate_authorities>
+            <ca>/etc/ssl/root-ca.pem</ca>
+          </certificate_authorities>
+          <certificate>/etc/ssl/filebeat.pem</certificate>
+          <key>/etc/ssl/filebeat-key.pem</key>
+        </ssl>
+      </indexer>
+
+      <rootcheck>
+        <disabled>no</disabled>
+        <check_files>yes</check_files>
+        <check_trojans>yes</check_trojans>
+        <check_dev>yes</check_dev>
+        <check_sys>yes</check_sys>
+        <check_pids>yes</check_pids>
+        <check_ports>yes</check_ports>
+        <check_if>yes</check_if>
+        <frequency>43200</frequency>
+        <skip_nfs>yes</skip_nfs>
+      </rootcheck>
+
+      <wodle name="syscollector">
+        <disabled>no</disabled>
+        <interval>1h</interval>
+        <scan_on_start>yes</scan_on_start>
+        <hardware>yes</hardware>
+        <os>yes</os>
+        <network>yes</network>
+        <packages>yes</packages>
+        <ports all="no">yes</ports>
+        <processes>yes</processes>
+      </wodle>
+
+      <sca>
+        <enabled>yes</enabled>
+        <scan_on_start>yes</scan_on_start>
+        <interval>12h</interval>
+        <skip_nfs>yes</skip_nfs>
+      </sca>
+
+      <syscheck>
+        <disabled>no</disabled>
+        <frequency>43200</frequency>
+        <scan_on_start>yes</scan_on_start>
+        <directories>/etc,/usr/bin,/usr/sbin</directories>
+        <directories>/bin,/sbin,/boot</directories>
+        <ignore>/etc/mtab</ignore>
+        <ignore>/etc/random-seed</ignore>
+        <ignore type="sregex">.log$|.swp$</ignore>
+        <skip_nfs>yes</skip_nfs>
+        <skip_dev>yes</skip_dev>
+        <skip_proc>yes</skip_proc>
+        <skip_sys>yes</skip_sys>
+      </syscheck>
+
+      <ruleset>
+        <decoder_dir>ruleset/decoders</decoder_dir>
+        <decoder_dir>etc/decoders</decoder_dir>
+        <rule_dir>ruleset/rules</rule_dir>
+        <rule_dir>etc/rules</rule_dir>
+        <list>etc/lists/audit-keys</list>
+        <list>etc/lists/amazon/aws-eventnames</list>
+        <list>etc/lists/security-eventchannel</list>
+        <list>etc/lists/malicious-ioc/malware-hashes</list>
+        <list>etc/lists/malicious-ioc/malicious-ip</list>
+        <list>etc/lists/malicious-ioc/malicious-domains</list>
+      </ruleset>
+
+      <localfile>
+        <log_format>syslog</log_format>
+        <location>/var/ossec/logs/active-responses.log</location>
+      </localfile>
+    </ossec_config>
+  local_rules.xml: |
+    <!-- Events pushed by Vector (kubernetes/apps/observability/vector) as JSON over
+         syslog/tcp. Vector stamps each one with wz_source; the stock `json` decoder
+         flattens the rest into fields. IDs 100100-100199 are reserved for these. -->
+    <group name="local,vector,">
+
+      <!-- Authentik: /api/v3/events/events poll -->
+      <rule id="100100" level="3">
+        <decoded_as>json</decoded_as>
+        <field name="wz_source">^authentik$</field>
+        <description>Authentik event: $(action)</description>
+        <group>authentik,</group>
+      </rule>
+      <rule id="100101" level="8">
+        <if_sid>100100</if_sid>
+        <field name="action">^login_failed$</field>
+        <description>Authentik: failed login for $(context.username)</description>
+        <mitre><id>T1110</id></mitre>
+        <group>authentication_failed,authentik,</group>
+      </rule>
+      <rule id="100102" level="7">
+        <if_sid>100100</if_sid>
+        <field name="action">^(suspicious_request|policy_exception|configuration_error|impersonation_started)$</field>
+        <description>Authentik: $(action)</description>
+        <group>authentik,</group>
+      </rule>
+      <rule id="100103" level="10" frequency="6" timeframe="120">
+        <if_matched_sid>100101</if_matched_sid>
+        <same_field>context.username</same_field>
+        <description>Authentik: repeated failed logins for $(context.username)</description>
+        <mitre><id>T1110</id></mitre>
+        <group>authentication_failures,authentik,</group>
+      </rule>
+
+      <!-- NetBird: management API audit events -->
+      <rule id="100110" level="3">
+        <decoded_as>json</decoded_as>
+        <field name="wz_source">^netbird$</field>
+        <description>NetBird audit: $(activity)</description>
+        <group>netbird,</group>
+      </rule>
+      <rule id="100111" level="7">
+        <if_sid>100110</if_sid>
+        <field name="activity_code">^(setupkey\.|user\.(delete|role\.update|invite)|policy\.|group\.|route\.|dns\.|account\.setting)</field>
+        <description>NetBird: access-control change ($(activity_code))</description>
+        <group>netbird,policy_changed,</group>
+      </rule>
+
+      <!-- Cloudflare: account audit log poll -->
+      <rule id="100120" level="3">
+        <decoded_as>json</decoded_as>
+        <field name="wz_source">^cloudflare$</field>
+        <description>Cloudflare audit: $(action.type) $(resource.type)</description>
+        <group>cloudflare,</group>
+      </rule>
+      <rule id="100121" level="6">
+        <if_sid>100120</if_sid>
+        <field name="action.type">^(create|delete|update)$</field>
+        <field name="resource.type">dns|tunnel|access|token|firewall|waf|ruleset</field>
+        <description>Cloudflare: $(action.type) on $(resource.type) by $(actor.email)</description>
+        <group>cloudflare,policy_changed,</group>
+      </rule>
+
+      <!-- Talos: machine logging (json_lines) -->
+      <rule id="100130" level="2">
+        <decoded_as>json</decoded_as>
+        <field name="wz_source">^talos$</field>
+        <description>Talos: $(talos-service)</description>
+        <group>talos,</group>
+      </rule>
+      <rule id="100131" level="5">
+        <if_sid>100130</if_sid>
+        <field name="talos-level">^(error|warning|ERROR|WARNING)$</field>
+        <description>Talos $(talos-service) $(talos-level)</description>
+        <group>talos,</group>
+      </rule>
+
+      <!-- Kubernetes pod logs from the security-relevant namespaces -->
+      <rule id="100140" level="2">
+        <decoded_as>json</decoded_as>
+        <field name="wz_source">^kubernetes$</field>
+        <description>Kubernetes log: $(kubernetes.pod_namespace)/$(custom_app_name)</description>
+        <group>kubernetes,</group>
+      </rule>
+      <rule id="100141" level="5">
+        <if_sid>100140</if_sid>
+        <field name="message" type="pcre2">(?i)\b(forbidden|unauthori[sz]ed|permission denied|authentication failed|invalid (token|credentials))\b</field>
+        <description>Kubernetes log: auth failure in $(kubernetes.pod_namespace)/$(custom_app_name)</description>
+        <group>kubernetes,authentication_failed,</group>
+      </rule>
+    </group>
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wazuh-manager
+spec:
+  selector:
+    app.kubernetes.io/name: wazuh-manager
+  ports:
+    - name: agents
+      port: 1514
+    - name: authd
+      port: 1515
+    - name: syslog-tcp
+      port: 514
+    - name: api
+      port: 55000
+---
+# LAN-facing: agents (1514/1515) and agentless syslog (514, UniFi/Unraid).
+apiVersion: v1
+kind: Service
+metadata:
+  name: wazuh-manager-lb
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: wazuh.int.${SECRET_DOMAIN}
+    lbipam.cilium.io/ips: 10.0.32.51
+spec:
+  type: LoadBalancer
+  # keep the real client IP so syslog allowed-ips and agent source IPs work
+  externalTrafficPolicy: Local
+  selector:
+    app.kubernetes.io/name: wazuh-manager
+  ports:
+    - name: agents
+      port: 1514
+      protocol: TCP
+    - name: authd
+      port: 1515
+      protocol: TCP
+    - name: syslog-tcp
+      port: 514
+      protocol: TCP
+    - name: syslog-udp
+      port: 514
+      protocol: UDP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wazuh-manager-headless
+spec:
+  clusterIP: None
+  selector:
+    app.kubernetes.io/name: wazuh-manager
+  ports:
+    - name: cluster
+      port: 1516
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: wazuh-manager
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  serviceName: wazuh-manager-headless
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: wazuh-manager
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: wazuh-manager
+    spec:
+      containers:
+        - name: manager
+          image: docker.io/wazuh/wazuh-manager:4.14.1
+          env:
+            - name: INDEXER_URL
+              value: https://wazuh-indexer:9200
+            - name: FILEBEAT_SSL_VERIFICATION_MODE
+              value: full
+            - name: SSL_CERTIFICATE_AUTHORITIES
+              value: /etc/ssl/root-ca.pem
+            - name: SSL_CERTIFICATE
+              value: /etc/ssl/filebeat.pem
+            - name: SSL_KEY
+              value: /etc/ssl/filebeat-key.pem
+            - name: INDEXER_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: wazuh-secret
+                  key: INDEXER_USERNAME
+            - name: INDEXER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: wazuh-secret
+                  key: INDEXER_PASSWORD
+            - name: API_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: wazuh-secret
+                  key: API_USERNAME
+            - name: API_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: wazuh-secret
+                  key: API_PASSWORD
+          ports:
+            - name: agents
+              containerPort: 1514
+            - name: authd
+              containerPort: 1515
+            - name: syslog-tcp
+              containerPort: 514
+              protocol: TCP
+            - name: syslog-udp
+              containerPort: 514
+              protocol: UDP
+            - name: api
+              containerPort: 55000
+          startupProbe:
+            tcpSocket:
+              port: 55000
+            periodSeconds: 10
+            failureThreshold: 60
+          readinessProbe:
+            tcpSocket:
+              port: 1514
+            periodSeconds: 15
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1Gi
+            limits:
+              memory: 3Gi
+          volumeMounts:
+            # persistent state (same layout as the upstream wazuh-docker volumes)
+            - { name: data, mountPath: /var/ossec/api/configuration, subPath: api_configuration }
+            - { name: data, mountPath: /var/ossec/etc, subPath: etc }
+            - { name: data, mountPath: /var/ossec/logs, subPath: logs }
+            - { name: data, mountPath: /var/ossec/queue, subPath: queue }
+            - { name: data, mountPath: /var/ossec/var/multigroups, subPath: multigroups }
+            - { name: data, mountPath: /var/ossec/integrations, subPath: integrations }
+            - { name: data, mountPath: /var/ossec/active-response/bin, subPath: active_response }
+            - { name: data, mountPath: /var/ossec/agentless, subPath: agentless }
+            - { name: data, mountPath: /var/ossec/wodles, subPath: wodles }
+            - { name: data, mountPath: /etc/filebeat, subPath: filebeat_etc }
+            - { name: data, mountPath: /var/lib/filebeat, subPath: filebeat_var }
+            # copied over /var/ossec by the image's init on every start
+            - { name: config, mountPath: /wazuh-config-mount/etc/ossec.conf, subPath: ossec.conf, readOnly: true }
+            - { name: config, mountPath: /wazuh-config-mount/etc/rules/local_rules.xml, subPath: local_rules.xml, readOnly: true }
+            - { name: credentials, mountPath: /wazuh-config-mount/etc/authd.pass, subPath: authd.pass, readOnly: true }
+            # file-by-file: mounting a directory would hide the system CA bundle in /etc/ssl
+            - { name: certs, mountPath: /etc/ssl/root-ca.pem, subPath: root-ca.pem, readOnly: true }
+            - { name: certs, mountPath: /etc/ssl/filebeat.pem, subPath: filebeat.pem, readOnly: true }
+            - { name: certs, mountPath: /etc/ssl/filebeat-key.pem, subPath: filebeat-key.pem, readOnly: true }
+      volumes:
+        - name: config
+          configMap:
+            name: wazuh-manager-config
+        - name: credentials
+          secret:
+            secretName: wazuh-secret
+            items:
+              - key: authd.pass
+                path: authd.pass
+        - name: certs
+          projected:
+            defaultMode: 0444
+            sources:
+              - secret:
+                  name: wazuh-filebeat-tls
+                  items:
+                    - key: ca.crt
+                      path: root-ca.pem
+                    - key: tls.crt
+                      path: filebeat.pem
+                    - key: tls.key
+                      path: filebeat-key.pem
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: [ReadWriteOnce]
+        storageClassName: ceph-block
+        resources:
+          requests:
+            storage: 30Gi

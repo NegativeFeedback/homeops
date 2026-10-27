@@ -10,3 +10,4 @@ resources:
   - ./authentik-operator/ks.yaml
   - ./openbao/ks.yaml
   - ./terrakube/ks.yaml
+  - ./wazuh/ks.yaml
