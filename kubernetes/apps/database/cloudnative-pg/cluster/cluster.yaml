@@ -74,6 +74,11 @@ spec:
         login: true
         passwordSecret:
           name: tracearr-db-secret
+      - name: gdd-game-ttt-user
+        ensure: present
+        login: true
+        passwordSecret:
+          name: ttt-db-secret
 
   monitoring:
     enablePodMonitor: true
