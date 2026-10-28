@@ -11,6 +11,7 @@ resources:
   - ./ogamex-db/ks.yaml
   - ./ogamex/ks.yaml
   - ./itrack/ks.yaml
+  - ./ttt/ks.yaml
 
 patches:
   - patch: |-
