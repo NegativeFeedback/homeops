@@ -59,7 +59,10 @@ spec:
               - |
                 set -e
                 BF16_DIR=/models/CyberStrike-OffSec-35B-abliterated
-                if [ -f "${BF16_DIR}/config.json" ]; then
+                # config.json lands first, so it can't signal completion; use a
+                # marker written only after `hf download` finishes. A restart
+                # mid-pull resumes instead of serving a partial model.
+                if [ -f "${BF16_DIR}/.download-complete" ]; then
                   echo "Model already downloaded."; exit 0
                 fi
                 python3 -m pip install -q hf-transfer huggingface_hub
@@ -67,6 +70,7 @@ spec:
                 HF_HUB_ENABLE_HF_TRANSFER=1 hf download \
                   huihui-ai/Huihui-CyberStrike-OffSec-35B-abliterated \
                   --local-dir ${BF16_DIR}
+                touch "${BF16_DIR}/.download-complete"
             env:
               # Gated repo — token comes from a manually-created secret (NOT in git,
               # not Flux-managed):  kubectl create secret generic hf-token -n gdd-ai
