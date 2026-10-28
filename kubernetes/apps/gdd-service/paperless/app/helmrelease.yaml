@@ -95,9 +95,10 @@ spec:
               tag: latest
             env:
               PAPERLESS_BASE_URL: http://127.0.0.1:8000
-              LLM_PROVIDER: ollama
-              LLM_MODEL: llama3.2:3b
-              OLLAMA_HOST: http://ollama.gdd-ai.svc.cluster.local:11434
+              LLM_PROVIDER: openai
+              LLM_MODEL: CyberStrike-OffSec-35B
+              OPENAI_BASE_URL: http://vllm.gdd-ai.svc.cluster.local:8000/v1
+              OPENAI_API_KEY: vllm-local-no-auth
               AUTO_TAG: "paperless-gpt-auto"
               AUTO_TITLE: "true"
               AUTO_OCR_TAG: "paperless-gpt-ocr-auto"

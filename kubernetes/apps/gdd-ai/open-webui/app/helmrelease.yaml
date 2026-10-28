@@ -16,9 +16,6 @@ spec:
     cleanupOnFail: true
     remediation:
       retries: 3
-  dependsOn:
-    - name: ollama
-      namespace: gdd-ai
   values:
     controllers:
       open-webui:
@@ -32,10 +29,11 @@ spec:
               tag: main
             env:
               TZ: America/Chicago
-              OLLAMA_BASE_URL: http://ollama.gdd-ai.svc.cluster.local:11434
+              ENABLE_OLLAMA_API: "false"
               ENABLE_OPENAI_API: "true"
               OPENAI_API_BASE_URL: http://vllm.gdd-ai.svc.cluster.local:8000/v1
               OPENAI_API_KEY: "vllm-local-no-auth"
+              DEFAULT_MODELS: CyberStrike-OffSec-35B
               WEBUI_SECRET_KEY:
                 valueFrom:
                   secretKeyRef:

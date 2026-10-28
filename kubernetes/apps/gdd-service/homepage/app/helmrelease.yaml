@@ -56,6 +56,9 @@ spec:
                 drop:
                   - ALL
     defaultPodOptions:
+      # app-template v5 stopped mounting the service-account token by default; Homepage's Kubernetes
+      # integration (kubernetes.yaml) discovers services through the API.
+      automountServiceAccountToken: true
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000

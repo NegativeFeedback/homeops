@@ -54,6 +54,9 @@ spec:
               readOnlyRootFilesystem: true
 
     defaultPodOptions:
+      # app-template v5 stopped mounting the service-account token by default; this operator talks to
+      # the Kubernetes API (secrets, objectstores, leader election) and crash-loops without it.
+      automountServiceAccountToken: true
       securityContext:
         runAsNonRoot: true
         runAsGroup: 10001

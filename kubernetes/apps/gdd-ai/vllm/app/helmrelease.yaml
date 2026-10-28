@@ -104,7 +104,7 @@ spec:
                   --host 0.0.0.0 \
                   --port 8000 \
                   --gpu-memory-util 0.90 \
-                  --max-model-len 32768 \
+                  --max-model-len 131072 \
                   --trust-remote-code \
                   --enforce-eager \
                   --enable-auto-tool-choice \

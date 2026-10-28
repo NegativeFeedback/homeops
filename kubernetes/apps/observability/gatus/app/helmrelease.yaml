@@ -62,6 +62,9 @@ spec:
               capabilities: {add: ["NET_RAW"], drop: ["ALL"]}
 
     defaultPodOptions:
+      # app-template v5 stopped mounting the service-account token by default; the sidecar and Gatus
+      # read services and routes through the Kubernetes API.
+      automountServiceAccountToken: true
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
