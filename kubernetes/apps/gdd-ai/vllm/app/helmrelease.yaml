@@ -155,7 +155,7 @@ spec:
                 gpu.intel.com/xe: "1"
               limits:
                 # 35B BF16 (~72GB) stages during load + online INT4 quant; verify node RAM.
-                memory: 90Gi
+                memory: 50Gi
                 gpu.intel.com/xe: "1"
     defaultPodOptions:
       securityContext:
