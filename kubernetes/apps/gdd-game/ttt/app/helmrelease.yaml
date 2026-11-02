@@ -24,7 +24,7 @@ spec:
           app:
             image:
               repository: git.gddnet.io/negativefeedback/bgtrack
-              tag: sha-6f13182
+              tag: sha-c960055
             env:
               TZ: America/Chicago
               TTT_ENV: prod
@@ -46,6 +46,8 @@ spec:
             envFrom:
               - secretRef:
                   name: ttt-secret
+              - secretRef:
+                  name: ttt-bgg
               - secretRef:
                   name: ttt-db
             probes:
