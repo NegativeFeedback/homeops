@@ -24,7 +24,7 @@ spec:
           app:
             image:
               repository: docker.io/wingysam/christmas-community
-              tag: "1.42.0"
+              tag: "1.42.1"
             env:
               TZ: America/Chicago
               LANGUAGE: en-us
