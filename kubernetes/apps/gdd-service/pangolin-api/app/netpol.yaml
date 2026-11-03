@@ -8,12 +8,12 @@ spec:
     matchLabels:
       app.kubernetes.io/name: pangolin-api
   ingress:
-    # Only the pangolin-operator newt site pod may reach this service
+    # Only the NetBird network router pods may reach this service
     - fromEndpoints:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: network
-            app.kubernetes.io/name: newtsite
-            app.kubernetes.io/component: newt
+            app.kubernetes.io/name: networkrouter
+            app.kubernetes.io/instance: homeops
   egress:
     # DNS resolution via CoreDNS
     - toEndpoints:
