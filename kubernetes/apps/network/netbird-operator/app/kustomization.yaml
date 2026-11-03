@@ -8,3 +8,4 @@ resources:
   - ./k8s-api-proxy.yaml
   - ./network-router.yaml
   - ./access-policies.yaml
+  - ./seclab-groups.yaml

@@ -1,0 +1,27 @@
+---
+# Security-lab access tiers. Deliberately disjoint from tier-*, k8s-* and net-*:
+# nothing else references these, no policy uses them as a destination of the
+# homelab groups, and a peer/user must never be in both a seclab-* and a
+# tier-*/k8s-* group. Keep every seclab policy scoped to these three groups only
+# (never the built-in "All" group, which would re-introduce overlap).
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/netbird.io/group_v1alpha1.json
+apiVersion: netbird.io/v1alpha1
+kind: Group
+metadata:
+  name: seclab-admin
+spec:
+  name: seclab-admin
+---
+apiVersion: netbird.io/v1alpha1
+kind: Group
+metadata:
+  name: seclab-privileged
+spec:
+  name: seclab-privileged
+---
+apiVersion: netbird.io/v1alpha1
+kind: Group
+metadata:
+  name: seclab-user
+spec:
+  name: seclab-user
