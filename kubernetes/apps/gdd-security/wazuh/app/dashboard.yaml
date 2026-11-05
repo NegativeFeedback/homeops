@@ -38,7 +38,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: dashboard
-          image: docker.io/wazuh/wazuh-dashboard:4.14.1
+          image: docker.io/wazuh/wazuh-dashboard:4.14.10
           # The image seeds its keystore from these (default kibanaserver/kibanaserver)
           # and the keystore overrides opensearch.username/password in the config file.
           env:
