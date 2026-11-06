@@ -174,7 +174,7 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
       containers:
         - name: indexer
-          image: docker.io/wazuh/wazuh-indexer:4.14.1
+          image: docker.io/wazuh/wazuh-indexer:4.14.10
           env:
             - name: OPENSEARCH_JAVA_OPTS
               value: -Xms1g -Xmx1g
