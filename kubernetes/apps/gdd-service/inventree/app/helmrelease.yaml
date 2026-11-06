@@ -48,6 +48,8 @@ spec:
               INVENTREE_CACHE_PORT: "6379"
               INVENTREE_USE_X_FORWARDED_HOST: "True"
               INVENTREE_USE_X_FORWARDED_PROTO: "True"
+              # Run pending migrations on start (server only, the worker opts out below)
+              INVENTREE_AUTO_UPDATE: "True"
               INVENTREE_LOGIN_ENABLE_SSO: "True"
               INVENTREE_LOGIN_ENABLE_SSO_REG: "True"
               INVENTREE_LOGIN_MAIL_REQUIRED: "False"
@@ -98,7 +100,9 @@ spec:
               repository: inventree/inventree
               tag: 1.6.1@sha256:7c1e251a6c5279fa692ba26ce8c1a351d400517796b4be0dc0c1883c1db46b71
             args: [invoke, worker]
-            env: *env
+            env:
+              <<: *env
+              INVENTREE_AUTO_UPDATE: "False"
             envFrom: *envFrom
             resources:
               requests:
