@@ -25,7 +25,7 @@ spec:
           app:
             image:
               repository: ghcr.io/maziggy/bambuddy
-              tag: 1.2.5.7@sha256:807f67511fa8c2b644b09de50a5d41794372214d00bd04fda59f576d9958d280
+              tag: daily@sha256:f30318802b556dde3e65462beeb2c79dc7347ec5bd27c723ce1bff94423e2b47
             env:
               TZ: America/Chicago
               LOG_LEVEL: INFO
@@ -62,7 +62,7 @@ spec:
           bambu-studio-api:
             image:
               repository: ghcr.io/maziggy/bambu-studio-api
-              tag: latest
+              tag: bambuddy-1.3.1b1@sha256:60d6cc91a28cdba01ba08fd1f2f18d7089bf0b62b785ad06fb3686b01cac8a3f
             env:
               NODE_ENV: production
               PORT: &slicerPort 3001
@@ -97,9 +97,9 @@ spec:
       annotations:
         k8s.v1.cni.cncf.io/networks: |
           [{
-            "name": "multus-vlan50",
+            "name": "multus-vlan60",
             "namespace": "network",
-            "ips": ["10.0.50.202/24"]
+            "ips": ["10.0.60.202/24"]
           }]
       # TODO: remove nodeSelector once multus VLANs are configured on all nodes
       nodeSelector:
