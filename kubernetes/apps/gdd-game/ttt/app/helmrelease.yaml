@@ -24,7 +24,7 @@ spec:
           app:
             image:
               repository: git.gddnet.io/negativefeedback/bgtrack
-              tag: sha-9ecf87f
+              tag: sha-af77429
             env:
               TZ: America/Chicago
               TTT_ENV: prod
