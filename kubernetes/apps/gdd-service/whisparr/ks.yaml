@@ -30,6 +30,7 @@ spec:
       VOLSYNC_MOVER_USER: "1000"
       VOLSYNC_SCHEDULE_B2: '30 4 * * 4'
       VOLSYNC_SCHEDULE_LOCAL: '30 2 * * *'
+      VOLSYNC_UNLOCK: "2026-11-13"
   prune: true
   retryInterval: 2m
   sourceRef:
