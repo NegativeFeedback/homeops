@@ -11,6 +11,9 @@ spec:
   restic:
     copyMethod: "${VOLSYNC_COPYMETHOD:-Snapshot}"
     pruneIntervalDays: 7
+    # Set VOLSYNC_UNLOCK to a new value (e.g. today's date) in the app's ks.yaml to make the
+    # next sync run `restic unlock` first. Clears stale locks left by a killed mover.
+    unlock: "${VOLSYNC_UNLOCK:-}"
     repository: "${APP}-local-volsync"
     volumeSnapshotClassName: "${VOLSYNC_SNAPSHOTCLASS:-csi-ceph-blockpool}"
     cacheCapacity: "${VOLSYNC_CACHE_CAPACITY:-1Gi}"
