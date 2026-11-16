@@ -24,7 +24,7 @@ spec:
           app:
             image:
               repository: ghcr.io/linkwarden/linkwarden
-              tag: v2.16.3
+              tag: v2.17.0
             env:
               TZ: America/Chicago
               NEXTAUTH_URL: "https://linkwarden.barn-walleye.ts.net"
