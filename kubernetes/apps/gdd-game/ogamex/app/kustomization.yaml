@@ -6,3 +6,4 @@ resources:
   - ./helmrelease.yaml
   - ./configmap.yaml
   - ./secret.sops.yaml
+  - ./netbird.yaml

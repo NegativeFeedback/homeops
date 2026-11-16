@@ -21,7 +21,7 @@ sources:
 
   netbird_source:
     type: http_client
-    endpoint: https://access.gddnet.io/api/events/audit
+    endpoint: https://edge.gddnet.io/api/events/audit
     scrape_interval_secs: 60
     scrape_timeout_secs: 30
     headers:
@@ -56,6 +56,8 @@ transforms:
     inputs: ["authentik_split"]
     source: |
       .wz_source = "authentik"
+      # `action` is a reserved Wazuh field name; rules key on authentik_action
+      .authentik_action = .action
 
   netbird_tag:
     type: remap

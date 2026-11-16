@@ -11,3 +11,4 @@ resources:
   - ./pvc.yaml
   - ./helmrelease.yaml
   - ./occ-maintenance-job.yaml
+  - ./netbird.yaml

@@ -22,7 +22,10 @@ metadata:
     # entered under Settings > Authentication > OIDC Providers in its UI, or
     # via its API) — this Secret still gets created for convenience, it just
     # has to be copy-pasted in rather than wired through envFrom.
-    authentik.gddnet.io/oauth-redirect-uris: "https://dockhand.barn-walleye.ts.net/api/auth/oidc/callback"
+    # Comma-separated: Tailscale ingress + the NetBird reverse-proxy service
+    # (private, dockhand.access.gddnet.io). The operator owns this list, so a
+    # URI added by hand in Authentik gets reverted on the next reconcile.
+    authentik.gddnet.io/oauth-redirect-uris: "https://dockhand.barn-walleye.ts.net/api/auth/oidc/callback,https://dockhand.access.gddnet.io/api/auth/oidc/callback"
 spec:
   ingressClassName: tailscale
   rules:

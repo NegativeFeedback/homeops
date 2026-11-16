@@ -63,7 +63,7 @@ spec:
               STATE_DIR: /state
               NB_INTERFACE_NAME: wt0
               NB_HOSTNAME: molebridge-exit
-              NB_MANAGEMENT_URL: https://access.gddnet.io
+              NB_MANAGEMENT_URL: https://edge.gddnet.io
               NB_LOG_LEVEL: info
               NB_DISABLE_DNS: "true"
               NB_DISABLE_USERSPACE_ROUTING: "true"
