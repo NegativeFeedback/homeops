@@ -112,3 +112,8 @@ spec:
         size: 2Gi
         globalMounts:
           - path: /app/config
+      tmp:
+        # readOnlyRootFilesystem: SQLite needs a writable temp dir for index migrations
+        type: emptyDir
+        globalMounts:
+          - path: /tmp
