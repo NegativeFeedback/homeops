@@ -26,8 +26,10 @@ spec:
         containers:
           app:
             image:
-              repository: mirror.gcr.io/fallenbagel/jellyseerr
-              tag: preview-OIDC@sha256:9f3195998306da6548fc3b2420d114dda64a6e904f41e911168788fb410a7972
+              # OIDC is still preview-only in Seerr (not in any stable release as of 2026-11).
+              # Swap to a stable tag once OIDC lands upstream.
+              repository: ghcr.io/seerr-team/seerr
+              tag: preview-new-oidc@sha256:6970dc3fbfa1d335583937f1bc85794266a8d8a4c5b348716fede906085fc540
             env:
               PROMETHEUS_ENABLED: true
               TZ: America/Chicago
