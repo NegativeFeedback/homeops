@@ -28,7 +28,7 @@ spec:
             env:
               TZ: America/Chicago
               ACTUAL_PORT: &port 5006
-              ACTUAL_OPENID_SERVER_HOSTNAME: "https://actual.app.gddnet.io"
+              ACTUAL_OPENID_SERVER_HOSTNAME: "https://actual.int.gddnet.io"
               ACTUAL_OPENID_DISCOVERY_URL: "https://sso.${SECRET_DOMAIN}/application/o/actual/.well-known/openid-configuration"
               ACTUAL_OPENID_ENFORCE: "true"
             envFrom:
