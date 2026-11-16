@@ -1,0 +1,40 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/netbird.io/networkresource_v1alpha1.json
+apiVersion: netbird.io/v1alpha1
+kind: NetworkResource
+metadata:
+  name: openstatus-dashboard
+spec:
+  networkRouterRef:
+    name: homeops
+    namespace: network
+  serviceRef:
+    name: openstatus-dashboard
+  groups:
+    - name: tier-admin
+---
+apiVersion: netbird.io/v1alpha1
+kind: NetworkResource
+metadata:
+  name: openstatus-server
+spec:
+  networkRouterRef:
+    name: homeops
+    namespace: network
+  serviceRef:
+    name: openstatus-server
+  groups:
+    - name: tier-admin
+---
+apiVersion: netbird.io/v1alpha1
+kind: NetworkResource
+metadata:
+  name: openstatus-status-page
+spec:
+  networkRouterRef:
+    name: homeops
+    namespace: network
+  serviceRef:
+    name: openstatus-status-page
+  groups:
+    - name: tier-family
