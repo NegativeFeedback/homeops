@@ -93,9 +93,12 @@ spec:
     redis-cluster:
       enabled: false
 
+    # Chart 17.x ignores `existingClaim`; the live data is on the chart-created
+    # `gitea-shared-storage` PVC (NOT the volsync-managed `forgejo` PVC). Grow it here.
     persistence:
       enabled: true
-      existingClaim: forgejo
+      claimName: gitea-shared-storage
+      size: 110Gi
 
     gitea:
       admin:
