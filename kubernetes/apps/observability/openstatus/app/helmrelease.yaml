@@ -3,8 +3,37 @@ apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: openstatus
+  annotations:
+    # The postRenderers patch below carries shell `$VAR`s; keep Flux envsubst off them.
+    kustomize.toolkit.fluxcd.io/substitute: disabled
 spec:
   interval: 1h
+  # Upstream bug, unmerged fix openstatusHQ/openstatus#2782: tinybird-local rejects 51
+  # datasources whose TTL (1/7/14/30d) is shorter than their monthly partition, so
+  # `tb --local deploy` fails. Apply that PR's change (toYYYYMM -> toYYYYMMDD on those
+  # 51 only) to the fetched source before deploying. Drop once upstream merges it.
+  postRenderers:
+    - kustomize:
+        patches:
+          - target:
+              kind: ConfigMap
+              name: openstatus-tinybird-bootstrap
+            patch: |
+              - op: replace
+                path: /data/bootstrap.sh
+                value: |
+                  set -eu
+                  pip install --quiet --root-user-action=ignore "tinybird==4.6.21"
+                  python3 /scripts/fetch.py "$SOURCE_URL" /work
+                  cd /work/packages/tinybird
+                  for f in datasources/*.datasource; do
+                    n=$(sed -n 's/^ENGINE_TTL "time + toIntervalDay(\([0-9]*\))"$/\1/p' "$f")
+                    if [ -n "$n" ] && [ "$n" -le 30 ]; then
+                      sed -i 's/^ENGINE_PARTITION_KEY "toYYYYMM(time)"$/ENGINE_PARTITION_KEY "toYYYYMMDD(time)"/' "$f"
+                    fi
+                  done
+                  tb --local deploy
+                  python3 /scripts/publish.py
   chart:
     spec:
       chart: ./charts/openstatus
@@ -54,10 +83,7 @@ spec:
     tinybird:
       enabled: true
       image:
-        # `latest` (Nov 2026+) rejects upstream's datasources (TTL shorter than the monthly
-        # partition), failing `tb --local deploy`. The pre-change build still accepts them.
-        tag: legacy-2026-11-02
-        digest: sha256:945813c198f37f0fed924992b1f261246c428f8bdf1c9cbe6437ad87adc902fd
+        digest: sha256:38fb8dcf675a51748db8c403363caafd35ef805d317c9ab80e175c7c92e752f9
       persistence:
         clickhouse:
           size: 10Gi
