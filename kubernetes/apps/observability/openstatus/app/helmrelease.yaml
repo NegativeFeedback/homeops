@@ -33,8 +33,8 @@ spec:
         openstatus-db-migrate: sha256:7419769d2449191e68abb531355004bbacbf0451aa11862acf43acd8d60509d3
 
     urls:
-      dashboard: https://openstatus.access.gddnet.io
-      server: https://openstatus-api.access.gddnet.io
+      dashboard: https://openstatus.gddnet.io
+      server: https://openstatus-api.gddnet.io
 
     env:
       TZ: America/Chicago
@@ -54,7 +54,10 @@ spec:
     tinybird:
       enabled: true
       image:
-        digest: sha256:38fb8dcf675a51748db8c403363caafd35ef805d317c9ab80e175c7c92e752f9
+        # `latest` (Nov 2026+) rejects upstream's datasources (TTL shorter than the monthly
+        # partition), failing `tb --local deploy`. The pre-change build still accepts them.
+        tag: legacy-2026-11-02
+        digest: sha256:945813c198f37f0fed924992b1f261246c428f8bdf1c9cbe6437ad87adc902fd
       persistence:
         clickhouse:
           size: 10Gi
