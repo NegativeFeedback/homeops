@@ -12,3 +12,17 @@ spec:
     name: esphome
   groups:
     - name: tier-admin
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/netbird.io/networkresource_v1alpha1.json
+apiVersion: netbird.io/v1alpha1
+kind: NetworkResource
+metadata:
+  name: esphome-code-server
+spec:
+  networkRouterRef:
+    name: homeops
+    namespace: network
+  serviceRef:
+    name: esphome-code-server
+  groups:
+    - name: tier-admin

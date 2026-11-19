@@ -24,7 +24,7 @@ spec:
   values:
     controllers:
       esphome:
-        strategy: RollingUpdate
+        strategy: Recreate
         pod:
           securityContext:
             runAsUser: 2000
