@@ -86,7 +86,7 @@ spec:
           postgres:
             image:
               repository: postgres
-              tag: 17-alpine@sha256:266d3c257594e195b309ae9d1805e54c788f1d7b375f56bf6c367aac6c917e7b
+              tag: 19-alpine@sha256:8b0ff4cdf221f0c53d7fcda681d3b461be725c492cd881c5ec9c0ad25023f188
             env:
               # ceph-block PVCs land a lost+found dir at the mount root, which
               # makes initdb refuse to init "/var/lib/postgresql/data" directly.
