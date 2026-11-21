@@ -30,7 +30,7 @@ spec:
           app:
             image:
               repository: invoiceninja/invoiceninja-debian
-              tag: 5.13.53
+              tag: 5.13.56
             env:
               TZ: America/Chicago
               APP_URL: https://invoice.gddnet.io
