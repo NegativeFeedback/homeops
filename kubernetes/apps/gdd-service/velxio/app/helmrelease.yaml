@@ -6,6 +6,9 @@ metadata:
   name: &app velxio
 spec:
   interval: 1h
+  # first boot downloads Arduino cores (AVR, RP2040, ESP32, ...) before nginx
+  # listens — far longer than Helm's default 5m wait
+  timeout: 30m
   chartRef:
     kind: OCIRepository
     name: app-template
@@ -64,7 +67,7 @@ spec:
                     port: &port 80
                   periodSeconds: 10
                   timeoutSeconds: 5
-                  failureThreshold: 60
+                  failureThreshold: 180
               liveness: &probes
                 enabled: true
                 custom: true
@@ -107,6 +110,8 @@ spec:
         storageClass: ceph-block
         accessMode: ReadWriteOnce
         size: 10Gi
+        # keep across helm uninstall/remediation so cores aren't re-downloaded
+        retain: true
         globalMounts:
           - path: /root/.arduino15
       arduino-libs:
@@ -114,6 +119,7 @@ spec:
         storageClass: ceph-block
         accessMode: ReadWriteOnce
         size: 5Gi
+        retain: true
         globalMounts:
           - path: /root/Arduino
       # Prepared Raspberry Pi OS base image (built once, ~2 GiB) + per-session
@@ -123,6 +129,7 @@ spec:
         storageClass: ceph-block
         accessMode: ReadWriteOnce
         size: 15Gi
+        retain: true
         globalMounts:
           - path: /var/lib/velxio-pi
       ccache:
