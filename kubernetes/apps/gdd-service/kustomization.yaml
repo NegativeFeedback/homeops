@@ -49,8 +49,7 @@ resources:
   - ./cve-report/ks.yaml
   - ./christmas-community/ks.yaml
   - ./actual/ks.yaml
-  - ./actual-mcp/ks.yaml
-  - ./velxio/ks.yaml
+Y  - ./velxio/ks.yaml
   - ./stash-fileflows-sync/ks.yaml
   - ./linkwarden/ks.yaml
   - ./meshmonitor/ks.yaml
