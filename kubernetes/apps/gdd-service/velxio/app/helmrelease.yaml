@@ -1,0 +1,135 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app velxio
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  values:
+    controllers:
+      velxio:
+        # RWO PVCs — avoid two pods fighting over them
+        strategy: Recreate
+        containers:
+          app:
+            image:
+              # velxio-gdd: upstream image + our overlay (BOM/PNG export, sensor chip
+              # pack, Raspberry Pi / STM32 / ESP32-C6 / ESP8266 lanes).
+              # Built by ~/projects/velxio-gdd CI.
+              # TODO: pin to vX@sha256 once the first CI build has pushed.
+              repository: git.gddnet.io/negativefeedback/velxio
+              tag: latest
+            env:
+              TZ: America/Chicago
+              DATA_DIR: /app/data
+              DATABASE_URL: sqlite+aiosqlite:////app/data/velxio.db
+              VELXIO_PERSISTENT_BUILD_DIR: "1"
+              VELXIO_NEWS: "off"
+              # Raspberry Pi lane: each running Pi is a QEMU guest (1-2 GiB RAM).
+              VELXIO_PI_DIR: /var/lib/velxio-pi
+              VELXIO_PI_MAX: "2"
+              # Concurrent boards per lane (velxio-gdd overlay). ESP32-C6 runs on
+              # Espressif esp-emu, ESP8266 sketches run natively as `nobody`,
+              # STM32 on libqemu-arm built from Velxio's GPL source.
+              VELXIO_C6_MAX: "4"
+              VELXIO_ESP8266_MAX: "4"
+              VELXIO_STM32_MAX: "4"
+              # Accounts: Authentik OIDC (provider/app "velxio", made by hand).
+              # Client ID/secret + session secret come from velxio-secret.
+              VELXIO_PUBLIC_URL: https://velxio.gddnet.io
+              VELXIO_OIDC_ISSUER: https://sso.gddnet.io/application/o/velxio/
+              VELXIO_OIDC_ADMIN_GROUP: velxio-admins
+            envFrom:
+              - secretRef:
+                  name: velxio-secret
+            probes:
+              # entrypoint installs arduino cores on boot; first start can take minutes
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: &port 80
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 60
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: *port
+                  periodSeconds: 30
+                  timeoutSeconds: 10
+                  failureThreshold: 3
+              readiness: *probes
+            # image requires root (nginx on :80, toolchains under /root) and a writable rootfs
+            securityContext:
+              allowPrivilegeEscalation: false
+            resources:
+              requests:
+                cpu: 250m
+                memory: 1Gi
+              limits:
+                # ESP-IDF builds (~3 GiB) + up to VELXIO_PI_MAX Pi guests
+                memory: 8Gi
+    defaultPodOptions:
+      securityContext:
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile: { type: RuntimeDefault }
+    service:
+      app:
+        ports:
+          http:
+            port: *port
+    persistence:
+      data:
+        enabled: true
+        existingClaim: *app
+        globalMounts:
+          - path: /app/data
+      # Arduino cores installed on demand (AVR, RP2040, STM32duino ~2 GiB)
+      arduino15:
+        type: persistentVolumeClaim
+        storageClass: ceph-block
+        accessMode: ReadWriteOnce
+        size: 10Gi
+        globalMounts:
+          - path: /root/.arduino15
+      arduino-libs:
+        type: persistentVolumeClaim
+        storageClass: ceph-block
+        accessMode: ReadWriteOnce
+        size: 5Gi
+        globalMounts:
+          - path: /root/Arduino
+      # Prepared Raspberry Pi OS base image (built once, ~2 GiB) + per-session
+      # qcow2 overlays. Rebuildable, so not backed up.
+      pi:
+        type: persistentVolumeClaim
+        storageClass: ceph-block
+        accessMode: ReadWriteOnce
+        size: 15Gi
+        globalMounts:
+          - path: /var/lib/velxio-pi
+      ccache:
+        type: emptyDir
+        globalMounts:
+          - path: /var/cache/ccache
+      build:
+        type: emptyDir
+        globalMounts:
+          - path: /var/lib/velxio-build
