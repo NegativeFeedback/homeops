@@ -35,7 +35,7 @@ spec:
           app:
             image:
               repository: ghcr.io/home-operations/esphome
-              tag: 2026.10.2@sha256:af1e3b9a8087f25583959be9eec87ef154ec398b407106e50bde05be73f453c7
+              tag: 2026.11.1@sha256:405cc7437cddd2cfbf41cbfc22edd48a0ee3e34bc4055bb31e1ce2a9576f38c3
             env:
               TZ: America/Chicago
             probes:
@@ -90,7 +90,9 @@ spec:
         type: persistentVolumeClaim
         storageClass: ceph-block
         accessMode: ReadWriteOnce
-        size: 500Mi
+        # HOME=/config: ESPHome keeps its ESP-IDF framework + toolchains in
+        # /config/.cache/esphome/idf (~0.4 GiB per framework, more per chip family)
+        size: 5Gi
         advancedMounts:
           esphome:
             app:
