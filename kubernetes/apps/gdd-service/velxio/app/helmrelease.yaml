@@ -32,7 +32,10 @@ spec:
               # Built by ~/projects/velxio-gdd CI.
               # TODO: pin to vX@sha256 once the first CI build has pushed.
               repository: git.gddnet.io/negativefeedback/velxio
-              tag: latest
+              # digest-pinned: spegel resolves :latest from node caches, so a bare
+              # tag + restart can come back up on a stale image.
+              # sha-3149eca: ESPHome per-device slots (velxio-esp-NN Services)
+              tag: sha-3149eca@sha256:5e1c500d234225b1e3d78c4f47c543acd4039bb431d1662b74be5d1a11537d9e
             env:
               TZ: America/Chicago
               DATA_DIR: /app/data
@@ -53,6 +56,20 @@ spec:
               VELXIO_PUBLIC_URL: https://velxio.gddnet.io
               VELXIO_OIDC_ISSUER: https://sso.gddnet.io/application/o/velxio/
               VELXIO_OIDC_ADMIN_GROUP: velxio-admins
+              # Background runs: saved projects kept simulating by a headless
+              # Chromium inside the image (~0.3-0.4 GiB per run + ~0.3 GiB browser).
+              # Emulated ESPHome devices stay online as background runs (one
+              # project each), so this covers VELXIO_ESPHOME_MAX plus a few others.
+              VELXIO_BG_MAX: "20"
+              # Emulated ESPHome devices (esp-emu, ~30-40 MiB RSS and ~0.15 CPU
+              # each, measured). Every running device takes a slot whose
+              # velxio-esp-NN Service (esphome-slots.yaml) presents 3232/6053/80;
+              # the slot is named by the device's `wifi: use_address:` (slot IP
+              # = VELXIO_ESPHOME_SLOT_IP_BASE + NN, the Services' pinned ClusterIPs).
+              VELXIO_ESPHOME_MAX: "16"
+              VELXIO_ESPHOME_SLOTS: "32"
+              VELXIO_ESPHOME_SLOT_IP_BASE: 10.96.0.200
+              VELXIO_ESPHOME_SLOT_DOMAIN: gdd-service.svc.cluster.local
             envFrom:
               - secretRef:
                   name: velxio-secret
@@ -87,8 +104,10 @@ spec:
                 cpu: 250m
                 memory: 1Gi
               limits:
-                # ESP-IDF builds (~3 GiB) + up to VELXIO_PI_MAX Pi guests
-                memory: 8Gi
+                # ESP-IDF builds (~3 GiB) + up to VELXIO_PI_MAX Pi guests (~4 GiB)
+                # + up to VELXIO_BG_MAX background runs (~0.35 GiB each) incl.
+                # VELXIO_ESPHOME_MAX esp-emu devices (~0.04 GiB each)
+                memory: 16Gi
     defaultPodOptions:
       securityContext:
         fsGroupChangePolicy: OnRootMismatch

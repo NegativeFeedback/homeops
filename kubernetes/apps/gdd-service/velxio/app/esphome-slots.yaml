@@ -1,0 +1,627 @@
+---
+# ESPHome device slots for Velxio's emulated ESPHome boards (velxio-gdd
+# esphome_lane). Each running emulated device takes one slot NN; the slot's
+# Service presents the device's standard ports so the ESPHome dashboard, the
+# esphome CLI and Home Assistant talk to it exactly like real hardware:
+#
+#   velxio-esp-NN  3232 (OTA) / 6053 (native API) / 80 (web_server)
+#     -> velxio pod 21000+NN / 22000+NN / 23000+NN   (esp-emu hostfwd)
+#
+# The slot is chosen by the device's own YAML: `wifi: use_address:` set to the
+# slot's pinned ClusterIP 10.96.0.(200+NN) (or the DNS name velxio-esp-NN...;
+# the IP is preferred: the ESPHome dashboard otherwise falls back to the
+# NAT address 192.168.4.2 the device reports over MQTT). Velxio reads that
+# address out of the firmware, so adding a device needs no change here.
+#
+# ClusterIPs are pinned in 10.96.0.201-232: the first 256 addresses of the
+# 10.96.0.0/12 service CIDR are the static band Kubernetes never hands out
+# dynamically (only .1 kubernetes and .10 kube-dns live there).
+# Count = VELXIO_ESPHOME_SLOTS in the HelmRelease.
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: velxio-esp-01
+  labels:
+    app.kubernetes.io/name: velxio
+    app.kubernetes.io/component: esphome-slot
+spec:
+  type: ClusterIP
+  clusterIP: 10.96.0.201
+  selector:
+    app.kubernetes.io/controller: velxio
+    app.kubernetes.io/instance: velxio
+    app.kubernetes.io/name: velxio
+  ports:
+    - { name: ota, port: 3232, targetPort: 21001, protocol: TCP }
+    - { name: api, port: 6053, targetPort: 22001, protocol: TCP }
+    - { name: http, port: 80, targetPort: 23001, protocol: TCP }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: velxio-esp-02
+  labels:
+    app.kubernetes.io/name: velxio
+    app.kubernetes.io/component: esphome-slot
+spec:
+  type: ClusterIP
+  clusterIP: 10.96.0.202
+  selector:
+    app.kubernetes.io/controller: velxio
+    app.kubernetes.io/instance: velxio
+    app.kubernetes.io/name: velxio
+  ports:
+    - { name: ota, port: 3232, targetPort: 21002, protocol: TCP }
+    - { name: api, port: 6053, targetPort: 22002, protocol: TCP }
+    - { name: http, port: 80, targetPort: 23002, protocol: TCP }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: velxio-esp-03
+  labels:
+    app.kubernetes.io/name: velxio
+    app.kubernetes.io/component: esphome-slot
+spec:
+  type: ClusterIP
+  clusterIP: 10.96.0.203
+  selector:
+    app.kubernetes.io/controller: velxio
+    app.kubernetes.io/instance: velxio
+    app.kubernetes.io/name: velxio
+  ports:
+    - { name: ota, port: 3232, targetPort: 21003, protocol: TCP }
+    - { name: api, port: 6053, targetPort: 22003, protocol: TCP }
+    - { name: http, port: 80, targetPort: 23003, protocol: TCP }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: velxio-esp-04
+  labels:
+    app.kubernetes.io/name: velxio
+    app.kubernetes.io/component: esphome-slot
+spec:
+  type: ClusterIP
+  clusterIP: 10.96.0.204
+  selector:
+    app.kubernetes.io/controller: velxio
+    app.kubernetes.io/instance: velxio
+    app.kubernetes.io/name: velxio
+  ports:
+    - { name: ota, port: 3232, targetPort: 21004, protocol: TCP }
+    - { name: api, port: 6053, targetPort: 22004, protocol: TCP }
+    - { name: http, port: 80, targetPort: 23004, protocol: TCP }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: velxio-esp-05
+  labels:
+    app.kubernetes.io/name: velxio
+    app.kubernetes.io/component: esphome-slot
+spec:
+  type: ClusterIP
+  clusterIP: 10.96.0.205
+  selector:
+    app.kubernetes.io/controller: velxio
+    app.kubernetes.io/instance: velxio
+    app.kubernetes.io/name: velxio
+  ports:
+    - { name: ota, port: 3232, targetPort: 21005, protocol: TCP }
+    - { name: api, port: 6053, targetPort: 22005, protocol: TCP }
+    - { name: http, port: 80, targetPort: 23005, protocol: TCP }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: velxio-esp-06
+  labels:
+    app.kubernetes.io/name: velxio
+    app.kubernetes.io/component: esphome-slot
+spec:
+  type: ClusterIP
+  clusterIP: 10.96.0.206
+  selector:
+    app.kubernetes.io/controller: velxio
+    app.kubernetes.io/instance: velxio
+    app.kubernetes.io/name: velxio
+  ports:
+    - { name: ota, port: 3232, targetPort: 21006, protocol: TCP }
+    - { name: api, port: 6053, targetPort: 22006, protocol: TCP }
+    - { name: http, port: 80, targetPort: 23006, protocol: TCP }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: velxio-esp-07
+  labels:
+    app.kubernetes.io/name: velxio
+    app.kubernetes.io/component: esphome-slot
+spec:
+  type: ClusterIP
+  clusterIP: 10.96.0.207
+  selector:
+    app.kubernetes.io/controller: velxio
+    app.kubernetes.io/instance: velxio
+    app.kubernetes.io/name: velxio
+  ports:
+    - { name: ota, port: 3232, targetPort: 21007, protocol: TCP }
+    - { name: api, port: 6053, targetPort: 22007, protocol: TCP }
+    - { name: http, port: 80, targetPort: 23007, protocol: TCP }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: velxio-esp-08
+  labels:
+    app.kubernetes.io/name: velxio
+    app.kubernetes.io/component: esphome-slot
+spec:
+  type: ClusterIP
+  clusterIP: 10.96.0.208
+  selector:
+    app.kubernetes.io/controller: velxio
+    app.kubernetes.io/instance: velxio
+    app.kubernetes.io/name: velxio
+  ports:
+    - { name: ota, port: 3232, targetPort: 21008, protocol: TCP }
+    - { name: api, port: 6053, targetPort: 22008, protocol: TCP }
+    - { name: http, port: 80, targetPort: 23008, protocol: TCP }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: velxio-esp-09
+  labels:
+    app.kubernetes.io/name: velxio
+    app.kubernetes.io/component: esphome-slot
+spec:
+  type: ClusterIP
+  clusterIP: 10.96.0.209
+  selector:
+    app.kubernetes.io/controller: velxio
+    app.kubernetes.io/instance: velxio
+    app.kubernetes.io/name: velxio
+  ports:
+    - { name: ota, port: 3232, targetPort: 21009, protocol: TCP }
+    - { name: api, port: 6053, targetPort: 22009, protocol: TCP }
+    - { name: http, port: 80, targetPort: 23009, protocol: TCP }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: velxio-esp-10
+  labels:
+    app.kubernetes.io/name: velxio
+    app.kubernetes.io/component: esphome-slot
+spec:
+  type: ClusterIP
+  clusterIP: 10.96.0.210
+  selector:
+    app.kubernetes.io/controller: velxio
+    app.kubernetes.io/instance: velxio
+    app.kubernetes.io/name: velxio
+  ports:
+    - { name: ota, port: 3232, targetPort: 21010, protocol: TCP }
+    - { name: api, port: 6053, targetPort: 22010, protocol: TCP }
+    - { name: http, port: 80, targetPort: 23010, protocol: TCP }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: velxio-esp-11
+  labels:
+    app.kubernetes.io/name: velxio
+    app.kubernetes.io/component: esphome-slot
+spec:
+  type: ClusterIP
+  clusterIP: 10.96.0.211
+  selector:
+    app.kubernetes.io/controller: velxio
+    app.kubernetes.io/instance: velxio
+    app.kubernetes.io/name: velxio
+  ports:
+    - { name: ota, port: 3232, targetPort: 21011, protocol: TCP }
+    - { name: api, port: 6053, targetPort: 22011, protocol: TCP }
+    - { name: http, port: 80, targetPort: 23011, protocol: TCP }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: velxio-esp-12
+  labels:
+    app.kubernetes.io/name: velxio
+    app.kubernetes.io/component: esphome-slot
+spec:
+  type: ClusterIP
+  clusterIP: 10.96.0.212
+  selector:
+    app.kubernetes.io/controller: velxio
+    app.kubernetes.io/instance: velxio
+    app.kubernetes.io/name: velxio
+  ports:
+    - { name: ota, port: 3232, targetPort: 21012, protocol: TCP }
+    - { name: api, port: 6053, targetPort: 22012, protocol: TCP }
+    - { name: http, port: 80, targetPort: 23012, protocol: TCP }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: velxio-esp-13
+  labels:
+    app.kubernetes.io/name: velxio
+    app.kubernetes.io/component: esphome-slot
+spec:
+  type: ClusterIP
+  clusterIP: 10.96.0.213
+  selector:
+    app.kubernetes.io/controller: velxio
+    app.kubernetes.io/instance: velxio
+    app.kubernetes.io/name: velxio
+  ports:
+    - { name: ota, port: 3232, targetPort: 21013, protocol: TCP }
+    - { name: api, port: 6053, targetPort: 22013, protocol: TCP }
+    - { name: http, port: 80, targetPort: 23013, protocol: TCP }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: velxio-esp-14
+  labels:
+    app.kubernetes.io/name: velxio
+    app.kubernetes.io/component: esphome-slot
+spec:
+  type: ClusterIP
+  clusterIP: 10.96.0.214
+  selector:
+    app.kubernetes.io/controller: velxio
+    app.kubernetes.io/instance: velxio
+    app.kubernetes.io/name: velxio
+  ports:
+    - { name: ota, port: 3232, targetPort: 21014, protocol: TCP }
+    - { name: api, port: 6053, targetPort: 22014, protocol: TCP }
+    - { name: http, port: 80, targetPort: 23014, protocol: TCP }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: velxio-esp-15
+  labels:
+    app.kubernetes.io/name: velxio
+    app.kubernetes.io/component: esphome-slot
+spec:
+  type: ClusterIP
+  clusterIP: 10.96.0.215
+  selector:
+    app.kubernetes.io/controller: velxio
+    app.kubernetes.io/instance: velxio
+    app.kubernetes.io/name: velxio
+  ports:
+    - { name: ota, port: 3232, targetPort: 21015, protocol: TCP }
+    - { name: api, port: 6053, targetPort: 22015, protocol: TCP }
+    - { name: http, port: 80, targetPort: 23015, protocol: TCP }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: velxio-esp-16
+  labels:
+    app.kubernetes.io/name: velxio
+    app.kubernetes.io/component: esphome-slot
+spec:
+  type: ClusterIP
+  clusterIP: 10.96.0.216
+  selector:
+    app.kubernetes.io/controller: velxio
+    app.kubernetes.io/instance: velxio
+    app.kubernetes.io/name: velxio
+  ports:
+    - { name: ota, port: 3232, targetPort: 21016, protocol: TCP }
+    - { name: api, port: 6053, targetPort: 22016, protocol: TCP }
+    - { name: http, port: 80, targetPort: 23016, protocol: TCP }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: velxio-esp-17
+  labels:
+    app.kubernetes.io/name: velxio
+    app.kubernetes.io/component: esphome-slot
+spec:
+  type: ClusterIP
+  clusterIP: 10.96.0.217
+  selector:
+    app.kubernetes.io/controller: velxio
+    app.kubernetes.io/instance: velxio
+    app.kubernetes.io/name: velxio
+  ports:
+    - { name: ota, port: 3232, targetPort: 21017, protocol: TCP }
+    - { name: api, port: 6053, targetPort: 22017, protocol: TCP }
+    - { name: http, port: 80, targetPort: 23017, protocol: TCP }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: velxio-esp-18
+  labels:
+    app.kubernetes.io/name: velxio
+    app.kubernetes.io/component: esphome-slot
+spec:
+  type: ClusterIP
+  clusterIP: 10.96.0.218
+  selector:
+    app.kubernetes.io/controller: velxio
+    app.kubernetes.io/instance: velxio
+    app.kubernetes.io/name: velxio
+  ports:
+    - { name: ota, port: 3232, targetPort: 21018, protocol: TCP }
+    - { name: api, port: 6053, targetPort: 22018, protocol: TCP }
+    - { name: http, port: 80, targetPort: 23018, protocol: TCP }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: velxio-esp-19
+  labels:
+    app.kubernetes.io/name: velxio
+    app.kubernetes.io/component: esphome-slot
+spec:
+  type: ClusterIP
+  clusterIP: 10.96.0.219
+  selector:
+    app.kubernetes.io/controller: velxio
+    app.kubernetes.io/instance: velxio
+    app.kubernetes.io/name: velxio
+  ports:
+    - { name: ota, port: 3232, targetPort: 21019, protocol: TCP }
+    - { name: api, port: 6053, targetPort: 22019, protocol: TCP }
+    - { name: http, port: 80, targetPort: 23019, protocol: TCP }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: velxio-esp-20
+  labels:
+    app.kubernetes.io/name: velxio
+    app.kubernetes.io/component: esphome-slot
+spec:
+  type: ClusterIP
+  clusterIP: 10.96.0.220
+  selector:
+    app.kubernetes.io/controller: velxio
+    app.kubernetes.io/instance: velxio
+    app.kubernetes.io/name: velxio
+  ports:
+    - { name: ota, port: 3232, targetPort: 21020, protocol: TCP }
+    - { name: api, port: 6053, targetPort: 22020, protocol: TCP }
+    - { name: http, port: 80, targetPort: 23020, protocol: TCP }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: velxio-esp-21
+  labels:
+    app.kubernetes.io/name: velxio
+    app.kubernetes.io/component: esphome-slot
+spec:
+  type: ClusterIP
+  clusterIP: 10.96.0.221
+  selector:
+    app.kubernetes.io/controller: velxio
+    app.kubernetes.io/instance: velxio
+    app.kubernetes.io/name: velxio
+  ports:
+    - { name: ota, port: 3232, targetPort: 21021, protocol: TCP }
+    - { name: api, port: 6053, targetPort: 22021, protocol: TCP }
+    - { name: http, port: 80, targetPort: 23021, protocol: TCP }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: velxio-esp-22
+  labels:
+    app.kubernetes.io/name: velxio
+    app.kubernetes.io/component: esphome-slot
+spec:
+  type: ClusterIP
+  clusterIP: 10.96.0.222
+  selector:
+    app.kubernetes.io/controller: velxio
+    app.kubernetes.io/instance: velxio
+    app.kubernetes.io/name: velxio
+  ports:
+    - { name: ota, port: 3232, targetPort: 21022, protocol: TCP }
+    - { name: api, port: 6053, targetPort: 22022, protocol: TCP }
+    - { name: http, port: 80, targetPort: 23022, protocol: TCP }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: velxio-esp-23
+  labels:
+    app.kubernetes.io/name: velxio
+    app.kubernetes.io/component: esphome-slot
+spec:
+  type: ClusterIP
+  clusterIP: 10.96.0.223
+  selector:
+    app.kubernetes.io/controller: velxio
+    app.kubernetes.io/instance: velxio
+    app.kubernetes.io/name: velxio
+  ports:
+    - { name: ota, port: 3232, targetPort: 21023, protocol: TCP }
+    - { name: api, port: 6053, targetPort: 22023, protocol: TCP }
+    - { name: http, port: 80, targetPort: 23023, protocol: TCP }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: velxio-esp-24
+  labels:
+    app.kubernetes.io/name: velxio
+    app.kubernetes.io/component: esphome-slot
+spec:
+  type: ClusterIP
+  clusterIP: 10.96.0.224
+  selector:
+    app.kubernetes.io/controller: velxio
+    app.kubernetes.io/instance: velxio
+    app.kubernetes.io/name: velxio
+  ports:
+    - { name: ota, port: 3232, targetPort: 21024, protocol: TCP }
+    - { name: api, port: 6053, targetPort: 22024, protocol: TCP }
+    - { name: http, port: 80, targetPort: 23024, protocol: TCP }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: velxio-esp-25
+  labels:
+    app.kubernetes.io/name: velxio
+    app.kubernetes.io/component: esphome-slot
+spec:
+  type: ClusterIP
+  clusterIP: 10.96.0.225
+  selector:
+    app.kubernetes.io/controller: velxio
+    app.kubernetes.io/instance: velxio
+    app.kubernetes.io/name: velxio
+  ports:
+    - { name: ota, port: 3232, targetPort: 21025, protocol: TCP }
+    - { name: api, port: 6053, targetPort: 22025, protocol: TCP }
+    - { name: http, port: 80, targetPort: 23025, protocol: TCP }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: velxio-esp-26
+  labels:
+    app.kubernetes.io/name: velxio
+    app.kubernetes.io/component: esphome-slot
+spec:
+  type: ClusterIP
+  clusterIP: 10.96.0.226
+  selector:
+    app.kubernetes.io/controller: velxio
+    app.kubernetes.io/instance: velxio
+    app.kubernetes.io/name: velxio
+  ports:
+    - { name: ota, port: 3232, targetPort: 21026, protocol: TCP }
+    - { name: api, port: 6053, targetPort: 22026, protocol: TCP }
+    - { name: http, port: 80, targetPort: 23026, protocol: TCP }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: velxio-esp-27
+  labels:
+    app.kubernetes.io/name: velxio
+    app.kubernetes.io/component: esphome-slot
+spec:
+  type: ClusterIP
+  clusterIP: 10.96.0.227
+  selector:
+    app.kubernetes.io/controller: velxio
+    app.kubernetes.io/instance: velxio
+    app.kubernetes.io/name: velxio
+  ports:
+    - { name: ota, port: 3232, targetPort: 21027, protocol: TCP }
+    - { name: api, port: 6053, targetPort: 22027, protocol: TCP }
+    - { name: http, port: 80, targetPort: 23027, protocol: TCP }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: velxio-esp-28
+  labels:
+    app.kubernetes.io/name: velxio
+    app.kubernetes.io/component: esphome-slot
+spec:
+  type: ClusterIP
+  clusterIP: 10.96.0.228
+  selector:
+    app.kubernetes.io/controller: velxio
+    app.kubernetes.io/instance: velxio
+    app.kubernetes.io/name: velxio
+  ports:
+    - { name: ota, port: 3232, targetPort: 21028, protocol: TCP }
+    - { name: api, port: 6053, targetPort: 22028, protocol: TCP }
+    - { name: http, port: 80, targetPort: 23028, protocol: TCP }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: velxio-esp-29
+  labels:
+    app.kubernetes.io/name: velxio
+    app.kubernetes.io/component: esphome-slot
+spec:
+  type: ClusterIP
+  clusterIP: 10.96.0.229
+  selector:
+    app.kubernetes.io/controller: velxio
+    app.kubernetes.io/instance: velxio
+    app.kubernetes.io/name: velxio
+  ports:
+    - { name: ota, port: 3232, targetPort: 21029, protocol: TCP }
+    - { name: api, port: 6053, targetPort: 22029, protocol: TCP }
+    - { name: http, port: 80, targetPort: 23029, protocol: TCP }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: velxio-esp-30
+  labels:
+    app.kubernetes.io/name: velxio
+    app.kubernetes.io/component: esphome-slot
+spec:
+  type: ClusterIP
+  clusterIP: 10.96.0.230
+  selector:
+    app.kubernetes.io/controller: velxio
+    app.kubernetes.io/instance: velxio
+    app.kubernetes.io/name: velxio
+  ports:
+    - { name: ota, port: 3232, targetPort: 21030, protocol: TCP }
+    - { name: api, port: 6053, targetPort: 22030, protocol: TCP }
+    - { name: http, port: 80, targetPort: 23030, protocol: TCP }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: velxio-esp-31
+  labels:
+    app.kubernetes.io/name: velxio
+    app.kubernetes.io/component: esphome-slot
+spec:
+  type: ClusterIP
+  clusterIP: 10.96.0.231
+  selector:
+    app.kubernetes.io/controller: velxio
+    app.kubernetes.io/instance: velxio
+    app.kubernetes.io/name: velxio
+  ports:
+    - { name: ota, port: 3232, targetPort: 21031, protocol: TCP }
+    - { name: api, port: 6053, targetPort: 22031, protocol: TCP }
+    - { name: http, port: 80, targetPort: 23031, protocol: TCP }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: velxio-esp-32
+  labels:
+    app.kubernetes.io/name: velxio
+    app.kubernetes.io/component: esphome-slot
+spec:
+  type: ClusterIP
+  clusterIP: 10.96.0.232
+  selector:
+    app.kubernetes.io/controller: velxio
+    app.kubernetes.io/instance: velxio
+    app.kubernetes.io/name: velxio
+  ports:
+    - { name: ota, port: 3232, targetPort: 21032, protocol: TCP }
+    - { name: api, port: 6053, targetPort: 22032, protocol: TCP }
+    - { name: http, port: 80, targetPort: 23032, protocol: TCP }

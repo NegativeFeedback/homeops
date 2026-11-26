@@ -24,7 +24,7 @@ spec:
     substitute:
       APP: *app
       NS: *namespace
-      VOLSYNC_CAPACITY: 2Gi
+      VOLSYNC_CAPACITY: 10Gi  # projects DB + per-user uploaded libraries and chips
       # image runs as root (nginx + uvicorn, paths under /root)
       VOLSYNC_MOVER_FS_GROUP: "0"
       VOLSYNC_MOVER_GROUP: "0"
