@@ -49,7 +49,7 @@ spec:
           exit:
             image:
               repository: ghcr.io/irashack/molebridge
-              tag: v0.11.0@sha256:21bdb633f0d9d2c8d4491da29f3567e1194eed2364641dfb0cdf7055481aca43
+              tag: v0.14.5@sha256:0aa9cd4900cd4120a77b17c74b5fcb915c3cc7365760767e9067b3ac3e3a4e68
             args: ["exit"]
             env:
               TZ: America/Chicago
@@ -100,7 +100,7 @@ spec:
           switchyard:
             image:
               repository: ghcr.io/irashack/molebridge
-              tag: v0.11.0@sha256:21bdb633f0d9d2c8d4491da29f3567e1194eed2364641dfb0cdf7055481aca43
+              tag: v0.14.5@sha256:0aa9cd4900cd4120a77b17c74b5fcb915c3cc7365760767e9067b3ac3e3a4e68
             args: ["panel"]
             env:
               TZ: America/Chicago
