@@ -34,8 +34,8 @@ spec:
               repository: git.gddnet.io/negativefeedback/velxio
               # digest-pinned: spegel resolves :latest from node caches, so a bare
               # tag + restart can come back up on a stale image.
-              # sha-9ad6d27: WS2812 strips/rings on ESPHome boards, led-ring colour fix, saved switch levels reach esp32 boards
-              tag: sha-9ad6d27@sha256:5348560a056b336012292307a8775ccfaccd14ae2e3b1e831382655c3e89f5d1
+              # sha-c4dcf5e: WS2812 on ESPHome boards; a pod stop saves every emulated device's flash
+              tag: sha-c4dcf5e@sha256:b29b469b28ec852e79d70aa44166f4d0277e3a17eee49fe88877f125c4522f84
             env:
               TZ: America/Chicago
               DATA_DIR: /app/data
@@ -109,6 +109,9 @@ spec:
                 # VELXIO_ESPHOME_MAX esp-emu devices (~0.04 GiB each)
                 memory: 16Gi
     defaultPodOptions:
+      # A stop saves every emulated ESPHome device's flash (esp-emu writes it
+      # on SIGTERM, up to ~15 s for a 16 MB flash, devices in parallel).
+      terminationGracePeriodSeconds: 60
       securityContext:
         fsGroupChangePolicy: OnRootMismatch
         seccompProfile: { type: RuntimeDefault }
