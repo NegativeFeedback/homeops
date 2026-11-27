@@ -25,7 +25,7 @@ spec:
           app:
             image:
               repository: ghcr.io/maziggy/bambuddy
-              tag: daily@sha256:5b600ec3ea1e2b8b1d4a9178e1e10bf45126ee1a00229b7915b0685da03f0b83
+              tag: daily@sha256:e4b0284ce5d7ee8fc1c1e3b94cc53a4dd93379c17f12fd55634c96494ab6327c
             env:
               TZ: America/Chicago
               LOG_LEVEL: INFO
