@@ -34,8 +34,8 @@ spec:
               repository: git.gddnet.io/negativefeedback/velxio
               # digest-pinned: spegel resolves :latest from node caches, so a bare
               # tag + restart can come back up on a stale image.
-              # sha-3149eca: ESPHome per-device slots (velxio-esp-NN Services)
-              tag: sha-3149eca@sha256:5e1c500d234225b1e3d78c4f47c543acd4039bb431d1662b74be5d1a11537d9e
+              # sha-9ad6d27: WS2812 strips/rings on ESPHome boards, led-ring colour fix, saved switch levels reach esp32 boards
+              tag: sha-9ad6d27@sha256:5348560a056b336012292307a8775ccfaccd14ae2e3b1e831382655c3e89f5d1
             env:
               TZ: America/Chicago
               DATA_DIR: /app/data
