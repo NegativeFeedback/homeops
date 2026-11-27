@@ -8,7 +8,7 @@ spec:
   # operator v0.8.0 defaults to netbird 0.72.4. 0.80 refuses the setup-key login
   # when NB_DISABLE_UPDATE_SETTINGS=true (the operator sets it) because the login
   # request carries NB_MANAGEMENT_URL, which counts as a settings override.
-  image: ghcr.io/netbirdio/netbird:0.83.1@sha256:3c9d68ae8b730aaed841ff5374e3efad8be550099871a52b1a653d30e5f4faf2
+  image: ghcr.io/netbirdio/netbird:0.84.0@sha256:0095ff483b5a06b0f4e9528032e4dd28a9ec126dc2e246c2336d3a7a4d54fcbe
   workloadOverride:
     podTemplate:
       spec:
